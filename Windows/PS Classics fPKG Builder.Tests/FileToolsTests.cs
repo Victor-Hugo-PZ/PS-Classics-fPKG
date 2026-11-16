@@ -331,6 +331,19 @@ public class FileUtilsAndPathsTests
     }
 
     [Fact]
+    public void AppPaths_ToolsAvailable_ChecksForThePublishingToolsAndEmulators()
+    {
+        using var ws = new TempWorkspace();
+        Assert.False(AppPaths.ToolsAvailable());
+
+        ws.Write(@"Tools\PS4\gengp4_patch.exe", new byte[] { 1 });
+        Assert.False(AppPaths.ToolsAvailable()); // the emulators folder is still missing
+
+        Directory.CreateDirectory(Path.Combine(ws.Root, "Tools", "PS4", "emus"));
+        Assert.True(AppPaths.ToolsAvailable());
+    }
+
+    [Fact]
     public void AppPaths_DefaultsToTheFolderOfTheExecutableNotTheWorkingDirectory()
     {
         var oldWorkingDirectory = Environment.CurrentDirectory;

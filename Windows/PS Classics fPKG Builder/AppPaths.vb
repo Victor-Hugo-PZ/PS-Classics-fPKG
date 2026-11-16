@@ -37,6 +37,11 @@ Public Class AppPaths
         End Get
     End Property
 
+    ''' <summary>True when the Tools folder with the PS4 publishing tools and emulators exists.</summary>
+    Public Shared Function ToolsAvailable() As Boolean
+        Return System.IO.File.Exists(ToolsDirectory + "\PS4\gengp4_patch.exe") AndAlso System.IO.Directory.Exists(ToolsDirectory + "\PS4\emus")
+    End Function
+
     Private Shared Function Normalize(Path As String) As String
         Return Path.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar)
     End Function

@@ -126,6 +126,18 @@ public class PS2GameTests
         Assert.Equal("", PS2Game.ParseGameIDFromListing(Array.Empty<string>()));
     }
 
+    [Theory]
+    [InlineData("SLUS21258", "SLUS_212.58")]
+    [InlineData("SCES50001", "SCES_500.01")]
+    [InlineData("", "")]
+    [InlineData("SLUS2125", "")]
+    [InlineData("SLUS212588", "")]
+    [InlineData(null, "")]
+    public void FormatGameIDFromNPTitle_RestoresTheIsoStyleId(string npTitle, string expected)
+    {
+        Assert.Equal(expected, PS2Game.FormatGameIDFromNPTitle(npTitle));
+    }
+
     [Fact]
     public void GetTitle_FindsTheTitleAndIgnoresTheDash()
     {

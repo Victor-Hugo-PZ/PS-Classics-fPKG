@@ -30,6 +30,12 @@ Public Class PS2Game
         Return ""
     End Function
 
+    ''' <summary>Builds the "SLUS_212.58" style game ID from a 9 character NP title ("SLUS21258"). Returns an empty string for any other length.</summary>
+    Public Shared Function FormatGameIDFromNPTitle(NPTitle As String) As String
+        If NPTitle Is Nothing OrElse NPTitle.Length <> 9 Then Return ""
+        Return NPTitle.Insert(4, "_").Insert(8, ".")
+    End Function
+
     Public Shared Function GetPS2GameID(GameISO As String) As String
         Dim ProcessOutput As String()
 

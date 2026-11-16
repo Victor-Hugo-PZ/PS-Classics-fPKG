@@ -6,6 +6,14 @@ Public Class PSClassicsfPKGBuilder
 
 #Region "Shared helpers"
 
+    Private Sub PSClassicsfPKGBuilder_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        If Not AppPaths.ToolsAvailable() Then
+            MsgBox("The 'Tools' folder was not found at:" + vbCrLf + AppPaths.ToolsDirectory + vbCrLf + vbCrLf +
+                   "Building fPKGs will fail until it is copied next to the application (see README.md, 'Building from source').",
+                   MsgBoxStyle.Exclamation, "Tools folder missing")
+        End If
+    End Sub
+
     ''' <summary>Tells the user about the result of a package build.</summary>
     Private Shared Sub ReportResult(BuildResult As PackageBuildResult, OutputFolder As String)
         If BuildResult.Success Then
@@ -44,8 +52,10 @@ Public Class PSClassicsfPKGBuilder
                 GameTitle = PS1Game.GetPS1GameTitleFromDatabaseList(GameID)
             End If
 
+            'Forget the ID of a previously selected game (it must not leak into the libcrypt check of this one)
+            CurrentPS1GameID = GameID.Trim()
+
             If Not String.IsNullOrEmpty(GameID) Then
-                CurrentPS1GameID = GameID.Trim()
                 PS1NPTitleTextBox.Text = GameID.Replace("-"c, "").Trim()
                 PS1SelectedDisc1TextBox.Text = OFD.FileName
             Else

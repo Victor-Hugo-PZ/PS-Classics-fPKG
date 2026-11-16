@@ -94,7 +94,6 @@ Public Class PS1PackageBuilder
         If Not String.IsNullOrEmpty(Request.Disc2) Then DiscFiles.Add(New KeyValuePair(Of Integer, String)(2, Request.Disc2))
         If Not String.IsNullOrEmpty(Request.Disc3) Then DiscFiles.Add(New KeyValuePair(Of Integer, String)(3, Request.Disc3))
         If Not String.IsNullOrEmpty(Request.Disc4) Then DiscFiles.Add(New KeyValuePair(Of Integer, String)(4, Request.Disc4))
-        Dim Disc1CueFile As String = Path.ChangeExtension(Request.Disc1, ".cue")
 
         'PS1 Emulator configuration
         Dim ConfigOptions As New PS1ConfigOptions() With {
@@ -130,15 +129,11 @@ Public Class PS1PackageBuilder
         'Create a new PARAM.SFO file
         File.WriteAllBytes(GameCacheDirectory + "\sce_sys\param.sfo", SfoBuilder.Build(SfoBuilder.PS1ContentID(Request.NPTitle), Request.Title, Request.NPTitle))
 
-        'Create TOC file
-        ProcessRunner.Run(AppPaths.ToolsDirectory + "\cue2toc.exe", """" + Disc1CueFile + """", Path.GetDirectoryName(Disc1CueFile))
-
-        Dim TocFile As String = Path.Combine(Path.GetDirectoryName(Request.Disc1), Path.GetFileNameWithoutExtension(Request.Disc1) + ".toc")
-        If Not File.Exists(TocFile) Then
-            Throw New FileNotFoundException("The TOC file could not be created. Make sure a CUE file with the same name as the BIN file exists next to it.", TocFile)
-        End If
+        'Create a TOC file for every disc (the original code only created the one of disc 1)
         Directory.CreateDirectory(GameCacheDirectory + "\data")
-        File.Move(TocFile, GameCacheDirectory + "\data\disc1.toc", True)
+        For Each Disc As KeyValuePair(Of Integer, String) In DiscFiles
+            File.WriteAllBytes(GameCacheDirectory + "\data\disc" + Disc.Key.ToString() + ".toc", CueToc.Generate(Path.ChangeExtension(Disc.Value, ".cue"), Disc.Value))
+        Next
 
         'Generate the GP4 project, modify it and add the disc info
         BuilderHelpers.GenerateGp4(GameCacheDirectory, Gp4File)
@@ -196,7 +191,12 @@ End Class
 Public Class PS2PackageBuilder
 
     Public Shared Function Build(Request As PS2BuildRequest, PKGOutputFolder As String) As PackageBuildResult
-        Dim FullPS2GameID As String = Request.DetectedGameID.Replace(".", "").Replace("_", "-").Trim()
+        'Use the game ID of the ISO, or derive it from the NP title when it could not be detected ("SLUS21258" -> "SLUS_212.58")
+        Dim DetectedGameID As String = If(String.IsNullOrEmpty(Request.DetectedGameID), PS2Game.FormatGameIDFromNPTitle(Request.NPTitle), Request.DetectedGameID)
+        If String.IsNullOrEmpty(DetectedGameID) Then
+            Throw New ArgumentException("The PS2 game ID could not be determined. Use an NP title with 9 characters, for example SLUS21258.")
+        End If
+        Dim FullPS2GameID As String = DetectedGameID.Replace(".", "").Replace("_", "-").Trim()
         Dim GameCacheDirectory As String = AppPaths.CacheDirectory + "\PS2fPKG"
         Dim Gp4File As String = AppPaths.CacheDirectory + "\PS2fPKG.gp4"
         Dim ConfigsDirectory As String = AppPaths.ToolsDirectory + "\PS4\ps2-configs"
@@ -219,12 +219,12 @@ Public Class PS2PackageBuilder
         BuilderHelpers.AddIconAndBackground(GameCacheDirectory, Request.IconFile, Request.BackgroundFile)
 
         'Create a new PARAM.SFO file
-        File.WriteAllBytes(GameCacheDirectory + "\sce_sys\param.sfo", SfoBuilder.Build(SfoBuilder.PS2ContentID(Request.NPTitle, Request.DetectedGameID), Request.Title, Request.NPTitle, True))
+        File.WriteAllBytes(GameCacheDirectory + "\sce_sys\param.sfo", SfoBuilder.Build(SfoBuilder.PS2ContentID(Request.NPTitle, DetectedGameID), Request.Title, Request.NPTitle, True))
 
         'Create a new PS2 emulator configuration file
         Dim ConfigOptions As New PS2ConfigOptions() With {
             .GameID = FullPS2GameID,
-            .RawGameID = Request.DetectedGameID,
+            .RawGameID = DetectedGameID,
             .DiscCount = DiscFiles.Count,
             .Uprender = Request.Uprender,
             .Upscaling = Request.Upscaling,
@@ -239,14 +239,14 @@ Public Class PS2PackageBuilder
 
         'Check for PS3 config file
         If Request.AddPS3ConfigFromDatabase Then
-            If File.Exists(ConfigsDirectory + "\ps3\" + Request.DetectedGameID + ".CONFIG") Then
+            If File.Exists(ConfigsDirectory + "\ps3\" + DetectedGameID + ".CONFIG") Then
                 ConfigOptions.UsePS3Config = True
                 Directory.CreateDirectory(PatchesDirectory)
-                File.Copy(ConfigsDirectory + "\ps3\" + Request.DetectedGameID + ".CONFIG", PatchesDirectory + "\" + FullPS2GameID + "_lopnor.cfgbin", True)
-            ElseIf IsoTools.IsConfigAvailable(Request.DetectedGameID + ".CONFIG", ConfigsDirectory + "\configs_ps3.dat") Then
+                File.Copy(ConfigsDirectory + "\ps3\" + DetectedGameID + ".CONFIG", PatchesDirectory + "\" + FullPS2GameID + "_lopnor.cfgbin", True)
+            ElseIf IsoTools.IsConfigAvailable(DetectedGameID + ".CONFIG", ConfigsDirectory + "\configs_ps3.dat") Then
                 ConfigOptions.UsePS3Config = True
                 Directory.CreateDirectory(PatchesDirectory)
-                IsoTools.ExtractFileFromISO(ConfigsDirectory + "\configs_ps3.dat", Request.DetectedGameID + ".CONFIG", PatchesDirectory + "\" + FullPS2GameID + "_lopnor.cfgbin")
+                IsoTools.ExtractFileFromISO(ConfigsDirectory + "\configs_ps3.dat", DetectedGameID + ".CONFIG", PatchesDirectory + "\" + FullPS2GameID + "_lopnor.cfgbin")
             End If
         End If
 
@@ -276,10 +276,10 @@ Public Class PS2PackageBuilder
             Directory.CreateDirectory(PatchesDirectory)
             File.Copy(Request.LuaConfigFile, GameCacheDirectory + "\patches\" + FullPS2GameID + "_config.lua", True)
         ElseIf Request.AddLuaConfigFromDatabase Then
-            If IsoTools.IsConfigAvailable(Request.DetectedGameID, ConfigsDirectory + "\configs_lua.dat") Then
+            If IsoTools.IsConfigAvailable(DetectedGameID, ConfigsDirectory + "\configs_lua.dat") Then
                 ConfigOptions.UsePatchesPath = True
                 Directory.CreateDirectory(PatchesDirectory)
-                IsoTools.ExtractFileFromISO(ConfigsDirectory + "\configs_lua.dat", Request.DetectedGameID, GameCacheDirectory + "\patches\" + FullPS2GameID + "_config.lua")
+                IsoTools.ExtractFileFromISO(ConfigsDirectory + "\configs_lua.dat", DetectedGameID, GameCacheDirectory + "\patches\" + FullPS2GameID + "_config.lua")
             End If
         End If
 
@@ -287,8 +287,8 @@ Public Class PS2PackageBuilder
         If Not String.IsNullOrEmpty(Request.TxtConfigFile) Then
             ConfigOptions.UserConfigText = File.ReadAllText(Request.TxtConfigFile)
         ElseIf Request.AddTxtConfigFromDatabase Then
-            If IsoTools.IsConfigAvailable(Request.DetectedGameID, ConfigsDirectory + "\configs_txt.dat") Then
-                ConfigOptions.DatabaseConfigText = IsoTools.GetPNACHFromDAT(ConfigsDirectory + "\configs_txt.dat", Request.DetectedGameID)
+            If IsoTools.IsConfigAvailable(DetectedGameID, ConfigsDirectory + "\configs_txt.dat") Then
+                ConfigOptions.DatabaseConfigText = IsoTools.GetPNACHFromDAT(ConfigsDirectory + "\configs_txt.dat", DetectedGameID)
             End If
         End If
 

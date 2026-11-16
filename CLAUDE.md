@@ -87,7 +87,9 @@ Corrigidos no Windows (com testes): disco 3/4 do PS1, aspas de `--path-patches`,
 
 **Precisam de validação em console real** (não dá para testar aqui): `-vu0-opt-flags` com um traço só (mantido como no original, comentado em `EmulatorConfigs.vb`) e o `--lopnor-config=1` agora ativo para configs PS3 do banco de dados.
 
-Abertos no Windows: PS2 com ID não detectado ("usar mesmo assim") gera `CONTENT_ID` e caminhos inválidos; `cue2toc`/`.toc` só para o disco 1 no PS1 (e o `.toc` é gerado na pasta do jogo do usuário); mensagem modal "All files ready" foi removida (o build segue direto).
+Também corrigidos no Windows: PS2 com ID não detectado ("usar mesmo assim") agora deriva o ID do NP title (`SLUS21258` → `SLUS_212.58`) ou falha com mensagem clara; o PS1 gera `data/discN.toc` para **todos** os discos (antes só o 1) e roda o `cue2toc` numa pasta temporária (antes deixava `.TOC` e `.cu2` na pasta do jogo); o ID PS1 de um jogo anterior não vaza mais para o seguinte; o app avisa na abertura quando a pasta `Tools` não existe.
+
+Notas: o `cue2toc` grava **dois** arquivos (`<bin>.TOC`, usado no pacote, e `<bin>.cu2`; o `--stdout` imprime o `.cu2`, não o `.TOC`). A mensagem modal "All files ready" foi removida (o build segue direto). O `disc2.toc`..`disc4.toc` segue o nome `discN.bin`, mas **não foi validado em console** (ver riscos acima).
 
 macOS: crash com `URL(string:)!` em caminhos com espaço; config do PS2 escrita sem `\n` e com a lógica de "reiniciar emulador" invertida; fundo copiado do campo do ícone (PS2 e PSP); disco omitido do GP4 se o ISO já existe em `/Games`; `BrowseMemoryCard` é um stub vazio; `ShaderComboBox`/`LUAConfigTextField` nunca são lidos; sem paridade de features do PS2 com o Windows; `launchPath`/`launch()` deprecados.
 

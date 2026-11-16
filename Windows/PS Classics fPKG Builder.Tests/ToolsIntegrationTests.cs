@@ -143,7 +143,96 @@ public class ToolsIntegrationTests
 
         var ex = Assert.Throws<FileNotFoundException>(() =>
             PS1PackageBuilder.Build(new PS1BuildRequest { Title = "T", NPTitle = "SLUS00594", Disc1 = bin }, output));
-        Assert.Contains("TOC", ex.Message);
+        Assert.Contains("CUE", ex.Message);
+    }
+
+    [RequiresToolsFact]
+    public void PS1_TocMatchesWhatCue2tocWritesNextToTheGameAndLeavesTheGameFolderUntouched()
+    {
+        using var ws = new TempWorkspace(linkTools: true);
+        var bin = CreatePS1Disc(ws);
+        var cue = Path.ChangeExtension(bin, ".cue");
+        var gameFolder = Path.GetDirectoryName(bin);
+
+        // Reference: what the original code produced, running cue2toc directly in a copy of the game folder.
+        var referenceFolder = Path.Combine(ws.Root, "reference");
+        Directory.CreateDirectory(referenceFolder);
+        File.Copy(bin, Path.Combine(referenceFolder, "game.bin"));
+        File.Copy(cue, Path.Combine(referenceFolder, "game.cue"));
+        var reference = ProcessRunner.Run(Path.Combine(ws.Tools, "cue2toc.exe"), "\"" + Path.Combine(referenceFolder, "game.cue") + "\"", referenceFolder);
+        Assert.Equal(0, reference.ExitCode);
+        var expected = File.ReadAllBytes(Path.Combine(referenceFolder, "game.TOC"));
+
+        var toc = CueToc.Generate(cue, bin);
+
+        Assert.NotEmpty(toc);
+        Assert.Equal(expected, toc);
+        // Nothing is written next to the user's game files.
+        Assert.Equal(new[] { "game.bin", "game.cue" }, Directory.GetFiles(gameFolder).Select(Path.GetFileName).OrderBy(n => n));
+    }
+
+    [RequiresToolsFact]
+    public void PS1_TocGenerationFailsClearlyForMissingFiles()
+    {
+        using var ws = new TempWorkspace(linkTools: true);
+        var bin = ws.Write(@"games\only.bin", new byte[2352 * 10]);
+
+        Assert.Throws<FileNotFoundException>(() => CueToc.Generate(Path.ChangeExtension(bin, ".cue"), bin));
+        var cue = ws.Write(@"games\ok.cue", "FILE \"ok.bin\" BINARY\r\n  TRACK 01 MODE2/2352\r\n    INDEX 01 00:00:00\r\n");
+        Assert.Throws<FileNotFoundException>(() => CueToc.Generate(cue, Path.Combine(ws.Root, "games", "ok.bin")));
+    }
+
+    [RequiresToolsFact]
+    public void PS1_BuildLeavesTheGameFolderUntouchedAndCreatesATocPerDisc()
+    {
+        using var ws = new TempWorkspace(linkTools: true);
+        var disc1 = CreatePS1Disc(ws, "disc1");
+        var disc2 = CreatePS1Disc(ws, "disc2");
+        var gameFolder = Path.GetDirectoryName(disc1);
+        var before = Directory.GetFiles(gameFolder).OrderBy(f => f).ToArray();
+        var output = Path.Combine(ws.Root, "out");
+        Directory.CreateDirectory(output);
+
+        var result = PS1PackageBuilder.Build(new PS1BuildRequest
+        {
+            Title = "T", NPTitle = "SLUS00594", DetectedGameID = "SLUS-00594", Disc1 = disc1, Disc2 = disc2,
+        }, output);
+
+        Assert.True(result.Success, result.Output);
+        Assert.Equal(before, Directory.GetFiles(gameFolder).OrderBy(f => f).ToArray());
+        Assert.True(File.Exists(Path.Combine(ws.Cache, "PS1fPKG", "data", "disc1.toc")));
+        Assert.True(File.Exists(Path.Combine(ws.Cache, "PS1fPKG", "data", "disc2.toc")));
+    }
+
+    [RequiresToolsFact]
+    public void PS2_DerivesTheGameIdFromTheNpTitleWhenItWasNotDetected()
+    {
+        using var ws = new TempWorkspace(linkTools: true);
+        var iso = CreateIso(Path.Combine(ws.Root, "game.iso"), ("SLUS_212.58", Noise(8192)));
+        var output = Path.Combine(ws.Root, "out");
+        Directory.CreateDirectory(output);
+        var emulator = Directory.GetDirectories(Path.Combine(TestEnvironment.ToolsDirectory, "PS4", "emus"))
+            .Select(Path.GetFileName).First(n => n != "ps1hd" && n != "psphd");
+
+        var result = PS2PackageBuilder.Build(new PS2BuildRequest
+        {
+            Title = "Manual", NPTitle = "SLUS21258", DetectedGameID = "", Disc1 = iso, Emulator = emulator,
+            Uprender = "2x2", Upscaling = "4X", DisplayMode = "Normal",
+        }, output);
+
+        Assert.True(result.Success, result.Output);
+        Assert.Contains("--ps2-title-id=SLUS-21258", File.ReadAllText(Path.Combine(ws.Cache, "PS2fPKG", "config-emu-ps4.txt")));
+        Assert.True(Directory.Exists(Path.Combine(ws.Cache, "PS2fPKG", "feature_data", "SLUS-21258")));
+        Assert.Contains("0000001", Path.GetFileName(Assert.Single(Directory.GetFiles(output, "*.pkg"))));
+    }
+
+    [Fact]
+    public void PS2_BuildWithoutAnyUsableIdThrowsBeforeTouchingTheCache()
+    {
+        using var ws = new TempWorkspace();
+        Assert.Throws<ArgumentException>(() =>
+            PS2PackageBuilder.Build(new PS2BuildRequest { NPTitle = "SHORT", DetectedGameID = "" }, Path.Combine(ws.Root, "out")));
+        Assert.False(Directory.Exists(ws.Cache));
     }
 
     [RequiresToolsFact]
