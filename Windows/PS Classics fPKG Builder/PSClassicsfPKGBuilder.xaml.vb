@@ -27,10 +27,11 @@ Public Class PSClassicsfPKGBuilder
                 WindowsCMD.StartInfo.UseShellExecute = False
                 WindowsCMD.StartInfo.CreateNoWindow = True
                 WindowsCMD.Start()
-                WindowsCMD.WaitForExit()
 
+                'Read the redirected output before waiting for the exit, otherwise a full pipe buffer blocks the child process forever
                 Dim OutputReader As StreamReader = WindowsCMD.StandardOutput
                 Dim ProcessOutput As String() = OutputReader.ReadToEnd().Split(New String() {vbCrLf}, StringSplitOptions.RemoveEmptyEntries)
+                WindowsCMD.WaitForExit()
 
                 If ProcessOutput.Length > 0 Then
                     For Each OutputLine In ProcessOutput
@@ -140,19 +141,19 @@ Public Class PSClassicsfPKGBuilder
         If FBD.ShowDialog() = Forms.DialogResult.OK Then
 
             Dim PKGOutputFolder As String = FBD.SelectedPath
-            Dim GameCacheDirectory As String = My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG"
+            Dim GameCacheDirectory As String = AppPaths.BaseDirectory + "\Cache\PS1fPKG"
 
             'Remove previous fPKG creation & re-create the PS1fPKG cache folder
             If Directory.Exists(GameCacheDirectory) Then
                 Directory.Delete(GameCacheDirectory, True)
             End If
-            If File.Exists(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4") Then
-                File.Delete(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4")
+            If File.Exists(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4") Then
+                File.Delete(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4")
             End If
             Directory.CreateDirectory(GameCacheDirectory)
 
             'Copy the PS1 emulator to the cache directory
-            My.Computer.FileSystem.CopyDirectory(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\emus\ps1hd", GameCacheDirectory, True)
+            My.Computer.FileSystem.CopyDirectory(AppPaths.BaseDirectory + "\Tools\PS4\emus\ps1hd", GameCacheDirectory, True)
 
             'Copy the selected icon and background to the cache directory
             If Not Directory.Exists(GameCacheDirectory + "\sce_sys") Then
@@ -258,7 +259,7 @@ Public Class PSClassicsfPKGBuilder
 
             'Create TOC file
             Dim CUE2TOCProcess As New Process()
-            CUE2TOCProcess.StartInfo.FileName = My.Computer.FileSystem.CurrentDirectory + "\Tools\cue2toc.exe"
+            CUE2TOCProcess.StartInfo.FileName = AppPaths.BaseDirectory + "\Tools\cue2toc.exe"
             CUE2TOCProcess.StartInfo.Arguments = """" + Disc1CueFile + """"
             CUE2TOCProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(Disc1CueFile)
             CUE2TOCProcess.StartInfo.UseShellExecute = False
@@ -270,7 +271,7 @@ Public Class PSClassicsfPKGBuilder
 
             'Generate GP4 project
             Dim NewProcess As New Process()
-            NewProcess.StartInfo.FileName = My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\gengp4_patch.exe"
+            NewProcess.StartInfo.FileName = AppPaths.BaseDirectory + "\Tools\PS4\gengp4_patch.exe"
             NewProcess.StartInfo.Arguments = """" + GameCacheDirectory + """"
             NewProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden
             NewProcess.StartInfo.CreateNoWindow = True
@@ -280,24 +281,24 @@ Public Class PSClassicsfPKGBuilder
             'Modify the GP4 project and add disc info
             Dim Disc1CuePath As String = vbCrLf + "    <file targ_path=""data/disc1.cue"" orig_path=""" + Disc1CueFile + """ pfs_compression=""enable""/>"
             Dim Disc1BinPath As String = vbCrLf + "    <file targ_path=""data/disc1.bin"" orig_path=""" + PS1SelectedDisc1TextBox.Text + """ pfs_compression=""enable""/>"
-            File.WriteAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4").Replace("<?xml version=""1.1""", "<?xml version=""1.0"""))
-            File.WriteAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4").Replace("<scenarios default_id=""1"">", "<scenarios default_id=""0"">"))
-            File.WriteAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4").Replace("</files>", Disc1CuePath + Disc1BinPath + vbCrLf + "</files>"))
+            File.WriteAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4").Replace("<?xml version=""1.1""", "<?xml version=""1.0"""))
+            File.WriteAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4").Replace("<scenarios default_id=""1"">", "<scenarios default_id=""0"">"))
+            File.WriteAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4").Replace("</files>", Disc1CuePath + Disc1BinPath + vbCrLf + "</files>"))
 
             If Not String.IsNullOrEmpty(PS1SelectedDisc2TextBox.Text) Then
                 Dim Disc2CuePath As String = vbCrLf + "    <file targ_path=""data/disc2.cue"" orig_path=""" + Disc2CueFile + """ pfs_compression=""enable""/>"
                 Dim Disc2BinPath As String = vbCrLf + "    <file targ_path=""data/disc2.bin"" orig_path=""" + PS1SelectedDisc2TextBox.Text + """ pfs_compression=""enable""/>"
-                File.WriteAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4").Replace("</files>", Disc2CuePath + Disc2BinPath + vbCrLf + "</files>"))
+                File.WriteAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4").Replace("</files>", Disc2CuePath + Disc2BinPath + vbCrLf + "</files>"))
             End If
-            If Not String.IsNullOrEmpty(PS1SelectedDisc2TextBox.Text) Then
+            If Not String.IsNullOrEmpty(PS1SelectedDisc3TextBox.Text) Then
                 Dim Disc3CuePath As String = vbCrLf + "    <file targ_path=""data/disc3.cue"" orig_path=""" + Disc3CueFile + """ pfs_compression=""enable""/>"
                 Dim Disc3BinPath As String = vbCrLf + "    <file targ_path=""data/disc3.bin"" orig_path=""" + PS1SelectedDisc3TextBox.Text + """ pfs_compression=""enable""/>"
-                File.WriteAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4").Replace("</files>", Disc3CuePath + Disc3BinPath + vbCrLf + "</files>"))
+                File.WriteAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4").Replace("</files>", Disc3CuePath + Disc3BinPath + vbCrLf + "</files>"))
             End If
-            If Not String.IsNullOrEmpty(PS1SelectedDisc2TextBox.Text) Then
+            If Not String.IsNullOrEmpty(PS1SelectedDisc4TextBox.Text) Then
                 Dim Disc4CuePath As String = vbCrLf + "    <file targ_path=""data/disc4.cue"" orig_path=""" + Disc4CueFile + """ pfs_compression=""enable""/>"
                 Dim Disc4BinPath As String = vbCrLf + "    <file targ_path=""data/disc4.bin"" orig_path=""" + PS1SelectedDisc4TextBox.Text + """ pfs_compression=""enable""/>"
-                File.WriteAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4").Replace("</files>", Disc4CuePath + Disc4BinPath + vbCrLf + "</files>"))
+                File.WriteAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4", File.ReadAllText(AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4").Replace("</files>", Disc4CuePath + Disc4BinPath + vbCrLf + "</files>"))
             End If
 
             MsgBox("All files ready for PKG creation.", MsgBoxStyle.Information)
@@ -305,17 +306,17 @@ Public Class PSClassicsfPKGBuilder
             'Create the fPKG
             Dim PKGBuilderProcessOutput As String
             Dim PKGBuilderProcess As New Process()
-            PKGBuilderProcess.StartInfo.FileName = My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\mod-pub\orbis-pub-cmd-3.38.exe"
-            PKGBuilderProcess.StartInfo.Arguments = "img_create --oformat pkg --skip_digest --no_progress_bar """ + My.Computer.FileSystem.CurrentDirectory + "\Cache\PS1fPKG.gp4"" """ + PKGOutputFolder + """"
+            PKGBuilderProcess.StartInfo.FileName = AppPaths.BaseDirectory + "\Tools\PS4\mod-pub\orbis-pub-cmd-3.38.exe"
+            PKGBuilderProcess.StartInfo.Arguments = "img_create --oformat pkg --skip_digest --no_progress_bar """ + AppPaths.BaseDirectory + "\Cache\PS1fPKG.gp4"" """ + PKGOutputFolder + """"
             PKGBuilderProcess.StartInfo.UseShellExecute = False
             PKGBuilderProcess.StartInfo.RedirectStandardOutput = True
             PKGBuilderProcess.StartInfo.CreateNoWindow = True
             PKGBuilderProcess.Start()
-            PKGBuilderProcess.WaitForExit()
 
             Using NewStreamReader As StreamReader = PKGBuilderProcess.StandardOutput
                 PKGBuilderProcessOutput = NewStreamReader.ReadToEnd()
             End Using
+            PKGBuilderProcess.WaitForExit()
             If PKGBuilderProcessOutput.Contains("Create image Process finished with warning") Then
                 If MsgBox("PKG created!" + vbCrLf + "Do you want to open the output folder ?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
                     Process.Start("explorer", FBD.SelectedPath)
@@ -351,7 +352,7 @@ Public Class PSClassicsfPKGBuilder
 
             If Not String.IsNullOrEmpty(PS2GameID) AndAlso Not String.IsNullOrEmpty(PS2GameCRC) Then
 
-                If IsConfigAvailable(PS2GameID, My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\configs_txt.dat") Then
+                If IsConfigAvailable(PS2GameID, AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\configs_txt.dat") Then
                     PS2AddTXTConfigFromDatabaseCheckBox.IsChecked = True
                     PS2AddTXTConfigFromDatabaseCheckBox.Visibility = Visibility.Visible
                 Else
@@ -359,7 +360,7 @@ Public Class PSClassicsfPKGBuilder
                     PS2AddTXTConfigFromDatabaseCheckBox.Visibility = Visibility.Hidden
                 End If
 
-                If IsConfigAvailable(PS2GameID, My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\configs_lua.dat") Then
+                If IsConfigAvailable(PS2GameID, AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\configs_lua.dat") Then
                     PS2AddLUAConfigFromDatabaseCheckBox.IsChecked = True
                     PS2AddLUAConfigFromDatabaseCheckBox.Visibility = Visibility.Visible
                 Else
@@ -367,7 +368,7 @@ Public Class PSClassicsfPKGBuilder
                     PS2AddLUAConfigFromDatabaseCheckBox.Visibility = Visibility.Hidden
                 End If
 
-                If IsConfigAvailable(PS2GameID + ".CONFIG", My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\configs_ps3.dat") Then
+                If IsConfigAvailable(PS2GameID + ".CONFIG", AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\configs_ps3.dat") Then
                     PS2AddPS3ConfigFromDatabaseCheckBox.IsChecked = True
                     PS2AddPS3ConfigFromDatabaseCheckBox.Visibility = Visibility.Visible
                 Else
@@ -375,7 +376,7 @@ Public Class PSClassicsfPKGBuilder
                     PS2AddPS3ConfigFromDatabaseCheckBox.Visibility = Visibility.Hidden
                 End If
 
-                If IsConfigAvailable(PS2GameCRC + ".lua", My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\widescreen.dat") Then
+                If IsConfigAvailable(PS2GameCRC + ".lua", AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\widescreen.dat") Then
                     PS2UseWidescreenPatchCheckBox.IsChecked = True
                     PS2UseWidescreenPatchCheckBox.IsEnabled = True
                 Else
@@ -416,7 +417,7 @@ Public Class PSClassicsfPKGBuilder
     Public Shared Function GetELFfromISO(GameISOFile As String, GameELFName As String) As String
         Dim ExtractedELFPath As String = ""
 
-        Dim CacheDir As String = My.Computer.FileSystem.CurrentDirectory + "\Cache"
+        Dim CacheDir As String = AppPaths.BaseDirectory + "\Cache"
         If Not Directory.Exists(CacheDir) Then
             Directory.CreateDirectory(CacheDir)
         End If
@@ -425,8 +426,12 @@ Public Class PSClassicsfPKGBuilder
             Using NewFileStream As New FileStream(GameISOFile, FileMode.Open, FileAccess.Read)
                 Dim NewCDReader As New Iso9660.CDReader(NewFileStream, True)
                 Try
-                    Dim ELFExtractionFileStream As New FileStream(CacheDir + "\" + GameELFName, FileMode.Create)
-                    NewCDReader.OpenFile(GameELFName, FileMode.Open).CopyTo(ELFExtractionFileStream)
+                    'Open the source first so no empty file is created when the ELF is missing, and dispose both streams
+                    Using ELFSourceStream As Streams.SparseStream = NewCDReader.OpenFile(GameELFName, FileMode.Open)
+                        Using ELFExtractionFileStream As New FileStream(CacheDir + "\" + GameELFName, FileMode.Create)
+                            ELFSourceStream.CopyTo(ELFExtractionFileStream)
+                        End Using
+                    End Using
 
                     ExtractedELFPath = CacheDir + "\" + GameELFName
                 Catch ex As Exception
@@ -440,7 +445,7 @@ Public Class PSClassicsfPKGBuilder
     End Function
 
     Public Shared Function GetGameCRC(PS2GamePath As String) As String
-        Dim NewProcessStartInfo As New ProcessStartInfo(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\crc.exe", PS2GamePath) With {.UseShellExecute = False, .RedirectStandardOutput = True, .CreateNoWindow = True, .Arguments = """" + PS2GamePath + """"}
+        Dim NewProcessStartInfo As New ProcessStartInfo(AppPaths.BaseDirectory + "\Tools\PS4\crc.exe", PS2GamePath) With {.UseShellExecute = False, .RedirectStandardOutput = True, .CreateNoWindow = True, .Arguments = """" + PS2GamePath + """"}
         Dim NewProcess As New Process With {.StartInfo = NewProcessStartInfo}
         NewProcess.Start()
         Using NewStreamReader As StreamReader = NewProcess.StandardOutput
@@ -454,9 +459,11 @@ Public Class PSClassicsfPKGBuilder
             Using NewFileStream As New FileStream(GameISOFile, FileMode.Open, FileAccess.Read)
                 Dim NewUdfReader As New Udf.UdfReader(NewFileStream, &H800)
                 Try
-                    Dim NewFileStream2 As New FileStream(FileDestinationPath, FileMode.Create)
-                    NewUdfReader.OpenFile(FileToExtract, FileMode.Open).CopyTo(NewFileStream2)
-                    NewFileStream2.Close()
+                    Using UdfSourceStream As Streams.SparseStream = NewUdfReader.OpenFile(FileToExtract, FileMode.Open)
+                        Using NewFileStream2 As New FileStream(FileDestinationPath, FileMode.Create)
+                            UdfSourceStream.CopyTo(NewFileStream2)
+                        End Using
+                    End Using
                     ReturnedFileDestinationPath = FileDestinationPath
                 Catch exception1 As Exception
                     ReturnedFileDestinationPath = ""
@@ -593,19 +600,19 @@ Public Class PSClassicsfPKGBuilder
             Dim PKGOutputFolder As String = FBD.SelectedPath
             Dim SelectedPS2Emulator As String = PS2EmulatorComboBox.Text
             Dim FullPS2GameID As String = CurrentPS2GameID.Replace(".", "").Replace("_", "-").Trim()
-            Dim GameCacheDirectory As String = My.Computer.FileSystem.CurrentDirectory + "\Cache\PS2fPKG"
+            Dim GameCacheDirectory As String = AppPaths.BaseDirectory + "\Cache\PS2fPKG"
 
             'Remove previous fPKG creation & re-create the PS2fPKG cache folder
             If Directory.Exists(GameCacheDirectory) Then
                 Directory.Delete(GameCacheDirectory, True)
             End If
-            If File.Exists(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS2fPKG.gp4") Then
-                File.Delete(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS2fPKG.gp4")
+            If File.Exists(AppPaths.BaseDirectory + "\Cache\PS2fPKG.gp4") Then
+                File.Delete(AppPaths.BaseDirectory + "\Cache\PS2fPKG.gp4")
             End If
             Directory.CreateDirectory(GameCacheDirectory)
 
             'Copy the selected PS2 emulator to the cache directory
-            My.Computer.FileSystem.CopyDirectory(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\emus\" + SelectedPS2Emulator, GameCacheDirectory, True)
+            My.Computer.FileSystem.CopyDirectory(AppPaths.BaseDirectory + "\Tools\PS4\emus\" + SelectedPS2Emulator, GameCacheDirectory, True)
 
             'Copy the selected icon and background to the cache directory
             If Not Directory.Exists(GameCacheDirectory + "\sce_sys") Then
@@ -668,7 +675,7 @@ Public Class PSClassicsfPKGBuilder
 
             'Check for PS3 config file
             If PS2AddPS3ConfigFromDatabaseCheckBox.IsChecked Then
-                If File.Exists(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\ps3\" + CurrentPS2GameID + ".CONFIG") Then
+                If File.Exists(AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\ps3\" + CurrentPS2GameID + ".CONFIG") Then
 
                     NewPS2EmulatorConfigContent = NewPS2EmulatorConfigContent + vbCrLf + "--lopnor-config=1"
 
@@ -677,16 +684,16 @@ Public Class PSClassicsfPKGBuilder
                         Directory.CreateDirectory(GameCacheDirectory + "\patches\" + FullPS2GameID)
                     End If
 
-                    File.Copy(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\ps3\" + CurrentPS2GameID + ".CONFIG",
+                    File.Copy(AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\ps3\" + CurrentPS2GameID + ".CONFIG",
                               GameCacheDirectory + "\patches\" + FullPS2GameID + "\" + FullPS2GameID + "_lopnor.cfgbin", True)
 
-                ElseIf IsConfigAvailable(CurrentPS2GameID + ".CONFIG", My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\configs_ps3.dat") Then
+                ElseIf IsConfigAvailable(CurrentPS2GameID + ".CONFIG", AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\configs_ps3.dat") Then
 
                     If Not Directory.Exists(GameCacheDirectory + "\patches\" + FullPS2GameID) Then
                         Directory.CreateDirectory(GameCacheDirectory + "\patches\" + FullPS2GameID)
                     End If
 
-                    ExtractFileFromISO(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\configs_ps3.dat",
+                    ExtractFileFromISO(AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\configs_ps3.dat",
                                        CurrentPS2GameID + ".CONFIG", GameCacheDirectory + "\patches\" + FullPS2GameID + "\" + FullPS2GameID + "_lopnor.cfgbin")
 
                 End If
@@ -696,10 +703,10 @@ Public Class PSClassicsfPKGBuilder
             If PS2UseWidescreenPatchCheckBox.IsChecked Then
                 Dim WidescreenPatch As String = ""
 
-                If File.Exists(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\widescreen\" + CurrentPS2GameCRC + ".lua") Then
-                    WidescreenPatch = File.ReadAllText(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\widescreen\" + CurrentPS2GameCRC + ".lua")
-                ElseIf IsConfigAvailable(CurrentPS2GameCRC + ".lua", My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\widescreen.dat") Then
-                    WidescreenPatch = GetPNACHFromDAT(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\widescreen.dat", CurrentPS2GameCRC + ".lua")
+                If File.Exists(AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\widescreen\" + CurrentPS2GameCRC + ".lua") Then
+                    WidescreenPatch = File.ReadAllText(AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\widescreen\" + CurrentPS2GameCRC + ".lua")
+                ElseIf IsConfigAvailable(CurrentPS2GameCRC + ".lua", AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\widescreen.dat") Then
+                    WidescreenPatch = GetPNACHFromDAT(AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\widescreen.dat", CurrentPS2GameCRC + ".lua")
                 End If
 
                 If Not String.IsNullOrEmpty(WidescreenPatch) Then
@@ -714,12 +721,12 @@ Public Class PSClassicsfPKGBuilder
             End If
 
             'Copy lua_include to cache directory
-            My.Computer.FileSystem.CopyDirectory(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\lua_include", GameCacheDirectory + "\lua_include", True)
+            My.Computer.FileSystem.CopyDirectory(AppPaths.BaseDirectory + "\Tools\PS4\lua_include", GameCacheDirectory + "\lua_include", True)
 
             'Check for LUA config
             If Not String.IsNullOrEmpty(SelectedPS2LUAConfigTextBox.Text) Then
 
-                NewPS2EmulatorConfigContent = NewPS2EmulatorConfigContent + vbCrLf + "--path-patches=""/app0/patches"
+                NewPS2EmulatorConfigContent = NewPS2EmulatorConfigContent + vbCrLf + "--path-patches=""/app0/patches"""
 
                 'Create patches directory if it doesn't exist yet
                 If Not Directory.Exists(GameCacheDirectory + "\patches\" + FullPS2GameID) Then
@@ -729,15 +736,15 @@ Public Class PSClassicsfPKGBuilder
                 File.Copy(SelectedPS2LUAConfigTextBox.Text, GameCacheDirectory + "\patches\" + FullPS2GameID + "_config.lua", True)
             Else
                 If PS2AddLUAConfigFromDatabaseCheckBox.IsChecked Then
-                    If IsConfigAvailable(CurrentPS2GameID, My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\configs_lua.dat") Then
+                    If IsConfigAvailable(CurrentPS2GameID, AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\configs_lua.dat") Then
 
-                        NewPS2EmulatorConfigContent = NewPS2EmulatorConfigContent + vbCrLf + "--path-patches=""/app0/patches"
+                        NewPS2EmulatorConfigContent = NewPS2EmulatorConfigContent + vbCrLf + "--path-patches=""/app0/patches"""
 
                         If Not Directory.Exists(GameCacheDirectory + "\patches\" + FullPS2GameID) Then
                             Directory.CreateDirectory(GameCacheDirectory + "\patches\" + FullPS2GameID)
                         End If
 
-                        ExtractFileFromISO(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\configs_lua.dat", CurrentPS2GameID, GameCacheDirectory + "\patches\" + FullPS2GameID + "_config.lua")
+                        ExtractFileFromISO(AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\configs_lua.dat", CurrentPS2GameID, GameCacheDirectory + "\patches\" + FullPS2GameID + "_config.lua")
                     End If
                 End If
             End If
@@ -763,13 +770,13 @@ Public Class PSClassicsfPKGBuilder
                 NewPS2EmulatorConfigContent = String.Concat(ModifiedPS2EmulatorConfigContent)
             Else
                 If PS2AddTXTConfigFromDatabaseCheckBox.IsChecked Then
-                    If IsConfigAvailable(CurrentPS2GameID, My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\configs_txt.dat") Then
-                        NewPS2EmulatorConfigContent = NewPS2EmulatorConfigContent + vbCrLf + "#" + CurrentPS2GameID + vbCrLf + GetPNACHFromDAT(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\ps2-configs\configs_txt.dat", CurrentPS2GameID)
+                    If IsConfigAvailable(CurrentPS2GameID, AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\configs_txt.dat") Then
+                        NewPS2EmulatorConfigContent = NewPS2EmulatorConfigContent + vbCrLf + "#" + CurrentPS2GameID + vbCrLf + GetPNACHFromDAT(AppPaths.BaseDirectory + "\Tools\PS4\ps2-configs\configs_txt.dat", CurrentPS2GameID)
                     End If
-                Else
-                    'Append only PS2EmulatorFixes
-                    NewPS2EmulatorConfigContent = NewPS2EmulatorConfigContent + vbCrLf + PS2EmulatorFixes
                 End If
+
+                'Always append the emulator fixes selected in the UI, whether or not a database config was added
+                NewPS2EmulatorConfigContent = NewPS2EmulatorConfigContent + vbCrLf + PS2EmulatorFixes
             End If
 
             'Write config-emu-ps4.txt
@@ -796,14 +803,14 @@ Public Class PSClassicsfPKGBuilder
 
             'Create a GP4 project
             Dim NewProcess As New Process()
-            NewProcess.StartInfo.FileName = My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\gengp4_patch.exe"
+            NewProcess.StartInfo.FileName = AppPaths.BaseDirectory + "\Tools\PS4\gengp4_patch.exe"
             NewProcess.StartInfo.Arguments = """" + GameCacheDirectory + """"
             NewProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden
             NewProcess.Start()
             NewProcess.WaitForExit()
 
-            File.WriteAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS2fPKG.gp4", File.ReadAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS2fPKG.gp4").Replace("<?xml version=""1.1""", "<?xml version=""1.0"""))
-            File.WriteAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS2fPKG.gp4", File.ReadAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS2fPKG.gp4").Replace("<scenarios default_id=""1"">", "<scenarios default_id=""0"">"))
+            File.WriteAllText(AppPaths.BaseDirectory + "\Cache\PS2fPKG.gp4", File.ReadAllText(AppPaths.BaseDirectory + "\Cache\PS2fPKG.gp4").Replace("<?xml version=""1.1""", "<?xml version=""1.0"""))
+            File.WriteAllText(AppPaths.BaseDirectory + "\Cache\PS2fPKG.gp4", File.ReadAllText(AppPaths.BaseDirectory + "\Cache\PS2fPKG.gp4").Replace("<scenarios default_id=""1"">", "<scenarios default_id=""0"">"))
 
             'Check compression config
             Dim UseCompression As String = "disable"
@@ -834,24 +841,24 @@ Public Class PSClassicsfPKGBuilder
                 FullDiscInfo = String.Concat(NewDiscInfo)
             End If
 
-            File.WriteAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS2fPKG.gp4", File.ReadAllText(My.Computer.FileSystem.CurrentDirectory + "\Cache\PS2fPKG.gp4").Replace("</files>", FullDiscInfo + vbCrLf + "</files>"))
+            File.WriteAllText(AppPaths.BaseDirectory + "\Cache\PS2fPKG.gp4", File.ReadAllText(AppPaths.BaseDirectory + "\Cache\PS2fPKG.gp4").Replace("</files>", FullDiscInfo + vbCrLf + "</files>"))
 
             MsgBox("All files ready for PKG creation.", MsgBoxStyle.Information)
 
             'Create the fPKG
             Dim PKGBuilderProcessOutput As String = ""
             Dim PKGBuilderProcess As New Process()
-            PKGBuilderProcess.StartInfo.FileName = My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\mod-pub\orbis-pub-cmd-3.38.exe"
-            PKGBuilderProcess.StartInfo.Arguments = "img_create --oformat pkg --skip_digest --no_progress_bar """ + My.Computer.FileSystem.CurrentDirectory + "\Cache\PS2fPKG.gp4"" """ + PKGOutputFolder + """"
+            PKGBuilderProcess.StartInfo.FileName = AppPaths.BaseDirectory + "\Tools\PS4\mod-pub\orbis-pub-cmd-3.38.exe"
+            PKGBuilderProcess.StartInfo.Arguments = "img_create --oformat pkg --skip_digest --no_progress_bar """ + AppPaths.BaseDirectory + "\Cache\PS2fPKG.gp4"" """ + PKGOutputFolder + """"
             PKGBuilderProcess.StartInfo.UseShellExecute = False
             PKGBuilderProcess.StartInfo.RedirectStandardOutput = True
             PKGBuilderProcess.StartInfo.CreateNoWindow = True
             PKGBuilderProcess.Start()
-            PKGBuilderProcess.WaitForExit()
 
             Using OutputStreamReader As StreamReader = PKGBuilderProcess.StandardOutput
                 PKGBuilderProcessOutput = OutputStreamReader.ReadToEnd()
             End Using
+            PKGBuilderProcess.WaitForExit()
 
             If PKGBuilderProcessOutput.Contains("Create image Process finished with warning") Then
                 If MsgBox("PKG created!" + vbCrLf + "Do you want to open the output folder ?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
@@ -899,10 +906,11 @@ Public Class PSClassicsfPKGBuilder
             Using NewFileStream As New FileStream(path, FileMode.Open, FileAccess.Read)
                 Dim NewIso9660CDReader As New Iso9660.CDReader(NewFileStream, True)
                 Try
-                    Dim NewSparseStream As Streams.SparseStream = NewIso9660CDReader.OpenFile(fileName, FileMode.Open)
-                    Dim OutputFileStream As New FileStream(DestinationPath, FileMode.Create)
-                    NewSparseStream.CopyTo(OutputFileStream)
-                    OutputFileStream.Close()
+                    Using NewSparseStream As Streams.SparseStream = NewIso9660CDReader.OpenFile(fileName, FileMode.Open)
+                        Using OutputFileStream As New FileStream(DestinationPath, FileMode.Create)
+                            NewSparseStream.CopyTo(OutputFileStream)
+                        End Using
+                    End Using
                     OutputDestination = DestinationPath
                 Catch ex As Exception
                     OutputDestination = ""
@@ -1016,7 +1024,7 @@ Public Class PSClassicsfPKGBuilder
         If OFD.ShowDialog() = Forms.DialogResult.OK Then
 
             If FileExistInISO(OFD.FileName, "\PSP_GAME\PARAM.SFO") Then
-                Dim CacheDir As String = My.Computer.FileSystem.CurrentDirectory + ""
+                Dim CacheDir As String = AppPaths.BaseDirectory + ""
                 Dim ExtractedUMDDataPath As String = ExtractFileFromPSPISO(OFD.FileName, "UMD_DATA.BIN", CacheDir + "\temp_umd_data.bin")
 
                 If Not String.IsNullOrEmpty(ExtractedUMDDataPath) Then
@@ -1065,21 +1073,21 @@ Public Class PSClassicsfPKGBuilder
         Dim FBD As New FolderBrowserDialog() With {.Description = "Please select an output folder", .ShowNewFolderButton = True}
         If FBD.ShowDialog() = Forms.DialogResult.OK Then
 
-            Dim CacheDirectory As String = My.Computer.FileSystem.CurrentDirectory + "\Cache"
-            Dim GameCacheDirectory As String = My.Computer.FileSystem.CurrentDirectory + "\Cache\PSPfPKG"
+            Dim CacheDirectory As String = AppPaths.BaseDirectory + "\Cache"
+            Dim GameCacheDirectory As String = AppPaths.BaseDirectory + "\Cache\PSPfPKG"
             Dim SelectedISOFile As String = SelectedPSPDiscTextBox.Text
 
             'Remove previous fPKG creation & re-create the PSPfPKG cache folder
             If Directory.Exists(GameCacheDirectory) Then
                 Directory.Delete(GameCacheDirectory, True)
             End If
-            If File.Exists(My.Computer.FileSystem.CurrentDirectory + "\Cache\PSPfPKG.gp4") Then
-                File.Delete(My.Computer.FileSystem.CurrentDirectory + "\Cache\PSPfPKG.gp4")
+            If File.Exists(AppPaths.BaseDirectory + "\Cache\PSPfPKG.gp4") Then
+                File.Delete(AppPaths.BaseDirectory + "\Cache\PSPfPKG.gp4")
             End If
             Directory.CreateDirectory(GameCacheDirectory)
 
             'Copy the selected PS2 emulator to the cache directory
-            My.Computer.FileSystem.CopyDirectory(My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\emus\psphd", GameCacheDirectory, True)
+            My.Computer.FileSystem.CopyDirectory(AppPaths.BaseDirectory + "\Tools\PS4\emus\psphd", GameCacheDirectory, True)
 
             'Get PSP EBOOT
             If Not File.Exists(ExtractFileFromPSPISO(SelectedISOFile, "\PSP_GAME\SYSDIR\EBOOT.BIN", CacheDirectory + "\temp_eboot.bin")) Then
@@ -1087,7 +1095,7 @@ Public Class PSClassicsfPKGBuilder
                 MsgBox("Cannot read the EBOOT.BIN file from the ISO." + vbCrLf + "Warning: This game may not work!", MsgBoxStyle.Exclamation)
             Else
                 Dim NewProcess As New Process()
-                NewProcess.StartInfo.FileName = My.Computer.FileSystem.CurrentDirectory + "\Tools\pspdecrypt.exe"
+                NewProcess.StartInfo.FileName = AppPaths.BaseDirectory + "\Tools\pspdecrypt.exe"
                 NewProcess.StartInfo.Arguments = """" + CacheDirectory + "\temp_eboot.bin"""
                 NewProcess.StartInfo.CreateNoWindow = True
                 NewProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden
@@ -1175,7 +1183,7 @@ Public Class PSClassicsfPKGBuilder
 
             'Create a GP4 project
             Dim GenGP4Process As New Process()
-            GenGP4Process.StartInfo.FileName = My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\gengp4_patch.exe"
+            GenGP4Process.StartInfo.FileName = AppPaths.BaseDirectory + "\Tools\PS4\gengp4_patch.exe"
             GenGP4Process.StartInfo.Arguments = """" + GameCacheDirectory + """"
             GenGP4Process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden
             GenGP4Process.Start()
@@ -1188,17 +1196,17 @@ Public Class PSClassicsfPKGBuilder
 
             Dim PKGBuilderProcessOutput As String = ""
             Dim PKGBuilderProcess As New Process()
-            PKGBuilderProcess.StartInfo.FileName = My.Computer.FileSystem.CurrentDirectory + "\Tools\PS4\mod-pub\orbis-pub-cmd-3.38.exe"
+            PKGBuilderProcess.StartInfo.FileName = AppPaths.BaseDirectory + "\Tools\PS4\mod-pub\orbis-pub-cmd-3.38.exe"
             PKGBuilderProcess.StartInfo.Arguments = "img_create --oformat pkg --skip_digest --no_progress_bar """ + CacheDirectory + "\PSPfPKG.gp4"" """ + FBD.SelectedPath + """"
             PKGBuilderProcess.StartInfo.UseShellExecute = False
             PKGBuilderProcess.StartInfo.RedirectStandardOutput = True
             PKGBuilderProcess.StartInfo.CreateNoWindow = True
             PKGBuilderProcess.Start()
-            PKGBuilderProcess.WaitForExit()
 
             Using standardOutput As StreamReader = PKGBuilderProcess.StandardOutput
                 PKGBuilderProcessOutput = standardOutput.ReadToEnd()
             End Using
+            PKGBuilderProcess.WaitForExit()
 
             If Not PKGBuilderProcessOutput.Contains("Create image Process finished with warning") Then
                 MsgBox(PKGBuilderProcessOutput)

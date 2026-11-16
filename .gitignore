@@ -69,3 +69,7 @@ bin
 obj
 packages
 Tools
+Cache
+lib
+TestResults
+*.trx

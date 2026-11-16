@@ -1,4 +1,7 @@
 # PS Classics fPKG Builder
+
+> **Maintenance notice:** the original project was abandoned by its author, [SvenGDK](https://github.com/Victor-Hugo-PZ/PS-Classics-fPKG/commits?author=SvenGDK) ([original repository](https://github.com/SvenGDK/PS-Classics-fPKG-Builder)). This fork **continues its development**: bug fixes, dependency updates, automated tests and documentation. All credit for the original work goes to SvenGDK.
+
 - Easily create PS1, PS2 & PSP game fake packages for the PS4 / PS5 on macOS, Linux and Windows
 - Supports .BIN files (PS1) & .ISO files (PS2 & PSP)
 - Detects PS1 game protection and can apply the required patch

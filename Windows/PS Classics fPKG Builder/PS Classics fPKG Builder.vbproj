@@ -90,6 +90,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AppPaths.vb" />
     <Compile Include="PS1Game.vb" />
     <Compile Include="PS2Game.vb" />
     <Compile Include="PSClassicsfPKGBuilder.xaml.vb">

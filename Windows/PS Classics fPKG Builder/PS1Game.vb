@@ -5,7 +5,7 @@ Public Class PS1Game
     Public Shared Function GetPS1GameTitleFromDatabaseList(GameID As String) As String
         Dim FoundGameTitle As String = ""
 
-        For Each GameTitle As String In File.ReadLines(My.Computer.FileSystem.CurrentDirectory + "\Tools\ps1ids.txt")
+        For Each GameTitle As String In File.ReadLines(AppPaths.BaseDirectory + "\Tools\ps1ids.txt")
             If GameTitle.Contains(GameID) Then
                 FoundGameTitle = GameTitle.Split(";"c)(1)
                 Exit For
@@ -22,7 +22,7 @@ Public Class PS1Game
     Public Shared Function IsGameProtected(GameID As String) As String
         Dim FoundValue As String = ""
 
-        For Each GameIDInFile As String In File.ReadLines(My.Computer.FileSystem.CurrentDirectory + "\Tools\libcrypt.txt")
+        For Each GameIDInFile As String In File.ReadLines(AppPaths.BaseDirectory + "\Tools\libcrypt.txt")
             If GameIDInFile.Contains(GameID) Then
                 FoundValue = GameIDInFile.Split(" "c)(1)
                 Exit For
