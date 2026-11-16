@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  windows:
+    name: Windows app (build + tests)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      # The Tools folder (third-party tools) is not part of the repository,
+      # so the integration tests that need it are skipped here.
+      - run: dotnet test "Windows/PS Classics fPKG Builder.sln" -p:CopyToolsToOutput=false
+
+  linux:
+    name: Linux app (build + tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet test Linux/makePSClassicsfPKG.sln

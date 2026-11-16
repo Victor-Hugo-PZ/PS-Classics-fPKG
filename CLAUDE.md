@@ -10,8 +10,8 @@ Três apps independentes, **sem código compartilhado**:
 
 | | `Windows/` | `Linux/` | `macOS/` |
 |---|---|---|---|
-| Stack | VB.NET, WPF, **.NET 10** | C#, Avalonia 11, .NET 8 (a atualizar) | Swift 5, AppKit |
-| Estado | migrado, refatorado e testado | ainda como o autor deixou | ainda como o autor deixou |
+| Stack | VB.NET, WPF, **.NET 10** | C#, Avalonia 11, **.NET 10** | Swift 5, AppKit |
+| Estado | migrado, refatorado e testado | net10 + correções pontuais + testes de `PS1Game`/`PS2Game`; sem refatoração; **nunca executado aqui** (não há WSL/Linux/Wine nesta máquina) | ainda como o autor deixou |
 | Ferramentas | EXEs em `Tools\` | Wine + EXEs | scripts em Wine empacotado |
 
 O trabalho de modernização está sendo feito primeiro no Windows; Linux e macOS devem receber depois as mesmas correções (ver "Paridade").
@@ -91,8 +91,10 @@ Abertos no Windows: PS2 com ID não detectado ("usar mesmo assim") gera `CONTENT
 
 macOS: crash com `URL(string:)!` em caminhos com espaço; config do PS2 escrita sem `\n` e com a lógica de "reiniciar emulador" invertida; fundo copiado do campo do ícone (PS2 e PSP); disco omitido do GP4 se o ISO já existe em `/Games`; `BrowseMemoryCard` é um stub vazio; `ShaderComboBox`/`LUAConfigTextField` nunca são lidos; sem paridade de features do PS2 com o Windows; `launchPath`/`launch()` deprecados.
 
-Linux: ainda não analisado a fundo (C#, ~2,3 mil linhas, provavelmente com os mesmos bugs do Windows original); .NET 8 já está sem suporte.
+Linux: corrigidos o parse do ID PS2 (`Length > 4` com índice 5 e o ramo `Volume:`), o deadlock de stdout (PKG, `strings`, `7z`, `winetricks`, `crc`) e a aspa de `--path-patches`. Ainda abertos (mesmos bugs do Windows original, não corrigidos por falta de como testar): `--lopnor-config=1` ausente com config PS3 do `.dat`, fixes do PS2 perdidos com a config TXT do banco, `-vu0-opt-flags`, `.Replace(".bin", ".cue")`, `Directory.SetCurrentDirectory("/usr/lib/...")` e caminhos relativos ao diretório atual. O app depende de Wine/bash e a lógica de build está toda em `MainWindow.axaml.cs` (~2 mil linhas).
 
 ## Próximos passos
 
-1. Linux: atualizar para .NET 10, aplicar as correções do Windows, criar testes. 2. macOS: corrigir os crashes e a config PS2. 3. CI (GitHub Actions, `windows-latest`, `dotnet test`).
+1. Linux: extrair a lógica de build (como no Windows) e testar em uma máquina Linux/WSL com Wine. 2. macOS: corrigir os crashes e a config PS2. 3. Validar em console real os itens da seção de riscos.
+
+CI: `.github/workflows/ci.yml` roda `dotnet test` no Windows (testes de integração ignorados sem `Tools/`) e no Linux **(workflow não verificado: ainda não executou no GitHub)**.

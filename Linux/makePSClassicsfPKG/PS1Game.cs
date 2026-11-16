@@ -7,41 +7,58 @@ namespace makePSClassicsfPKG
 
         public static string GetPS1GameTitleFromDatabaseList(string GameID)
         {
-            string FoundGameTitle = "";
+            return GetPS1GameTitleFromDatabaseList(GameID, Directory.GetCurrentDirectory() + @"/Tools/ps1ids.txt");
+        }
 
-            foreach (string GameTitle in File.ReadLines(Directory.GetCurrentDirectory() + @"/Tools/ps1ids.txt"))
-            {
-                if (GameTitle.Contains(GameID))
-                {
-                    FoundGameTitle = GameTitle.Split(';')[1];
-                    break;
-                }
-            }
-
-            if (string.IsNullOrEmpty(FoundGameTitle))
+        /// <summary>Looks up the title of a game in a "ID;Title" database file. Returns an empty string when the game is unknown.</summary>
+        public static string GetPS1GameTitleFromDatabaseList(string GameID, string DatabaseFile)
+        {
+            if (string.IsNullOrEmpty(GameID))
             {
                 return "";
             }
-            else
+
+            foreach (string GameTitle in File.ReadLines(DatabaseFile))
             {
-                return FoundGameTitle;
+                if (GameTitle.Contains(GameID))
+                {
+                    string[] Parts = GameTitle.Split(';');
+                    if (Parts.Length > 1)
+                    {
+                        return Parts[1];
+                    }
+                }
             }
+
+            return "";
         }
 
         public static string IsGameProtected(string GameID)
         {
-            string FoundValue = "";
+            return IsGameProtected(GameID, Directory.GetCurrentDirectory() + @"/Tools/libcrypt.txt");
+        }
 
-            foreach (string GameIDInFile in File.ReadLines(Directory.GetCurrentDirectory() + @"/Tools/libcrypt.txt"))
+        /// <summary>Returns the libcrypt value of a protected game ("SLES_012.26 03E7" lists), or an empty string when the game is not in the list.</summary>
+        public static string IsGameProtected(string GameID, string DatabaseFile)
+        {
+            if (string.IsNullOrEmpty(GameID))
+            {
+                return "";
+            }
+
+            foreach (string GameIDInFile in File.ReadLines(DatabaseFile))
             {
                 if (GameIDInFile.Contains(GameID))
                 {
-                    FoundValue = GameIDInFile.Split(' ')[1];
-                    break;
+                    string[] Parts = GameIDInFile.Split(' ');
+                    if (Parts.Length > 1)
+                    {
+                        return Parts[1];
+                    }
                 }
             }
 
-            return FoundValue;
+            return "";
         }
 
     }

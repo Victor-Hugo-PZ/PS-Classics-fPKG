@@ -1,4 +1,4 @@
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using LibOrbisPkg.SFO;
 using MsBox.Avalonia;
@@ -500,13 +500,12 @@ namespace makePSClassicsfPKG
                 PKGBuilderProcess.StartInfo.RedirectStandardOutput = true;
                 PKGBuilderProcess.StartInfo.CreateNoWindow = true;
                 PKGBuilderProcess.Start();
-                PKGBuilderProcess.WaitForExit();
-
-                // Read the process output
+                // Read the process output before waiting for the exit (otherwise a full pipe blocks the child process)
                 using (var NewStreamReader = PKGBuilderProcess.StandardOutput)
                 {
                     PKGBuilderProcessOutput = NewStreamReader.ReadToEnd();
                 }
+                PKGBuilderProcess.WaitForExit();
                 if (PKGBuilderProcessOutput.Contains("Create image Process finished with warning"))
                 {
                     string PKGFileName = "UP9000-" + PS1NPTitleTextBox.Text + "_00-" + PS1NPTitleTextBox.Text + "PS1FPKG-A0100-V0100.pkg";
@@ -554,10 +553,9 @@ namespace makePSClassicsfPKG
             Bash.StartInfo.UseShellExecute = false;
             Bash.StartInfo.CreateNoWindow = false;
             Bash.Start();
-            Bash.WaitForExit();
-
             var OutputReader = Bash.StandardOutput;
             string[] ProcessOutput = OutputReader.ReadToEnd().Split(["\r\n"], StringSplitOptions.RemoveEmptyEntries);
+            Bash.WaitForExit();
 
             if (ProcessOutput.Length > 0)
             {
@@ -1085,7 +1083,7 @@ namespace makePSClassicsfPKG
                 // Check for LUA config
                 if (!string.IsNullOrEmpty(SelectedPS2LUAConfigTextBox.Text))
                 {
-                    NewPS2EmulatorConfigContent += "\r\n--path-patches=\"/app0/patches";
+                    NewPS2EmulatorConfigContent += "\r\n--path-patches=\"/app0/patches\"";
 
                     // Create patches directory if it doesn't exist yet
                     if (!Directory.Exists(GameCacheDirectory + @"/patches/" + FullPS2GameID))
@@ -1099,7 +1097,7 @@ namespace makePSClassicsfPKG
                 {
                     if (IsConfigAvailable(CurrentPS2GameID, Directory.GetCurrentDirectory() + @"/Tools/PS4/ps2-configs/configs_lua.dat"))
                     {
-                        NewPS2EmulatorConfigContent += "\r\n--path-patches=\"/app0/patches";
+                        NewPS2EmulatorConfigContent += "\r\n--path-patches=\"/app0/patches\"";
 
                         if (!Directory.Exists(GameCacheDirectory + @"/patches/" + FullPS2GameID))
                         {
@@ -1277,13 +1275,12 @@ namespace makePSClassicsfPKG
                 PKGBuilderProcess.StartInfo.RedirectStandardOutput = true;
                 PKGBuilderProcess.StartInfo.CreateNoWindow = true;
                 PKGBuilderProcess.Start();
-                PKGBuilderProcess.WaitForExit();
-
-                // Read the process output
+                // Read the process output before waiting for the exit (otherwise a full pipe blocks the child process)
                 using (var NewStreamReader = PKGBuilderProcess.StandardOutput)
                 {
                     PKGBuilderProcessOutput = NewStreamReader.ReadToEnd();
                 }
+                PKGBuilderProcess.WaitForExit();
                 if (PKGBuilderProcessOutput.Contains("Create image Process finished with warning"))
                 {
                     string PKGFileName = "UP9000-" + PS2NPTitleTextBox.Text + "_00-" + CurrentPS2GameID.Replace(".", "").Replace("_", "").Trim() + "0000001" + "-A0100-V0100.pkg";
@@ -1383,10 +1380,10 @@ namespace makePSClassicsfPKG
             CRCProcess.StartInfo.CreateNoWindow = true;
             CRCProcess.StartInfo.RedirectStandardOutput = true;
             CRCProcess.Start();
-            CRCProcess.WaitForExit();
-
             using var NewStreamReader = CRCProcess.StandardOutput;
-            return NewStreamReader.ReadToEnd().Replace("crc:", "").Trim();
+            string CRCOutput = NewStreamReader.ReadToEnd();
+            CRCProcess.WaitForExit();
+            return CRCOutput.Replace("crc:", "").Trim();
         }
 
         private static string ExtractFileFromISO(string GameISOFile, string FileToExtract, string FileDestinationPath)
@@ -1732,13 +1729,12 @@ namespace makePSClassicsfPKG
                 PKGBuilderProcess.StartInfo.RedirectStandardOutput = true;
                 PKGBuilderProcess.StartInfo.CreateNoWindow = true;
                 PKGBuilderProcess.Start();
-                PKGBuilderProcess.WaitForExit();
-
-                // Read the process output
+                // Read the process output before waiting for the exit (otherwise a full pipe blocks the child process)
                 using (var NewStreamReader = PKGBuilderProcess.StandardOutput)
                 {
                     PKGBuilderProcessOutput = NewStreamReader.ReadToEnd();
                 }
+                PKGBuilderProcess.WaitForExit();
                 if (PKGBuilderProcessOutput.Contains("Create image Process finished with warning"))
                 {
                     string PKGFileName = "UP9000-" + PSPNPTitleTextBox.Text + "_00-" + PSPNPTitleTextBox.Text + "PSPFPKG-A0100-V0100.pkg";
@@ -1990,11 +1986,10 @@ namespace makePSClassicsfPKG
             Bash.StartInfo.UseShellExecute = false;
             Bash.StartInfo.CreateNoWindow = false;
             Bash.Start();
-            Bash.WaitForExit();
-
             var UpdateRequired = false;
             var OutputReader = Bash.StandardOutput;
             string[] ProcessOutput = OutputReader.ReadToEnd().Split(["\r\n"], StringSplitOptions.RemoveEmptyEntries);
+            Bash.WaitForExit();
 
             if (ProcessOutput.Length > 0)
             {
