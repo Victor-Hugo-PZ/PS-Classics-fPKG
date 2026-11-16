@@ -1,98 +1,98 @@
 # CLAUDE.md
 
-Guia para trabalhar neste repositório. Projeto open-source herdado (autor original: SvenGDK, ver cabeçalhos dos arquivos), agora em manutenção. A base abaixo vem de uma análise completa do código; itens marcados **(não verificado)** ainda não foram testados em build real.
+Guia para trabalhar neste repositório. Projeto open-source herdado (autor original: SvenGDK) e agora mantido neste fork. Itens marcados **(não verificado)** ainda não foram testados em build real.
 
 ## O que é
 
 Gera **fPKGs** (pacotes "fake" para PS4/PS5) de jogos **PS1, PS2 e PSP**. Não é um emulador: é uma UI que prepara uma pasta de cache (emulador + `param.sfo` + configs + ícone/fundo), gera um projeto `.gp4` e chama `orbis-pub-cmd` para produzir o `.pkg`.
 
-Três apps independentes, **sem código compartilhado** (`Linux/makePSClassicsfPKG`: C#, Avalonia 11, .NET 8, ~2,3 mil linhas, mesma lógica do Windows portada para C#; a tabela abaixo cobre Windows e macOS):
+Três apps independentes, **sem código compartilhado**:
 
-| | `Windows/` | `macOS/` |
-|---|---|---|
-| Stack | VB.NET, WPF (+ WinForms só para diálogos), .NET Framework 4.8.1 | Swift 5, AppKit, storyboards, macOS 12+ |
-| Entrada | `Application.xaml` → `PSClassicsfPKGBuilder.xaml(.vb)` | `AppDelegate` → `Preloader.storyboard` → `Main.storyboard` |
-| Libs | DiscUtils 0.16.13 (NuGet), LibOrbisPkg (DLL local) | binários `isoinfo`, `pspdecrypt`, `sfoutil`, `unar` |
-| Ferramentas externas | EXEs em `Tools\` | scripts `gengp4_*`/`make_fPKG_*` rodando dentro de um Wine empacotado |
+| | `Windows/` | `Linux/` | `macOS/` |
+|---|---|---|---|
+| Stack | VB.NET, WPF, **.NET 10** | C#, Avalonia 11, .NET 8 (a atualizar) | Swift 5, AppKit |
+| Estado | migrado, refatorado e testado | ainda como o autor deixou | ainda como o autor deixou |
+| Ferramentas | EXEs em `Tools\` | Wine + EXEs | scripts em Wine empacotado |
 
-## Layout
+O trabalho de modernização está sendo feito primeiro no Windows; Linux e macOS devem receber depois as mesmas correções (ver "Paridade").
+
+## Layout (Windows)
 
 ```
-Windows/PS Classics fPKG Builder/
-  AppPaths.vb                      resolve a pasta base (use sempre; ver Regras)
-  PSClassicsfPKGBuilder.xaml(.vb)  janela única, 3 abas; code-behind em #Region PS1 / PS2 / PSP
-  PS1Game.vb, PS2Game.vb           IDs, títulos, libcrypt (lógica fora da UI)
-  Utils.vb                         resize/conversão de PNG
-macOS/fPKG Builder/
-  PS1/PS2/PSPClassicsViewController.swift   um controller por plataforma (PS1 e PS2 são ~idênticos)
-  PreloaderViewController.swift             remove quarentena do Wine e o instala
-  Utils.swift                               ToolsPath / CDrivePath / UTTypes
+Windows/PS Classics fPKG Builder/            app WPF (projeto SDK-style, net10.0-windows)
+  PSClassicsfPKGBuilder.xaml(.vb)            UI: lê os controles, monta um *BuildRequest e mostra resultados
+  Core/                                      lógica sem UI (testável)
+    PackageBuilders.vb                       PS1/PS2/PSP PackageBuilder + *BuildRequest (orquestra o build inteiro)
+    EmulatorConfigs.vb                       texto dos config-title.txt / config-emu-ps4.txt (funções puras)
+    SfoBuilder.vb  Gp4Editor.vb              param.sfo e edição do .gp4
+    IsoTools.vb  PspTools.vb                 ISO/UDF (DiscUtils), bancos .dat, patch do EBOOT do PSP
+    ProcessRunner.vb                         ProcessRunner (+ PkgTools: gengp4 / orbis-pub-cmd)
+  PS1Game.vb PS2Game.vb                      IDs, títulos, libcrypt
+  AppPaths.vb FileUtils.vb Utils.vb          caminhos, cópia de pastas, PNG
+Windows/PS Classics fPKG Builder.Tests/      xUnit (C#): testes unitários + integração com as ferramentas reais
+external/LibOrbisPkg/                        submódulo git (LGPL-3.0), compilado junto com o app
+Tools/                                       NÃO versionada (.gitignore): ferramentas e emuladores de terceiros
 ```
 
-**Não estão no repositório (precisam existir para rodar):**
-- Windows: `Tools\` ao lado do executável (`bin\Debug\Tools`) com `7z.exe`, `strings.exe`, `cue2toc.exe`, `Tools\PS4\{gengp4_patch.exe,crc.exe,mod-pub\orbis-pub-cmd-3.38.exe,emus\*,lua_include,ps2-configs\*}`, `pspdecrypt.exe`, `ps1ids.txt`, `ps2ids.txt`, `libcrypt.txt`; e `LibOrbisPkg.dll` (o `.vbproj` ainda aponta para o Desktop do autor original).
-- macOS: pasta `Tools/` ao lado do `.app`, com `Wine Stable.app`, `Resources/wine-prefix/drive_c/...` e os scripts citados acima.
-- Esses binários são proprietários/de terceiros: **nunca commitar** `Tools/`, `Cache/` nem emuladores.
+`Tools/` vem do release original (`PS.Classics.fPKG.Builder.v1.Windows.7z`, pasta `Tools`). São binários proprietários/de terceiros: **nunca commitar** `Tools/`, `Cache/`, emuladores, DLLs ou ISOs/BINs.
 
 ## Comandos
 
-Não há CI nem testes automatizados.
+Requer Windows e o .NET 10 SDK (Visual Studio é opcional).
 
-**Windows** (requer Visual Studio 2022 com workload ".NET desktop" e o `.sln`; o projeto é legado, não SDK-style) **(não verificado: ainda sem MSBuild nesta máquina)**:
 ```bash
-nuget restore "Windows/PS Classics fPKG Builder.sln"
-msbuild "Windows/PS Classics fPKG Builder.sln" /p:Configuration=Debug
+git clone --recurse-submodules <repo>        # ou: git submodule update --init
+dotnet build "Windows/PS Classics fPKG Builder.sln"
+dotnet test  "Windows/PS Classics fPKG Builder.sln"
+dotnet run --project "Windows/PS Classics fPKG Builder"
 ```
-Depois copie `Tools\` para `Windows/PS Classics fPKG Builder/bin/Debug/`.
 
-**Checagem rápida de sintaxe sem Visual Studio** (usada para validar as alterações até agora): compilar os `.vb` num projeto SDK-style descartável (`net8.0-windows`, `UseWPF`, `UseWindowsForms`, `OptionStrict Off`, `Import` de `System.Windows*`, DiscUtils 0.16.13 por NuGet, e um stub de `LibOrbisPkg.SFO.ParamSfo`/`SfoEntryType` + shim de `My.Computer`) e rodar `dotnet build`. Isso valida a compilação do código, **não** o build real em .NET Framework 4.8.1 nem o comportamento em runtime.
-
-**macOS** (requer Mac + Xcode 15+) **(não verificado)**:
-```bash
-xcodebuild -project "macOS/fPKG Builder.xcodeproj" -scheme "fPKG Builder" -configuration Debug build
-```
+- O build copia `Tools/` (raiz do repo) para a pasta do executável quando ela existe. `-p:CopyToolsToOutput=false` desliga isso (build mais rápido, útil para rodar só testes unitários).
+- Os testes de integração (`ToolsIntegrationTests`, `[RequiresToolsFact]`) rodam as ferramentas reais e geram pacotes PS1/PS2/PSP a partir de discos sintéticos; sem `Tools/` eles são **ignorados**, não falham.
+- Os testes usam `TempWorkspace`: apontam `AppPaths.BaseDirectory` para uma pasta temporária (com junction para `Tools/`), então o repositório nunca é alterado. Testes não rodam em paralelo (estado estático).
+- macOS **(não verificado)**: `xcodebuild -project "macOS/fPKG Builder.xcodeproj" -scheme "fPKG Builder" build` (requer Mac + Xcode 15+). Linux: `dotnet build Linux/makePSClassicsfPKG.sln`.
 
 ## Convenções de nomenclatura (como o código já é; manter)
 
 **VB.NET**
-- `PascalCase` para tudo, inclusive variáveis locais e parâmetros (`GameCacheDirectory`, `PKGOutputFolder`).
-- Instâncias locais descartáveis começam com `New` (`NewProcess`, `NewFileStream`); `OFD`/`FBD` para `OpenFileDialog`/`FolderBrowserDialog`.
-- Controles XAML: `<Plataforma><Função><TipoDoControle>`, ex.: `PS1TitleTextBox`, `PS1NPTitleTextBox`, `BrowsePS1Disc1Button`, `PS1SkipBootlogoCheckBox`. Handlers: `<NomeDoControle>_Click`. (A aba PS2 é inconsistente: `SelectedDisc1TextBox`, `SelectedIconTextBox` sem prefixo. Em controles novos, **use sempre o prefixo da plataforma**.)
-- Cada plataforma tem seu `#Region` no code-behind. Lógica de consulta/parse de IDs fica em `PS1Game`/`PS2Game` (classes com `Shared`).
-- Comentários em inglês, com aspa simples: `'Create a TOC file`. Strings de UI em inglês.
-- Config do emulador: linhas `--chave=valor`; comentários `#Texto` dentro do `.txt` gerado.
+- `PascalCase` para tudo, inclusive locais e parâmetros (`GameCacheDirectory`, `PKGOutputFolder`). Instâncias locais descartáveis começam com `New` (`NewProcess`); `OFD`/`FBD` para os diálogos.
+- Controles XAML: `<Plataforma><Função><Tipo>` (`PS1TitleTextBox`, `BrowsePS1Disc1Button`); handlers `<Controle>_Click`. Na aba PS2 alguns controles não têm prefixo (`SelectedDisc1TextBox`); em controles novos **use sempre o prefixo da plataforma**.
+- Classes de Core: substantivos (`Gp4Editor`, `SfoBuilder`), métodos `Shared`; opções em classes `*Options`/`*BuildRequest`.
+- Comentários em inglês, com aspa simples (`'Create a TOC file`) e `'''` para XML docs. Strings de UI em inglês.
+- Config do emulador: linhas `--chave=valor`; comentários `#Texto`.
 
-**Swift**
-- Também `PascalCase` para propriedades, funções, outlets e actions (não segue a convenção Swift usual): `@IBOutlet weak var GameTitleTextField`, `@IBAction func BrowseDisc1`, `CreatefPKG()`, `CreateParamSFO()`.
-- Outlets terminam no tipo (`...TextField`, `...CheckBox`, `...ComboBox`). Caminhos comuns via `Utils().ToolsPath` / `Utils().CDrivePath`.
-- Comentários `// Texto` em inglês.
+**Swift (macOS)**: também `PascalCase` (`@IBOutlet weak var GameTitleTextField`, `@IBAction func BrowseDisc1`), comentários `// Texto`.
+
+**Testes (C#)**: um arquivo por área, `NomeDaClasseTests`, métodos `Metodo_ComportamentoEsperado`; bugs corrigidos ganham um teste de regressão com comentário `// Regression: ...`.
 
 **Domínio**
-- "NP Title" = ID de 9 caracteres (ex.: `SLUS00001` sem `_`/`.`), validado com `Length <> 9`.
-- Cache por plataforma: `Cache\PS1fPKG`, `Cache\PS2fPKG`, `Cache\PSPfPKG` + `<nome>.gp4` ao lado. Slots de disco no PKG: `data/disc1.bin` (PS1), `image/disc01.iso` (PS2), `data/USER_L0.IMG` (PSP).
-- `CONTENT_ID` = `UP9000-<NP>_00-<sufixo>`. Sufixo: `<NP>PS1FPKG` (PS1), `<NP>PSPFPKG` (PSP); no PS2 o Windows usa `<ID sem _ e .>0000001` e o macOS usa `<ID>PS2FPKG` (inconsistência entre os apps; o macOS procura o `.pkg` final por esse nome).
+- "NP Title" = ID de 9 caracteres (`SLUS00594`, sem `_`/`.`), validado com `Length <> 9`.
+- Cache: `Cache\PS1fPKG`, `PS2fPKG`, `PSPfPKG` + `<nome>.gp4` ao lado. Discos no PKG: `data/disc1.bin` (PS1), `image/disc01.iso` (PS2), `data/USER_L0.IMG` (PSP).
+- `CONTENT_ID` = `UP9000-<NP>_00-<sufixo>`: `<NP>PS1FPKG`, `<NP>PSPFPKG`, e no PS2 `<ID sem _ e .>0000001` no Windows (o macOS usa `<ID>PS2FPKG`: inconsistência entre os apps).
 
 ## Regras de arquitetura
 
-1. **Caminhos (Windows):** use `AppPaths.BaseDirectory` (pasta do executável). **Nunca** `My.Computer.FileSystem.CurrentDirectory`: o diretório de trabalho muda conforme o atalho.
-2. **Processos externos:** com `RedirectStandardOutput = True`, **leia o stdout (`ReadToEnd`) antes de `WaitForExit()`**; do contrário o processo filho trava com o buffer cheio.
-3. **Streams/arquivos:** sempre em `Using` (inclusive o stream de origem de `CDReader.OpenFile`/`UdfReader.OpenFile`). Abra a origem antes de criar o arquivo de destino.
-4. **Não engorde o code-behind.** Lógica nova (parse, montagem de config, edição de GP4) vai para classes separadas e testáveis, no estilo de `PS1Game`/`PS2Game`; os handlers só leem a UI e delegam.
-5. **Paridade entre plataformas:** PS1/PS2/PSP e Windows/macOS repetem a mesma lógica. Ao corrigir um bug, procure o mesmo padrão nas outras cópias (vários bugs já eram copy-paste, ex.: disco 3/4 do PS1 testando o disco 2). Não unifique/refatore em massa sem combinar antes.
-6. **GP4:** é editado por `String.Replace` no XML gerado por `gengp4_*` (`<?xml version="1.1"` → `1.0`, `default_id="1"` → `"0"`, inserção antes de `</files>`). Se mexer nisso, preserve esses três ajustes.
-7. **macOS:** nunca force-unwrap `URL(string:)` com caminho de arquivo (caminhos com espaço retornam `nil`); use `URL(fileURLWithPath:)`. Não concatene entrada do usuário (título, caminhos) em `sh -c`; prefira `Process` com `executableURL` + `arguments`. Não bloqueie a thread principal com `sleep`.
-8. **Segredos/binários:** nada de `Tools/`, `Cache/`, DLLs de terceiros ou ISOs/BINs no git.
+1. **Caminhos:** use `AppPaths` (`BaseDirectory`, `ToolsDirectory`, `CacheDirectory`). Nunca `CurrentDirectory`. `strings.exe` etc. são chamados pelo caminho completo em `Tools`.
+2. **UI fina:** os handlers só leem os controles, montam um `*BuildRequest` e exibem mensagens. Toda a lógica vai para `Core/`, sem `MsgBox`/WPF. Interação com o usuário durante o build entra por callback no request (`ConfirmLibcrypt`, `Warn`).
+3. **Processos externos:** use `ProcessRunner.Run` (lê stdout/stderr antes de `WaitForExit`; sem janela de console). Nunca `cmd /c ... | findstr`.
+4. **Streams:** sempre em `Using`, abrindo a origem antes de criar o arquivo de destino.
+5. **Testabilidade:** lógica nova = função pura ou recebendo caminhos por parâmetro, com teste. Não use `My.Computer` (não existe em WPF no .NET moderno; use `FileUtils`).
+6. **Paridade entre plataformas:** PS1/PS2/PSP e Windows/Linux/macOS repetem a mesma lógica. Ao corrigir um bug, procure o mesmo padrão nas outras cópias.
+7. **GP4:** editado por `Gp4Editor` (cabeçalho 1.1→1.0, `default_id` 1→0, entradas antes de `</files>`). Preserve esses ajustes.
+8. **macOS:** nunca force-unwrap `URL(string:)` com caminho de arquivo (use `URL(fileURLWithPath:)`); não concatene entrada do usuário em `sh -c`; não bloqueie a thread principal com `sleep`.
 
-## Bugs conhecidos ainda abertos
+## Pendências e riscos conhecidos
 
-Windows (corrigidos nesta rodada: disco 3/4 do PS1, aspas de `--path-patches`, fixes do PS2 perdidos, `IndexOutOfRange` em `GetPS2GameID`, deadlock de stdout, handles vazados, `CurrentDirectory`):
-- `cue2toc`/`.toc` só para o disco 1 no PS1, e o `.toc` é gerado dentro da pasta do jogo do usuário.
-- PSP: `temp_umd_data.bin` fica na raiz e não é removido; busca do EBOOT na ISO é lenta.
-- ID não detectado ("usar mesmo assim") deixa `CurrentPS2GameID` vazio → `CONTENT_ID`/caminhos inválidos; `Insert(8, ".")` do PS1 pode lançar com ID curto.
-- `-vu0-opt-flags=1` com um traço só (provável typo, também no macOS).
+Corrigidos no Windows (com testes): disco 3/4 do PS1, aspas de `--path-patches`, fixes do PS2 perdidos, `IndexOutOfRange` em `GetPS2GameID` (inclusive o caminho `Volume:` que nunca funcionava), deadlock de stdout, handles vazados, dependência do diretório de trabalho, `strings.exe` via `cmd`, `--lopnor-config=1` ausente quando a config PS3 vem do `.dat` (o caso comum), arquivo temporário do PSP, `Insert` do libcrypt com ID curto.
 
-macOS: crash com `URL(string:)!` em caminhos com espaço; config do PS2 escrita sem `\n` e com a lógica de "reiniciar emulador" invertida; fundo copiado do campo do ícone (PS2 e PSP); disco omitido do GP4 se o ISO já existe em `/Games`; `BrowseMemoryCard` é um stub vazio; `ShaderComboBox`/`LUAConfigTextField` nunca são lidos; sem paridade de features do PS2 com o Windows (bancos `.dat`, widescreen, config PS3); `launchPath`/`launch()` deprecados.
+**Precisam de validação em console real** (não dá para testar aqui): `-vu0-opt-flags` com um traço só (mantido como no original, comentado em `EmulatorConfigs.vb`) e o `--lopnor-config=1` agora ativo para configs PS3 do banco de dados.
 
-## Modernização planejada (ordem sugerida)
+Abertos no Windows: PS2 com ID não detectado ("usar mesmo assim") gera `CONTENT_ID` e caminhos inválidos; `cue2toc`/`.toc` só para o disco 1 no PS1 (e o `.toc` é gerado na pasta do jogo do usuário); mensagem modal "All files ready" foi removida (o build segue direto).
 
-1. Windows estável (este arquivo, `AppPaths`, bugs acima) → 2. DiscUtils 1.x e migração para .NET 8 (WPF suporta VB) → 3. extrair a lógica de build da UI → 4. corrigir macOS (bugs de crash e config primeiro).
+macOS: crash com `URL(string:)!` em caminhos com espaço; config do PS2 escrita sem `\n` e com a lógica de "reiniciar emulador" invertida; fundo copiado do campo do ícone (PS2 e PSP); disco omitido do GP4 se o ISO já existe em `/Games`; `BrowseMemoryCard` é um stub vazio; `ShaderComboBox`/`LUAConfigTextField` nunca são lidos; sem paridade de features do PS2 com o Windows; `launchPath`/`launch()` deprecados.
+
+Linux: ainda não analisado a fundo (C#, ~2,3 mil linhas, provavelmente com os mesmos bugs do Windows original); .NET 8 já está sem suporte.
+
+## Próximos passos
+
+1. Linux: atualizar para .NET 10, aplicar as correções do Windows, criar testes. 2. macOS: corrigir os crashes e a config PS2. 3. CI (GitHub Actions, `windows-latest`, `dotnet test`).

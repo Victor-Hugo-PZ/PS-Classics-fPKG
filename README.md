@@ -45,3 +45,37 @@ PS Classics fPKG Builder uses the following tools from other developers:
 | `sfo` | hippie68 | [https://github.com/hippie68/sfo](https://github.com/hippie68/sfo)
 | `unar` | The Unarchiver | [https://theunarchiver.com/command-line](https://theunarchiver.com/command-line)
 | `wine` | WineHQ | [https://www.winehq.org/](https://www.winehq.org/)
+| `LibOrbisPkg` | OpenOrbis (LGPL-3.0) | [https://github.com/OpenOrbis/LibOrbisPkg](https://github.com/OpenOrbis/LibOrbisPkg)
+| `DiscUtils` | Kenneth Bell & contributors | [https://github.com/DiscUtils/DiscUtils](https://github.com/DiscUtils/DiscUtils)
+
+## Building from source (Windows)
+Requirements: Windows and the [.NET 10 SDK](https://dotnet.microsoft.com/download). Visual Studio is optional.
+
+```
+git clone --recurse-submodules https://github.com/Victor-Hugo-PZ/PS-Classics-fPKG.git
+cd PS-Classics-fPKG
+dotnet build "Windows/PS Classics fPKG Builder.sln"
+```
+
+- [LibOrbisPkg](https://github.com/OpenOrbis/LibOrbisPkg) is a git submodule (`external/LibOrbisPkg`) and is compiled together with the app. If you cloned without `--recurse-submodules`, run `git submodule update --init`.
+- The third-party tools and emulators are **not** part of this repository (they are git-ignored). Extract the `Tools` folder of the [original Windows release](https://github.com/SvenGDK/PS-Classics-fPKG-Builder/releases/tag/v1) into the repository root (`Tools/`). The build copies it next to the executable when it exists.
+- Run the app with `dotnet run --project "Windows/PS Classics fPKG Builder"`.
+
+## Running the tests
+```
+dotnet test "Windows/PS Classics fPKG Builder.sln"
+```
+- Unit tests cover the game databases, emulator configuration, `param.sfo`, GP4 editing, ISO/UDF helpers and the PSP EBOOT patching.
+- Integration tests run the real tools (`7z`, `strings`, `crc`, `cue2toc`, `gengp4`, `orbis-pub-cmd`) and build complete PS1, PS2 and PSP packages from small synthetic discs. They are **skipped** when the `Tools` folder is not available.
+
+## Project status
+This fork is being modernized step by step:
+
+- [x] Windows app migrated from .NET Framework 4.8.1 to .NET 10 (SDK-style project)
+- [x] LibOrbisPkg built from source instead of a local DLL
+- [x] Build logic extracted from the window into testable classes (`Windows/.../Core`)
+- [x] Automated unit and integration tests (Windows)
+- [x] Fixed: PS1 discs 3/4 ignored, unterminated `--path-patches`, lost PS2 emulator fixes, pipe deadlocks, leaked file handles, working-directory dependent paths
+- [ ] Linux app (`Linux/`): update to .NET 10 and add tests
+- [ ] macOS app (`macOS/`): known crashes and config bugs (see `CLAUDE.md`)
+- [ ] Verify on a real console: PS2 `-vu0-opt-flags` (single dash in the original) and the PS3 config (`--lopnor-config`) now enabled for database configs
