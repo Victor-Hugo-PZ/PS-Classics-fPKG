@@ -42,7 +42,8 @@ jobs:
         shell: bash
         run: |
           gh release download "${{ inputs.tools_release }}" --repo "$GITHUB_REPOSITORY" --pattern '*.Windows.zip' --dir _release
-          unzip -q _release/*.zip 'Tools/*' -d _release/x
+          unzip -q _release/*.zip -d _release/x   # the whole zip: unzip of Git for Windows does not match subfolders with 'Tools/*'
+          test -f _release/x/Tools/PS4/gengp4_patch.exe
           mv _release/x/Tools Tools
       - name: Build (Windows)
         if: matrix.rid == 'win-x64'
