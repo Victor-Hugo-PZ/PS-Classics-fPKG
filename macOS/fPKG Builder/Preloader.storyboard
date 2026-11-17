@@ -10,7 +10,7 @@
         <scene sceneID="RhC-Y2-v22">
             <objects>
                 <windowController id="RgM-zw-Kyg" sceneMemberID="viewController">
-                    <window key="window" title="PS Classics fPKG Builder for macOS [by SvenGDK]" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="bKe-r2-B5n">
+                    <window key="window" title="PS Classics fPKG Builder for macOS [Original version by Victor]" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="bKe-r2-B5n">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="425" y="462" width="480" height="270"/>

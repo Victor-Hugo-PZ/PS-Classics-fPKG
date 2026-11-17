@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="775"
         x:Class="makePSClassicsfPKG.MainWindow"
-        Title="PS Classics fPKG Builder for Linux [by SvenGDK]" Height="775" Width="1100">
+        Title="PS Classics fPKG Builder for Linux [Original version by Victor]" Height="775" Width="1100">
 	<Grid>
 		<TabControl>
 			<TabItem Header="PS1 Classics">
