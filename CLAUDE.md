@@ -98,6 +98,13 @@ dotnet run --project CrossPlatform/PSClassicsfPKGBuilder
 11. **Textos visíveis:** escreva em inglês e traduza com `Localizer.T("...")` / `Localizer.F("... {0}", x)` (VB não tem escape de quebra de linha: escreva a barra-n literal dentro da string, o `T` converte). XAML fica em inglês: o `UiTranslator` de cada app traduz a janela (combo box items não são traduzidos: são valores). Todo texto novo precisa de uma linha em `Shared/PSClassics.Core/Localization/pt-BR.tsv`; o teste `TranslationCoverageTests` varre o XAML e o código dos dois apps e falha listando o que falta.
 12. **Recursos para iniciantes** (2.2): modo passo a passo (`StepBar` + seções nomeadas `<Plataforma>GameSection`...), arrastar e soltar, buscar capa, predefinições, preflight, janela de resultado (`BuildResultWindow`), histórico, configurações e aviso de atualização existem nos dois apps com os mesmos nomes. Mudou um, mude o outro.
 
+## Branches e fluxo de trabalho
+
+- `main` é a versão publicada. Não há push direto: toda mudança entra por pull request.
+- Nomes: `tipo/assunto-curto` em kebab-case e em inglês. Tipos: `feat/` (recurso), `fix/` (correção), `chore/` (manutenção, docs, CI), `release/` (preparação de versão).
+- Uma branch = um assunto. Depois do merge, a branch é apagada (o GitHub apaga sozinho).
+- Releases são tags anotadas `vX.Y.Z` na `main` (`v1`, `v2.0.0`, `v2.1.0`, `v2.2.0`).
+
 ## Pendências e riscos conhecidos
 
 **Precisam de validação em console real**: qual fundo a tela inicial mostra (o app grava a imagem do usuário como `pic0.png`, mas os emuladores trazem um `pic1.png`); `-vu0-opt-flags` com um traço só (como no original, comentado em `EmulatorConfigs.vb`); `--lopnor-config=1` para configs PS3 do banco; `disc2.toc`..`disc4.toc` de PS1 multi-disco. Pacotes PSP sem ícone ficam sem `icon0.png`/`pic1.png`.
