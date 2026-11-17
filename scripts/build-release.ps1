@@ -12,7 +12,9 @@
 param(
     [Parameter(Mandatory = $true)][string]$Version,
     [string]$OutDir = (Join-Path $PSScriptRoot '..\dist'),
-    [switch]$SkipTools
+    [switch]$SkipTools,
+    # By default the .NET runtime is included in the zip, so the .exe runs without installing anything (about +130 MB).
+    [switch]$FrameworkDependent
 )
 
 $ErrorActionPreference = 'Stop'
@@ -32,13 +34,15 @@ if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
 if (Test-Path $zip) { Remove-Item $zip -Force }
 New-Item -ItemType Directory -Path $stage -Force | Out-Null
 
-Write-Host "Publishing the app..."
+$selfContained = if ($FrameworkDependent) { 'false' } else { 'true' }
+
+Write-Host "Publishing the app (self-contained: $selfContained)..."
 $toolsProp = if ($SkipTools) { '-p:CopyToolsToOutput=false' } else { '-p:CopyToolsToOutput=true' }
-dotnet publish (Join-Path $repo 'Windows\PS Classics fPKG Builder\PS Classics fPKG Builder.vbproj') -c Release -o $stage "-p:Version=$Version" $toolsProp --nologo -v q
+dotnet publish (Join-Path $repo 'Windows\PS Classics fPKG Builder\PS Classics fPKG Builder.vbproj') -c Release -r win-x64 --self-contained $selfContained -o $stage "-p:Version=$Version" $toolsProp --nologo -v q
 if ($LASTEXITCODE -ne 0) { throw 'Publishing the app failed.' }
 
 Write-Host "Publishing PkgCheck..."
-dotnet publish (Join-Path $repo 'Windows\PkgCheck\PkgCheck.vbproj') -c Release -o $stage "-p:Version=$Version" --nologo -v q
+dotnet publish (Join-Path $repo 'Windows\PkgCheck\PkgCheck.vbproj') -c Release -r win-x64 --self-contained $selfContained -o $stage "-p:Version=$Version" --nologo -v q
 if ($LASTEXITCODE -ne 0) { throw 'Publishing PkgCheck failed.' }
 
 Copy-Item (Join-Path $PSScriptRoot 'release-readme.txt') (Join-Path $stage 'README.txt')

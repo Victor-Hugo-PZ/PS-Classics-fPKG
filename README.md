@@ -2,6 +2,8 @@
 
 > **Maintenance notice:** the original project was abandoned by its author, [SvenGDK](https://github.com/Victor-Hugo-PZ/PS-Classics-fPKG/commits?author=SvenGDK) ([original repository](https://github.com/SvenGDK/PS-Classics-fPKG-Builder)). This fork **continues its development**: bug fixes, dependency updates, automated tests and documentation. All credit for the original work goes to SvenGDK.
 
+**Download (Windows):** get `PS.Classics.fPKG.Builder.vX.Y.Z.Windows.zip` from the [Releases](https://github.com/Victor-Hugo-PZ/PS-Classics-fPKG/releases) page, extract it and run `PS Classics fPKG Builder.exe`. Nothing else to install: the .NET runtime and the `Tools` folder are inside the zip. It also contains `PkgCheck.exe`, a tool that checks a generated `.pkg`.
+
 - Easily create PS1, PS2 & PSP game fake packages for the PS4 / PS5 on macOS, Linux and Windows
 - Supports .BIN files (PS1) & .ISO files (PS2 & PSP)
 - Detects PS1 game protection and can apply the required patch
@@ -52,7 +54,7 @@ PS Classics fPKG Builder uses the following tools from other developers:
 | `DiscUtils` | Kenneth Bell & contributors | [https://github.com/DiscUtils/DiscUtils](https://github.com/DiscUtils/DiscUtils)
 
 ## Building from source (Windows)
-Requirements: Windows and the [.NET 10 SDK](https://dotnet.microsoft.com/download). Visual Studio is optional.
+Requirements: Windows and the [.NET 10 SDK](https://dotnet.microsoft.com/download). Visual Studio is optional. (To only run a release you need nothing: the release zip includes the .NET runtime.)
 
 ```
 git clone --recurse-submodules https://github.com/Victor-Hugo-PZ/PS-Classics-fPKG.git
@@ -85,7 +87,7 @@ The same check with the SDK tool directly: `Tools\PS4\mod-pub\orbis-pub-cmd-3.38
 ```
 .\scripts\build-release.ps1 -Version 2.1.0
 ```
-Publishes the app and PkgCheck, adds the `Tools` folder and a short `README.txt`, and creates `dist\PS.Classics.fPKG.Builder.v2.1.0.Windows.zip`.
+Publishes the app and PkgCheck self-contained (the .NET runtime is inside the zip, so the `.exe` runs without installing anything; use `-FrameworkDependent` for a smaller zip), adds the `Tools` folder and a short `README.txt`, and creates `dist\PS.Classics.fPKG.Builder.v2.1.0.Windows.zip`.
 
 ## Running the tests
 ```

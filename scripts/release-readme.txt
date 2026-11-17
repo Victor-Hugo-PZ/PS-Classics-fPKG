@@ -5,7 +5,7 @@ Original version by Victor. Continues the project of SvenGDK.
 
 Requirements
   - Windows 10 or 11
-  - .NET 10 Desktop Runtime: https://dotnet.microsoft.com/download
+  - Nothing else: the .NET runtime is included, just run the .exe
 
 Contents
   PS Classics fPKG Builder.exe   The app: creates PS1, PS2 and PSP fake packages for PS4/PS5.
