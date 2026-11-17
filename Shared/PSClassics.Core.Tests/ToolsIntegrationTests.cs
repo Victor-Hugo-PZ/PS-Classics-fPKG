@@ -236,7 +236,7 @@ public class ToolsIntegrationTests
         Directory.CreateDirectory(referenceFolder);
         File.Copy(bin, Path.Combine(referenceFolder, "game.bin"));
         File.Copy(cue, Path.Combine(referenceFolder, "game.cue"));
-        var reference = ProcessRunner.Run(Path.Combine(ws.Tools, "cue2toc.exe"), "\"" + Path.Combine(referenceFolder, "game.cue") + "\"", referenceFolder);
+        var reference = ToolRunner.Run(Path.Combine(ws.Tools, "cue2toc.exe"), new[] { Platform.ToolPath(Path.Combine(referenceFolder, "game.cue")) }, referenceFolder);
         Assert.Equal(0, reference.ExitCode);
         var expected = File.ReadAllBytes(Path.Combine(referenceFolder, "game.TOC"));
 

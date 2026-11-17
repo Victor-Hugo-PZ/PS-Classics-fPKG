@@ -73,4 +73,5 @@ jobs:
             if command -v "$ws" >/dev/null 2>&1; then "$ws" -w; break; fi
           done
           ls "$WINEPREFIX/drive_c/windows/winsxs" | grep -i vc90 | head -5
-      - run: dotnet test Shared/PSClassics.Core.Tests -p:CopyToolsToOutput=false --logger "console;verbosity=normal"
+      # gengp4_patch.exe (Delphi) creates a hidden window at startup, so Wine needs a display, like on a desktop.
+      - run: xvfb-run -a dotnet test Shared/PSClassics.Core.Tests -p:CopyToolsToOutput=false --logger "console;verbosity=normal"
