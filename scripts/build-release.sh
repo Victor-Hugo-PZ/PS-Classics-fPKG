@@ -6,7 +6,7 @@
 #     rid: linux-x64 | osx-arm64 | osx-x64
 #
 # Output (in dist/):
-#   linux-x64  -> PS.Classics.fPKG.Builder.v<version>.Linux-x64.tar.gz   (folder with the app, PkgCheck and Tools)
+#   linux-x64  -> PS.Classics.fPKG.Builder.v<version>.Linux-x64.zip      (folder with the app, PkgCheck and Tools; zip keeps the executable permissions)
 #   osx-*      -> PS.Classics.fPKG.Builder.v<version>.macOS-<arch>.zip  ("PS Classics fPKG Builder.app", ad-hoc signed)
 #
 # Requires the .NET 10 SDK and the git-ignored Tools folder in the repository root (see README).
@@ -34,7 +34,7 @@ mkdir -p "$dist"
 case "$rid" in
   linux-*)
     stage="$dist/$name v$version"
-    archive="$dist/PS.Classics.fPKG.Builder.v$version.Linux-${rid#linux-}.tar.gz"
+    archive="$dist/PS.Classics.fPKG.Builder.v$version.Linux-${rid#linux-}.zip"
     rm -rf "$stage" "$archive"
     echo "Publishing the app for $rid..."
     publish "$app_project" "$stage" -p:CopyToolsToOutput=true
@@ -44,7 +44,8 @@ case "$rid" in
     cp "$repo/CrossPlatform/PSClassicsfPKGBuilder/Assets/app.png" "$stage/app.png" 2>/dev/null || true
     cp "$repo/scripts/linux-install-shortcut.sh" "$stage/install-shortcut.sh"
     chmod +x "$stage/PSClassicsfPKGBuilder" "$stage/PkgCheck" "$stage/install-shortcut.sh"
-    tar -C "$dist" -czf "$archive" "$(basename "$stage")"
+    # Info-ZIP stores the Unix permissions, so the programs stay executable after unzip
+    (cd "$dist" && zip -qr -y "$archive" "$(basename "$stage")")
     ;;
 
   osx-*)

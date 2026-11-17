@@ -9,7 +9,7 @@ Get the package for your system from the [Releases](https://github.com/Victor-Hu
 | System | File | How to start |
 | --- | --- | --- |
 | Windows 10/11 | `…Windows.zip` | Extract and run `PS Classics fPKG Builder.exe`. Nothing else to install. |
-| Linux x64 | `…Linux-x64.tar.gz` | Install Wine + winetricks, extract, run `./PSClassicsfPKGBuilder`, press **Wine setup** once. |
+| Linux x64 | `…Linux-x64.zip` | Install Wine + winetricks, unzip, run `./PSClassicsfPKGBuilder`, press **Wine setup** once. |
 | macOS (Apple Silicon) | `…macOS-arm64.zip` | Install Wine + winetricks with Homebrew, open the app (see below), press **Wine setup** once. |
 | macOS (Intel) | `…macOS-x64.zip` | Same as above. |
 
@@ -25,6 +25,19 @@ All versions share the same build code (`Shared/PSClassics.Core`), so they produ
 - Automatically apply game configs from the database
 - Live preview of the icon and background on the PS4 / PS5 home screen
 - Check a generated `.pkg` from the app or with `PkgCheck`
+
+**Made for beginners** (new in 2.2):
+- English and Portuguese (Brazil) interface, chosen in **Settings** (follows the system language by default)
+- **Step-by-step mode**: one step at a time (Game, Images, Options, Review) with Next and Back
+- **Drag and drop** the game, images, configs or a `.pkg` anywhere on the window
+- **Find cover**: downloads the PS1/PS2 cover by game ID and creates the icon and background; PSP uses the images stored on the disc
+- Emulator **presets** (Recommended, Most compatible, Best looking, Other emulator)
+- **Checks before building** (missing files and `.cue`, invalid NP title, free disk space) with the fix for each problem
+- **Errors explained in plain words**, with the technical details below
+- The package is **checked automatically** after building
+- **History** of the packages you built, the options used and how each one ran on the console
+- Guide section on **installing the package on the console**
+- **Update notice** when a new version is released (Settings can turn it off)
 
 ![PS Classics fPKG Builder on Windows, PS5 home screen preview](docs/screenshots/windows-ps1-ps5-preview.png)
 
@@ -102,7 +115,7 @@ The same check with the SDK tool directly: `Tools\PS4\mod-pub\orbis-pub-cmd-3.38
 
 ## Building a release
 - Windows: `.\scripts\build-release.ps1 -Version 2.2.0` → `dist\PS.Classics.fPKG.Builder.v2.2.0.Windows.zip` (self-contained; `-FrameworkDependent` for a smaller zip).
-- Linux: `scripts/build-release.sh 2.2.0 linux-x64` → `dist/PS.Classics.fPKG.Builder.v2.2.0.Linux-x64.tar.gz`.
+- Linux: `scripts/build-release.sh 2.2.0 linux-x64` → `dist/PS.Classics.fPKG.Builder.v2.2.0.Linux-x64.zip`.
 - macOS (on a Mac): `scripts/build-release.sh 2.2.0 osx-arm64` (or `osx-x64`) → `dist/PS.Classics.fPKG.Builder.v2.2.0.macOS-arm64.zip` with an ad-hoc signed `.app`.
 - All of them at once on GitHub: run the **Release packages** workflow (Actions tab) with the version. It builds the four packages as artifacts; it does not publish a release.
 

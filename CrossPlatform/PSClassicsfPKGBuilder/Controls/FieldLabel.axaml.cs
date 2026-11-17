@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Media;
+using PS_Classics_fPKG_Builder;
 using PSClassicsfPKGBuilder.Dialogs;
 
 namespace PSClassicsfPKGBuilder.Controls;
@@ -49,7 +50,7 @@ public partial class FieldLabel : UserControl
         set
         {
             _isRequired = value;
-            BadgeText.Text = value ? "Required" : "Optional";
+            BadgeText.Text = value ? Localizer.T("Required") : Localizer.T("Optional");
             BadgeText.Foreground = value ? Brushes.Black : new SolidColorBrush(Color.Parse("#C5C5C5"));
             BadgeBorder.Background = new SolidColorBrush(Color.Parse(value ? "#5AA8F2" : "#3A3A3A"));
         }

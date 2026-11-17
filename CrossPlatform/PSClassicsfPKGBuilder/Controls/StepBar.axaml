@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="PSClassicsfPKGBuilder.Controls.StepBar">
+
+    <!-- Step-by-step mode: shows one step of the form at a time (Game, Images, Options, Review). Same as the Windows app. -->
+    <Border CornerRadius="8" Padding="12,10" Margin="0,0,0,12" Background="{DynamicResource CardBackgroundBrush}"
+            BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1">
+        <DockPanel LastChildFill="True">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button x:Name="BackButton" MinWidth="90">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <mi:MaterialIcon Kind="ArrowLeft" Width="16" Height="16" />
+                        <TextBlock Text="Back" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="NextButton" MinWidth="90" Classes="accent">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <mi:MaterialIcon Kind="ArrowRight" Width="16" Height="16" />
+                        <TextBlock Text="Next" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <WrapPanel VerticalAlignment="Center">
+                <Border x:Name="Step1Border" CornerRadius="12" Padding="10,3" Margin="0,0,6,0"><TextBlock x:Name="Step1Text" Text="1. Game" /></Border>
+                <Border x:Name="Step2Border" CornerRadius="12" Padding="10,3" Margin="0,0,6,0"><TextBlock x:Name="Step2Text" Text="2. Images" /></Border>
+                <Border x:Name="Step3Border" CornerRadius="12" Padding="10,3" Margin="0,0,6,0"><TextBlock x:Name="Step3Text" Text="3. Options" /></Border>
+                <Border x:Name="Step4Border" CornerRadius="12" Padding="10,3"><TextBlock x:Name="Step4Text" Text="4. Review" /></Border>
+            </WrapPanel>
+        </DockPanel>
+    </Border>
+</UserControl>

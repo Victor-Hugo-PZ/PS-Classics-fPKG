@@ -1,0 +1,399 @@
+# Portuguese (Brazil) translation of the user interface.
+# Format: English text<TAB>translation. A line break inside a text is written 
+1. Copy the .pkg file to the root folder of a USB drive formatted as exFAT (FAT32 also works for packages smaller than 4 GB).	1. Copie o arquivo .pkg para a pasta raiz de um pendrive formatado em exFAT (FAT32 também funciona para pacotes menores que 4 GB).
+1. Game	1. Jogo
+1. Quick start	1. Início rápido
+2. Images	2. Imagens
+2. PS4 with GoldHEN: plug in the drive, open Settings › Debug Settings › Game › Package Installer, choose the package and install it.	2. PS4 com GoldHEN: conecte o pendrive, abra Configurações › Debug Settings › Game › Package Installer, escolha o pacote e instale.
+2. Required and optional fields	2. Campos obrigatórios e opcionais
+3. Images (icon and background)	3. Imagens (ícone e fundo)
+3. Options	3. Opções
+3. PS5 with etaHEN: install the package from the USB drive with the package installer of your homebrew (for example the etaHEN debug settings or ItemzFlow).	3. PS5 com etaHEN: instale o pacote a partir do pendrive com o instalador de pacotes do seu homebrew (por exemplo as configurações de debug do etaHEN ou o ItemzFlow).
+4. Emulators	4. Emuladores
+4. Review	4. Revisão
+4. The game appears on the home screen with the icon you chose. If it does not start, write what happened in the History and try another emulator preset.	4. O jogo aparece na tela inicial com o ícone que você escolheu. Se ele não iniciar, anote o que aconteceu no Histórico e tente outra predefinição do emulador.
+5. Helpers that save time	5. Recursos que poupam tempo
+6. Install the package on the console	6. Instalar o pacote no console
+7. Wine (Linux and macOS)	7. Wine (Linux e macOS)
+8. Problems?	8. Problemas?
+9 characters, for example SLUS00594	9 caracteres, por exemplo SLUS00594
+9 characters, for example SLUS21258	9 caracteres, por exemplo SLUS21258
+9 characters, for example ULUS10041	9 caracteres, por exemplo ULUS10041
+A .txt file with extra emulator options. Its content is added at the end of config-title.txt. Only use it if you know the options.	Um arquivo .txt com opções extras do emulador. O conteúdo é adicionado ao final do config-title.txt. Use só se você conhece as opções.
+A .txt file with options added to the default config-title.txt. Only use it if you know the emulator options.	Um arquivo .txt com opções adicionadas ao config-title.txt padrão. Use só se você conhece as opções do emulador.
+A file is open in another program.	Um arquivo está aberto em outro programa.
+A file needed by the build was not found.	Um arquivo necessário para a criação não foi encontrado.
+A file path is too long for the publishing tool.	O caminho de um arquivo é longo demais para a ferramenta de publicação.
+A game file or the Tools folder may have been moved. Select the files again and keep the Tools folder next to the program.	Um arquivo do jogo ou a pasta Tools pode ter sido movido. Selecione os arquivos de novo e mantenha a pasta Tools ao lado do programa.
+A game specific .lua script (patches). Only use it if you have a script made for this game.	Um script .lua específico do jogo (patches). Use só se você tem um script feito para este jogo.
+Additional discs · optional	Discos adicionais · opcional
+Advanced configuration · optional	Configuração avançada · opcional
+Also replace the background with the one made from these images?	Substituir também o fundo pelo criado a partir destas imagens?
+Approximation of the console home screen. PSP packages have no default icon, so choosing one is recommended.	Aproximação da tela inicial do console. Pacotes de PSP não têm ícone padrão, então é recomendado escolher um.
+Approximation of the console home screen. Without an icon, the default icon of the emulator is used.	Aproximação da tela inicial do console. Sem um ícone, é usado o ícone padrão do emulador.
+Approximation of the console home screen. Without an icon, the default icon of the selected emulator is used.	Aproximação da tela inicial do console. Sem um ícone, é usado o ícone padrão do emulador escolhido.
+Back	Voltar
+Background	Fundo
+Background · 1920×1080	Fundo · 1920×1080
+Before building	Antes de criar
+Before the next step	Antes do próximo passo
+Best looking	Melhor imagem
+Browse…	Procurar…
+Build fPKG	Criar fPKG
+Build failed	Falha na criação
+Build result	Resultado
+Build result - PS Classics fPKG Builder	Resultado - PS Classics fPKG Builder
+Building… (this can take a few minutes)	Criando… (pode levar alguns minutos)
+Can raise the frame rate, but may cause glitches in some games.	Pode aumentar a taxa de quadros, mas pode causar falhas em alguns jogos.
+Cannot create fPKG	Não foi possível criar o fPKG
+Cannot decrypt the EBOOT.BIN file of the ISO.\nWarning: This game may not work!	Não foi possível descriptografar o EBOOT.BIN do ISO.\nAviso: este jogo pode não funcionar!
+Cannot find the game ID within the PS1 BIN file, do you want to use this file anyway ?\nDo not forget to specify a NP title and title if you do so.	O ID do jogo não foi encontrado no arquivo BIN de PS1. Deseja usar este arquivo mesmo assim?\nNesse caso, não esqueça de preencher o NP Title e o título.
+Cannot read the EBOOT.BIN file from the ISO.\nWarning: This game may not work!	Não foi possível ler o EBOOT.BIN do ISO.\nAviso: este jogo pode não funcionar!
+Check a .pkg	Verificar um .pkg
+Check again	Verificar de novo
+Check for new versions	Procurar novas versões
+Check that the Tools folder is complete. On Linux and macOS, check the Wine setup.	Confira se a pasta Tools está completa. No Linux e no macOS, confira a configuração do Wine.
+Check the package after building	Verificar o pacote depois de criar
+Check the summary, then press Build fPKG. Use Back to change something.	Confira o resumo e clique em Criar fPKG. Use Voltar para mudar algo.
+Check the technical details below. Try again; if it keeps failing, report it with the details (Copy button).	Veja os detalhes técnicos abaixo. Tente de novo; se continuar falhando, relate o problema com os detalhes (botão Copiar).
+Checking the package…	Verificando o pacote…
+Checking…	Verificando…
+Choose a preset or set the options yourself.	Escolha uma predefinição ou ajuste as opções você mesmo.
+Choose another output folder (for example in Documents) or move the app to a folder you own.	Escolha outra pasta de saída (por exemplo em Documentos) ou mova o app para uma pasta sua.
+Close	Fechar
+Close programs that may use the game or the package (emulators, players, antivirus scans) and try again.	Feche programas que possam estar usando o jogo ou o pacote (emuladores, players, verificações do antivírus) e tente de novo.
+Compress the discs in the package	Comprimir os discos no pacote
+Configs & memory card · optional	Configs e memory card · opcional
+Continue anyway?	Continuar mesmo assim?
+Copy	Copiar
+Copy report	Copiar relatório
+Could not find any PSP game information within the ISO file.\nDo you want to use this file anyway ?	Nenhuma informação de jogo de PSP foi encontrada no arquivo ISO.\nDeseja usar este arquivo mesmo assim?
+Could not find the PS2 game ID within the ISO file.\nDo you want to use this file anyway ?	O ID do jogo de PS2 não foi encontrado no arquivo ISO.\nDeseja usar este arquivo mesmo assim?
+Crashes	Trava
+Create a fake package from a .BIN game with its .CUE sheet (up to 4 discs). The game ID and title are detected from disc 1. Fields marked Required must be filled; the others can be left empty.	Crie um pacote fake a partir de um jogo .BIN com seu arquivo .CUE (até 4 discos). O ID e o título do jogo são detectados no disco 1. Campos marcados como Obrigatório precisam ser preenchidos; os outros podem ficar vazios.
+Create a fake package from a PSP .ISO game. The NP title is read from the disc and the title from the file name. Fields marked Required must be filled; the others can be left empty.	Crie um pacote fake a partir de um jogo .ISO de PSP. O NP Title é lido do disco e o título vem do nome do arquivo. Campos marcados como Obrigatório precisam ser preenchidos; os outros podem ficar vazios.
+Create a fake package from an .ISO game (up to 5 discs). Game ID, title and the available configs are detected from disc 1. Fields marked Required must be filled; the others can be left empty.	Crie um pacote fake a partir de um jogo .ISO (até 5 discos). O ID, o título e as configs disponíveis são detectados no disco 1. Campos marcados como Obrigatório precisam ser preenchidos; os outros podem ficar vazios.
+Creating the Wine prefix (first run, this can take a minute)...	Criando o prefixo do Wine (primeira execução, pode levar um minuto)...
+Custom config	Config personalizada
+Default settings that work for most games.	Configurações padrão que funcionam na maioria dos jogos.
+Default: 2x2 (sharper). Use None if the game runs slowly.	Padrão: 2x2 (mais nítido). Use None se o jogo ficar lento.
+Default: Jak v2. If the game does not start or crashes, try Rogue v1.	Padrão: Jak v2. Se o jogo não iniciar ou travar, tente o Rogue v1.
+Default: Normal. Use 16:9 for a widescreen TV if the picture looks squeezed.	Padrão: Normal. Use 16:9 em TV widescreen se a imagem parecer espremida.
+Details	Detalhes
+Disable instant VIF1 transfer	Desativar transferência VIF1 instantânea
+Disc 1	Disco 1
+Disc 2	Disco 2
+Disc 3	Disco 3
+Disc 4	Disco 4
+Disc 5	Disco 5
+Disc {0} was not found: {1}	O disco {0} não foi encontrado: {1}
+Discs	Discos
+Display mode	Modo de tela
+Does not start	Não inicia
+Download	Baixar
+Downloads the cover of the game by its ID and creates the icon and the background	Baixa a capa do jogo pelo ID e cria o ícone e o fundo
+EXPECTED FOR FAKE PACKAGES (Sony certification checks, safe to ignore)	ESPERADO EM PACOTES FAKE (regras de certificação da Sony, podem ser ignoradas)
+Emulate analog sticks	Emular analógicos
+Emulator	Emulador
+Emulator · optional	Emulador · opcional
+Enabled automatically when the database has a widescreen patch for this game.	Ativado automaticamente quando o banco de dados tem um patch widescreen para este jogo.
+Enables the GunCon light gun. Only for shooting games that use it.	Ativa a pistola GunCon. Só para jogos de tiro que a usam.
+Enables the multitap adapter, for games that play with more than two controllers. Leave it disabled unless the game asks for it.	Ativa o adaptador multitap, para jogos com mais de dois controles. Deixe desativado, a não ser que o jogo peça.
+Error: {0}	Erro: {0}
+Every package you build is listed here with the options you used. Write down how each one runs on the console to compare emulator settings.	Cada pacote que você cria aparece aqui com as opções usadas. Anote como cada um roda no console para comparar as configurações do emulador.
+Exactly 9 characters, without _ or -. Example: SLUS00594. It is the game ID and it is filled automatically when detected. Only upper case letters and digits.	Exatamente 9 caracteres, sem _ ou -. Exemplo: SLUS00594. É o ID do jogo e é preenchido automaticamente quando detectado. Só letras maiúsculas e números.
+Exactly 9 characters, without _ or -. Example: SLUS21258. Filled automatically from the game ID; if the ID is not detected, it is derived from the NP title you type.	Exatamente 9 caracteres, sem _ ou -. Exemplo: SLUS21258. Preenchido automaticamente a partir do ID do jogo; se o ID não for detectado, ele é obtido do NP Title que você digitar.
+Exactly 9 characters, without _ or -. Example: ULUS10041. Read from the disc when possible.	Exatamente 9 caracteres, sem _ ou -. Exemplo: ULUS10041. Lido do disco quando possível.
+Extra emulator options appended to config-title.txt	Opções extras do emulador adicionadas ao config-title.txt
+Fake packages only install on a console with homebrew enabled (a jailbroken PS4 or PS5). The app cannot do that part for you.	Pacotes fake só instalam em um console com homebrew ativado (PS4 ou PS5 desbloqueado). O app não faz essa parte por você.
+Fields marked Required must be filled, or the build stops with a message. Fields marked Optional can be left empty.	Campos marcados como Obrigatório precisam ser preenchidos, senão a criação para com uma mensagem. Campos marcados como Opcional podem ficar vazios.
+Fifth disc of the game. Optional.	Quinto disco do jogo. Opcional.
+Filter used to scale the image. None keeps the original look. The other filters smooth or sharpen it. Some filters look wrong in some games, so try them if the default looks poor.	Filtro usado para ampliar a imagem. None mantém o visual original. Os outros filtros suavizam ou deixam mais nítido. Alguns filtros ficam estranhos em certos jogos, então teste se o padrão não ficar bom.
+Find cover	Buscar capa
+Fix graphics	Corrigir gráficos
+For example: crashes after the menu, works with Rogue v1	Por exemplo: trava depois do menu, funciona com Rogue v1
+For games that only use the analog stick: makes the digital pad act as analog.	Para jogos que só usam o analógico: faz o direcional funcionar como analógico.
+Force 60 Hz	Forçar 60 Hz
+Forces 60 Hz output. Can make some games smoother; check that the picture is not broken.	Força a saída em 60 Hz. Pode deixar alguns jogos mais fluidos; confira se a imagem não fica quebrada.
+Fourth disc of the game. Optional.	Quarto disco do jogo. Opcional.
+Free some space or choose an output folder on another drive.	Libere espaço ou escolha uma pasta de saída em outro disco.
+Full check	Verificação completa
+Game	Jogo
+Game ID not found	ID do jogo não encontrado
+Game specific LUA script	Script LUA específico do jogo
+Game title	Título do jogo
+Guide	Guia
+Guide - PS Classics fPKG Builder	Guia - PS Classics fPKG Builder
+Help	Ajuda
+History	Histórico
+History - PS Classics fPKG Builder	Histórico - PS Classics fPKG Builder
+Home screen preview	Prévia da tela inicial
+How did it run on the console?	Como rodou no console?
+How the picture fills the screen. Normal keeps the original proportion. Full stretches it to the screen. 4:3 and 16:9 force that proportion.	Como a imagem preenche a tela. Normal mantém a proporção original. Full estica até a tela. 4:3 e 16:9 forçam essa proporção.
+How to create a fPKG	Como criar um fPKG
+How to install	Como instalar
+How to install Wine and winetricks:	Como instalar o Wine e o winetricks:
+ISO file	Arquivo ISO
+Icon	Ícone
+Icon & background · optional	Ícone e fundo · opcional
+Images from the disc	Imagens do disco
+Import an 8 MB PS2 memory card (.vm2, .ps2, .bin)	Importar um memory card de PS2 de 8 MB (.vm2, .ps2, .bin)
+Imports a PS2 memory card with your saves (8 MB). Use a .vm2, .ps2 or .bin file.	Importa um memory card de PS2 com seus saves (8 MB). Use um arquivo .vm2, .ps2 ou .bin.
+Improve speed	Melhorar velocidade
+Install Wine (64-bit, with 32-bit support) and winetricks from your distribution, for example:	Instale o Wine (64 bits, com suporte a 32 bits) e o winetricks da sua distribuição, por exemplo:
+Install Wine and winetricks with Homebrew (https://brew.sh):	Instale o Wine e o winetricks com o Homebrew (https://brew.sh):
+Install Wine and winetricks, then press 'Wine setup' at the bottom left.	Instale o Wine e o winetricks e depois clique em 'Configurar Wine' no canto inferior esquerdo.
+Installing the Visual C++ 2008 runtime with winetricks (downloads it from Microsoft)...	Instalando o runtime do Visual C++ 2008 com o winetricks (baixado da Microsoft)...
+Internal rendering scale. Higher values look sharper but need more from the console. The default (2) is a good balance.	Escala de renderização interna. Valores maiores ficam mais nítidos, mas exigem mais do console. O padrão (2) é um bom equilíbrio.
+Keep Disabled unless the game needs more than two controllers.	Mantenha Disabled, a não ser que o jogo precise de mais de dois controles.
+LUA config from database	Config LUA do banco de dados
+Language	Idioma
+Language, step-by-step mode, package check and updates	Idioma, modo passo a passo, verificação de pacote e atualizações
+Later	Depois
+Memory card	Memory card
+Most compatible	Mais compatível
+Move the game to a short folder (for example C:\Games) and choose a short output folder.	Mova o jogo para uma pasta de caminho curto (por exemplo C:\Jogos) e escolha uma pasta de saída curta.
+Multitap	Multitap
+Name shown on the home screen	Nome exibido na tela inicial
+Next	Próximo
+No	Não
+No cover was found for {0}. Choose an image yourself.	Nenhuma capa foi encontrada para {0}. Escolha uma imagem você mesmo.
+No game title specified.	Nenhum título de jogo informado.
+No image? Find the cover of the game online (needs the game ID).	Sem imagem? Busque a capa do jogo na internet (precisa do ID do jogo).
+No image? Use the icon and background stored on the PSP disc.	Sem imagem? Use o ícone e o fundo gravados no disco do PSP.
+No packages built yet.	Nenhum pacote criado ainda.
+No problems found	Nenhum problema encontrado
+None keeps the original image. Bilinear and Edgesmooth smooth it; Point keeps hard pixels.	None mantém a imagem original. Bilinear e Edgesmooth suavizam; Point mantém os pixels marcados.
+Not enough free space on {0}: about {1} needed, {2} free.	Espaço livre insuficiente em {0}: são necessários cerca de {1}, há {2} livres.
+Not tested yet	Ainda não testado
+Notes	Anotações
+OK	OK
+Once a day the app asks GitHub for the latest version number. Nothing else is sent.	Uma vez por dia o app pergunta ao GitHub qual é a versão mais recente. Nada mais é enviado.
+Only for games with more than one disc (up to 5 in total).	Só para jogos com mais de um disco (até 5 no total).
+Only for games with more than one disc. Each disc needs its own .CUE sheet.	Só para jogos com mais de um disco. Cada disco precisa do seu próprio arquivo .CUE.
+Open Wine setup	Abrir configuração do Wine
+Open folder	Abrir pasta
+Optional	Opcional
+Optional .BIN file	Arquivo .BIN opcional
+Optional .ISO file	Arquivo .ISO opcional
+Options used	Opções usadas
+Original resolution and safer emulation. Try it when a game freezes, crashes or shows glitches.	Resolução original e emulação mais segura. Tente quando um jogo congela, trava ou mostra falhas.
+Original resolution. Try it when a game runs slowly or shows glitches.	Resolução original. Tente quando um jogo fica lento ou mostra falhas.
+Other emulator (Rogue v1)	Outro emulador (Rogue v1)
+Output folder: {0}	Pasta de saída: {0}
+PACKAGE INFO	INFORMAÇÕES DO PACOTE
+PKG created!\nDo you want to open the output folder ?	PKG criado!\nDeseja abrir a pasta de saída?
+PNG, JPG, BMP, GIF, WebP (optional)	PNG, JPG, BMP, GIF, WebP (opcional)
+PNG, JPG, BMP, GIF, WebP (recommended)	PNG, JPG, BMP, GIF, WebP (recomendado)
+PROBLEMS (may stop the package from installing or running)	PROBLEMAS (podem impedir o pacote de instalar ou rodar)
+PS2 Game ID not found	ID do jogo de PS2 não encontrado
+PS3 config from database	Config de PS3 do banco de dados
+PSP packages do not use LUA configs.	Pacotes de PSP não usam configs LUA.
+Package check	Verificação do pacote
+Package check - PS Classics fPKG Builder	Verificação do pacote - PS Classics fPKG Builder
+Package created, but the check found problems	Pacote criado, mas a verificação encontrou problemas
+Package: {0}	Pacote: {0}
+Packages you built, the options you used and how they run on the console	Pacotes que você criou, as opções usadas e como rodam no console
+Pick a platform on the left, fill the fields and press Build fPKG. Every field has a help button (i) that explains it.	Escolha uma plataforma à esquerda, preencha os campos e clique em Criar fPKG. Cada campo tem um botão de ajuda (i) que explica para que serve.
+Please select an output folder	Selecione uma pasta de saída
+Preset	Predefinição
+Press 'Wine setup' at the bottom left and then 'Set up Wine'.	Clique em 'Configurar Wine' no canto inferior esquerdo e depois em 'Preparar o Wine'.
+Press Browse… next to Disc 1, or drag the game onto the window.	Clique em Procurar… ao lado de Disco 1, ou arraste o jogo para a janela.
+Put the .cue file next to the .bin file, with the same name.	Coloque o arquivo .cue ao lado do .bin, com o mesmo nome.
+Put {0} next to the .BIN file (same name, .cue extension).	Coloque {0} ao lado do arquivo .BIN (mesmo nome, extensão .cue).
+Ready	Pronto
+Ready-made settings. Choose one to fill the options below at once; you can still change any option afterwards.	Configurações prontas. Escolha uma para preencher as opções abaixo de uma vez; você ainda pode mudar qualquer opção depois.
+Recommended	Recomendado
+Recommended. Fixes graphic glitches in many games.	Recomendado. Corrige falhas gráficas em muitos jogos.
+Recommended. Makes the package smaller. Turn it off only to speed up the build.	Recomendado. Deixa o pacote menor. Desative só para acelerar a criação.
+Remove from history	Remover do histórico
+Remove this entry from the history? The package file is not deleted.	Remover este item do histórico? O arquivo do pacote não é apagado.
+Renders the game at a higher internal resolution. 2x2 looks sharper but needs a stronger machine. None keeps the original resolution.	Renderiza o jogo numa resolução interna maior. 2x2 fica mais nítido, mas exige mais do console. None mantém a resolução original.
+Required	Obrigatório
+Restart the emulator when the disc changes	Reiniciar o emulador ao trocar de disco
+Restarts the emulator when you switch discs. Use it for multi-disc games that do not switch discs by themselves.	Reinicia o emulador quando você troca de disco. Use em jogos com vários discos que não trocam de disco sozinhos.
+Result: no problems found.	Resultado: nenhum problema encontrado.
+Result: {0} problem(s) found.	Resultado: {0} problema(s) encontrado(s).
+Review	Revisão
+Rogue v1 selected. If the game does not start or crashes, switch back to Jak v2 (the default).	Rogue v1 selecionado. Se o jogo não iniciar ou travar, volte para o Jak v2 (o padrão).
+Runs a quick check of every new package and tells you if something is wrong.	Faz uma verificação rápida de cada pacote novo e avisa se algo estiver errado.
+Runs the SDK checker on the package (can take minutes on large games)	Roda o verificador do SDK no pacote (pode levar minutos em jogos grandes)
+Save	Salvar
+Searching…	Buscando…
+Second disc of the game. Optional.	Segundo disco do jogo. Opcional.
+Select the .BIN file of the game	Selecione o arquivo .BIN do jogo
+Select the .ISO file of the game	Selecione o arquivo .ISO do jogo
+Select the ISO file of the game first.	Selecione primeiro o arquivo ISO do jogo.
+Select the game file first.	Selecione primeiro o arquivo do jogo.
+Select the game first: the game ID (or the NP title) is needed to find its cover.	Selecione o jogo primeiro: o ID do jogo (ou o NP Title) é necessário para buscar a capa.
+Set up Wine	Preparar o Wine
+Settings	Configurações
+Settings - PS Classics fPKG Builder	Configurações - PS Classics fPKG Builder
+Setup progress appears here.	O progresso da configuração aparece aqui.
+Sharper picture (4x). Use it if the game still runs at full speed.	Imagem mais nítida (4x). Use se o jogo continuar rodando na velocidade normal.
+Sharper picture and the widescreen patch when the database has one.	Imagem mais nítida e o patch widescreen quando o banco de dados tiver um.
+Show summary	Mostrar resumo
+Show tool output	Mostrar saída da ferramenta
+Shows one step at a time (Game, Images, Options, Review) with Next and Back buttons. Recommended for beginners.	Mostra um passo de cada vez (Jogo, Imagens, Opções, Revisão) com botões Próximo e Voltar. Recomendado para iniciantes.
+Skip	Pular
+Skip boot logo	Pular logo de inicialização
+Skips the Sony logo at startup.	Pula o logo da Sony ao iniciar.
+Start the app from your desktop session, not from a remote terminal.	Abra o app pela sua área de trabalho, não por um terminal remoto.
+Step-by-step mode	Modo passo a passo
+TXT config from database	Config TXT do banco de dados
+Technical details	Detalhes técnicos
+The 'Tools' folder was not found at:\n{0}\n\nBuilding fPKGs will fail until it is copied next to the application (see README.md, 'Building from source').	A pasta 'Tools' não foi encontrada em:\n{0}\n\nA criação de fPKGs vai falhar até ela ser copiada para junto do aplicativo (veja o README.md, 'Building from source').
+The .BIN file of the game. It needs a .CUE sheet with the same name in the same folder. The game ID and title are read from this disc.	O arquivo .BIN do jogo. Ele precisa de um arquivo .CUE com o mesmo nome na mesma pasta. O ID e o título do jogo são lidos deste disco.
+The .BIN file of this .CUE was not found next to it.	O arquivo .BIN deste .CUE não foi encontrado ao lado dele.
+The .CUE file of disc {0} is missing.	Falta o arquivo .CUE do disco {0}.
+The .CUE file of the game is missing.	Falta o arquivo .CUE do jogo.
+The .ISO file of the PSP game. The NP title and the title are read from it when possible.	O arquivo .ISO do jogo de PSP. O NP Title e o título são lidos dele quando possível.
+The .ISO file of the game. The game ID, title and the available database configs are read from this disc.	O arquivo .ISO do jogo. O ID, o título e as configs disponíveis no banco de dados são lidos deste disco.
+The ISO file was not found: {0}	O arquivo ISO não foi encontrado: {0}
+The NP title has {0} characters, it must have exactly 9.	O NP Title tem {0} caracteres; precisa ter exatamente 9.
+The PS1 emulator is fixed (ps1hd), so there is nothing to choose here. The options below only change how it runs.	O emulador de PS1 é fixo (ps1hd), então não há o que escolher aqui. As opções abaixo só mudam como ele roda.
+The PS2 game ID could not be found.	O ID do jogo de PS2 não foi encontrado.
+The PS4 publishing tools are Windows programs and run through Wine on this system. Wine is not ready yet.\n\nOpen the Wine setup now?	As ferramentas de publicação do PS4 são programas de Windows e rodam pelo Wine neste sistema. O Wine ainda não está pronto.\n\nAbrir a configuração do Wine agora?
+The PS4 publishing tools are Windows programs. On Linux and macOS the app runs them through Wine, in a Wine folder of its own. This only has to be done once.	As ferramentas de publicação do PS4 são programas de Windows. No Linux e no macOS o app as roda pelo Wine, numa pasta do Wine só dele. Isso só precisa ser feito uma vez.
+The PS4 publishing tools are Windows programs: on Linux and macOS the app runs them through Wine. Install Wine and winetricks once, then press 'Wine setup' in the app: it prepares a Wine folder for the app and installs the Visual C++ 2008 runtime the tools need. The status at the bottom left tells you when everything is ready.	As ferramentas de publicação do PS4 são programas de Windows: no Linux e no macOS o app as roda pelo Wine. Instale o Wine e o winetricks uma vez e clique em 'Configurar Wine' no app: ele prepara uma pasta do Wine para o app e instala o runtime do Visual C++ 2008 que as ferramentas precisam. O status no canto inferior esquerdo avisa quando tudo estiver pronto.
+The PS4 tools run through Wine on Linux and macOS. Check and prepare it here.	As ferramentas do PS4 rodam pelo Wine no Linux e no macOS. Verifique e prepare aqui.
+The PSP emulator is fixed (psphd), so there is nothing to choose here. Use the field below only if you know which options you need.	O emulador de PSP é fixo (psphd), então não há o que escolher aqui. Use o campo abaixo só se você souber quais opções precisa.
+The SDK checker did not run: {0}	O verificador do SDK não rodou: {0}
+The Tools folder was not found at {0}.	A pasta Tools não foi encontrada em {0}.
+The Visual C++ 2008 runtime is missing in Wine.	Falta o runtime do Visual C++ 2008 no Wine.
+The app is not allowed to write to a folder.	O app não tem permissão para gravar em uma pasta.
+The background could not be read.	Não foi possível ler o fundo.
+The background is {0}×{1}: it will be stretched to {2}×{3}.	O fundo tem {0}×{1}: ele será esticado para {2}×{3}.
+The background is {0}×{1}: it will be upscaled to {2}×{3} and may look blurry.	O fundo tem {0}×{1}: ele será ampliado para {2}×{3} e pode ficar borrado.
+The background was not found: {0}	O fundo não foi encontrado: {0}
+The cover could not be downloaded: {0}	Não foi possível baixar a capa: {0}
+The disk is full.	O disco está cheio.
+The emulator that runs the game. Jak v2 is the default. If a game does not start or crashes, try the other emulator. Each game may work better with one of them.	O emulador que roda o jogo. O Jak v2 é o padrão. Se um jogo não iniciar ou travar, tente o outro emulador. Cada jogo pode funcionar melhor com um deles.
+The fPKG could not be created	Não foi possível criar o fPKG
+The file could not be read as a PS4 package: {0}	Não foi possível ler o arquivo como pacote de PS4: {0}
+The file of the field '{0}' was not found: {1}	O arquivo do campo '{0}' não foi encontrado: {1}
+The file size ({0} bytes) is different from the size in the package header ({1} bytes): the file is incomplete or damaged.	O tamanho do arquivo ({0} bytes) é diferente do tamanho no cabeçalho do pacote ({1} bytes): o arquivo está incompleto ou danificado.
+The folder of this package no longer exists.	A pasta deste pacote não existe mais.
+The icon could not be read.	Não foi possível ler o ícone.
+The icon is {0}×{1}: it will be stretched to {2}×{3}.	O ícone tem {0}×{1}: ele será esticado para {2}×{3}.
+The icon is {0}×{1}: it will be upscaled to {2}×{3} and may look blurry.	O ícone tem {0}×{1}: ele será ampliado para {2}×{3} e pode ficar borrado.
+The icon or the background could not be read.	Não foi possível ler o ícone ou o fundo.
+The icon was not found: {0}	O ícone não foi encontrado: {0}
+The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to 1920×1080. A 16:9 image avoids distortion.	A imagem atrás do jogo na tela inicial. Aceita PNG, JPG, BMP, GIF e WebP. É convertida para 1920×1080. Uma imagem 16:9 evita distorção.
+The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the emulator.	A imagem exibida no bloco do jogo. Aceita PNG, JPG, BMP, GIF e WebP. É convertida para um PNG de 512×512. Deixe vazio para usar o ícone padrão do emulador.
+The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the selected emulator.	A imagem exibida no bloco do jogo. Aceita PNG, JPG, BMP, GIF e WebP. É convertida para um PNG de 512×512. Deixe vazio para usar o ícone padrão do emulador escolhido.
+The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Recommended: PSP packages have no default icon, so without one the tile stays empty.	A imagem exibida no bloco do jogo. Aceita PNG, JPG, BMP, GIF e WebP. É convertida para um PNG de 512×512. Recomendado: pacotes de PSP não têm ícone padrão, então sem ele o bloco fica vazio.
+The memory card is {0}, PS2 memory cards are 8 MB.	O memory card tem {0}; memory cards de PS2 têm 8 MB.
+The name shown on the PS4/PS5 home screen. Filled from the file name; you can change it.	O nome exibido na tela inicial do PS4/PS5. Preenchido a partir do nome do arquivo; você pode mudar.
+The name shown on the PS4/PS5 home screen. It is filled automatically when the game is recognized, and you can change it.	O nome exibido na tela inicial do PS4/PS5. É preenchido automaticamente quando o jogo é reconhecido, e você pode mudar.
+The options under the emulator (upscaling, uprender, display mode, fixes) are optional. Start with the defaults; change one option at a time if a game has problems.	As opções do emulador (upscaling, uprender, modo de tela, correções) são opcionais. Comece com o padrão; mude uma opção de cada vez se um jogo tiver problemas.
+The package could not be checked:\n{0}	Não foi possível verificar o pacote:\n{0}
+The package has no icon0.png: the game tile will be empty or the console may refuse it.	O pacote não tem icon0.png: o bloco do jogo ficará vazio ou o console pode recusá-lo.
+The package has no param.sfo.	O pacote não tem param.sfo.
+The package is well formed. Sony certification rules that fake packages never meet are listed below and can be ignored.	O pacote está bem formado. As regras de certificação da Sony que pacotes fake nunca cumprem aparecem abaixo e podem ser ignoradas.
+The package may not install or run. See the details below.	O pacote pode não instalar ou não rodar. Veja os detalhes abaixo.
+The package was created and the quick check found no problems. Copy it to the console to install it.	O pacote foi criado e a verificação rápida não encontrou problemas. Copie para o console para instalar.
+The package was created. Copy it to the console to install it.	O pacote foi criado. Copie para o console para instalar.
+The project generator (gengp4) failed.	O gerador de projeto (gengp4) falhou.
+The publishing tool rejected the title or the NP title.	A ferramenta de publicação recusou o título ou o NP Title.
+The publishing tool stopped with an error.	A ferramenta de publicação parou com um erro.
+The second emulator. Try it when the game does not start or crashes with the recommended settings.	O segundo emulador. Tente quando o jogo não iniciar ou travar com as configurações recomendadas.
+The setup did not finish. Check the messages above.	A configuração não terminou. Veja as mensagens acima.
+The whole app changes language at once.	O app inteiro muda de idioma na hora.
+Then press 'Set up Wine' in the app.	Depois clique em 'Preparar o Wine' no app.
+These findings may stop the package from installing or running. Details below.	Estes problemas podem impedir o pacote de instalar ou rodar. Detalhes abaixo.
+Third disc of the game. Optional.	Terceiro disco do jogo. Opcional.
+This disc has no icon. Choose an image yourself.	Este disco não tem ícone. Escolha uma imagem você mesmo.
+This file type is not supported: {0}	Este tipo de arquivo não é suportado: {0}
+Tip: 2 is the default. Use 6 or 4 only if the game runs at full speed with it.	Dica: 2 é o padrão. Use 6 ou 4 só se o jogo rodar na velocidade normal com eles.
+Tip: drag and drop the game file, images or configs anywhere on this window.	Dica: arraste e solte o arquivo do jogo, imagens ou configs em qualquer lugar desta janela.
+Tip: write in the History how the game runs on the console. It helps to compare emulator settings.	Dica: anote no Histórico como o jogo roda no console. Isso ajuda a comparar configurações do emulador.
+Title	Título
+Tools folder found	Pasta Tools encontrada
+Tools folder missing	Pasta Tools não encontrada
+Try it if the game freezes or has strange sound or picture.	Tente se o jogo congelar ou tiver som ou imagem estranhos.
+Try it if there are graphic failures that the other options do not fix.	Tente se houver falhas gráficas que as outras opções não corrigem.
+Type the NP title of the game (9 characters, for example SLUS21258).	Digite o NP Title do jogo (9 caracteres, por exemplo SLUS21258).
+Type the name that the home screen will show.	Digite o nome que a tela inicial vai mostrar.
+Unknown PSP ISO file	Arquivo ISO de PSP desconhecido
+Uprender	Uprender
+Upscaling	Upscaling
+Use a PNG, JPG, BMP, GIF or WebP image, or leave the field empty.	Use uma imagem PNG, JPG, BMP, GIF ou WebP, ou deixe o campo vazio.
+Use only letters and digits in the NP title and avoid special symbols in the title.	Use só letras e números no NP Title e evite símbolos especiais no título.
+Uses the PS3 config of this game from the list of the app, when it exists.	Usa a config de PS3 deste jogo da lista do app, quando existir.
+Uses the icon and background stored on the PSP disc	Usa o ícone e o fundo gravados no disco do PSP
+Uses the list of the app for this game, when it exists.	Usa a lista do app para este jogo, quando existir.
+Verifies a generated .pkg with the SDK checker and tells you if something is wrong	Verifica um .pkg gerado com o verificador do SDK e avisa se algo estiver errado
+Version {0} is available.	A versão {0} está disponível.
+Visual C++ 2008 runtime (needed by the tools)	Runtime do Visual C++ 2008 (necessário para as ferramentas)
+WARNINGS	AVISOS
+Warning	Aviso
+Widescreen patch	Patch widescreen
+Wine could not open a window (no display was found).	O Wine não conseguiu abrir uma janela (nenhuma tela foi encontrada).
+Wine folder of the app: {0}	Pasta do Wine do app: {0}
+Wine is not installed or was not found.	O Wine não está instalado ou não foi encontrado.
+Wine is not ready	O Wine não está pronto
+Wine is not ready yet: check the messages above.	O Wine ainda não está pronto: veja as mensagens acima.
+Wine is not ready, so the PS4 tools cannot run. Press 'Wine setup' at the bottom left and follow the steps.	O Wine não está pronto, então as ferramentas do PS4 não podem rodar. Clique em 'Configurar Wine' no canto inferior esquerdo e siga os passos.
+Wine is not ready. Press 'Wine setup' first.	O Wine não está pronto. Clique em 'Configurar Wine' primeiro.
+Wine is ready.	O Wine está pronto.
+Wine needs setup	O Wine precisa ser configurado
+Wine not found	Wine não encontrado
+Wine ready	Wine pronto
+Wine setup	Configurar Wine
+Wine setup - PS Classics fPKG Builder	Configurar Wine - PS Classics fPKG Builder
+Wine was not found.	O Wine não foi encontrado.
+Wine: not found	Wine: não encontrado
+Works	Funciona
+Works with problems	Funciona com problemas
+Yes	Sim
+You can also send the package over the network with a remote package installer; see the documentation of your homebrew.	Você também pode enviar o pacote pela rede com um instalador remoto de pacotes; veja a documentação do seu homebrew.
+You can still change any option below.	Você ainda pode mudar qualquer opção abaixo.
+You do not need to convert images first. The app accepts PNG, JPG, BMP, GIF and WebP and converts them to PNG:	Não é preciso converter as imagens antes. O app aceita PNG, JPG, BMP, GIF e WebP e converte para PNG:
+Your own LUA script (replaces the database script)	Seu próprio script LUA (substitui o script do banco de dados)
+Your own LUA script with patches. It replaces the database script. Only use it if you have a script made for this game.	Seu próprio script LUA com patches. Ele substitui o script do banco de dados. Use só se você tem um script feito para este jogo.
+Your own config (replaces the database config)	Sua própria config (substitui a config do banco de dados)
+Your own emulator options file. It replaces the database TXT config. Leave it empty to use the database one (when the box above is checked).	Seu próprio arquivo de opções do emulador. Ele substitui a config TXT do banco de dados. Deixe vazio para usar a do banco (quando a caixa acima estiver marcada).
+Your package is ready	Seu pacote está pronto
+config-title.txt options appended to the default config	Opções do config-title.txt adicionadas à config padrão
+default of the emulator	padrão do emulador
+none	nenhum
+none (empty tile)	nenhum (bloco vazio)
+winetricks was not found: install it to set up the Visual C++ 2008 runtime.	O winetricks não foi encontrado: instale-o para configurar o runtime do Visual C++ 2008.
+winetricks: not found	winetricks: não encontrado
+{0} problem(s) found	{0} problema(s) encontrado(s)
+• A yellow warning under the preview is about an image, not an error: it is only a suggestion.	• Um aviso amarelo abaixo da prévia é sobre uma imagem, não um erro: é só uma sugestão.
+• After building, the package is checked automatically and the History keeps the options you used, so you can compare what works.	• Depois de criar, o pacote é verificado automaticamente e o Histórico guarda as opções usadas, para você comparar o que funciona.
+• Background: 1920×1080 pixels. A 16:9 image avoids distortion.	• Fundo: 1920×1080 pixels. Uma imagem 16:9 evita distorção.
+• Before building, the app checks the files, the NP title and the free disk space, and tells you how to fix each problem.	• Antes de criar, o app confere os arquivos, o NP Title e o espaço livre no disco, e diz como corrigir cada problema.
+• Check the NP Title: it must have exactly 9 characters, without _ or -.	• Confira o NP Title: ele precisa ter exatamente 9 caracteres, sem _ ou -.
+• Drag and drop: drop the game (.bin, .cue or .iso), images, configs or a .pkg anywhere on the window. The app puts each file in the right field.	• Arrastar e soltar: solte o jogo (.bin, .cue ou .iso), imagens, configs ou um .pkg em qualquer lugar da janela. O app coloca cada arquivo no campo certo.
+• Find cover (PS1 and PS2): downloads the cover of the game by its ID and creates the icon and the background. PSP: 'Images from the disc' uses the icon and background stored on the disc.	• Buscar capa (PS1 e PS2): baixa a capa do jogo pelo ID e cria o ícone e o fundo. PSP: 'Imagens do disco' usa o ícone e o fundo gravados no disco.
+• Icon: 512×512 pixels. A square image avoids distortion.	• Ícone: 512×512 pixels. Uma imagem quadrada evita distorção.
+• If a game does not work on the console, note the emulator and the options you used and try changing one option at a time.	• Se um jogo não funcionar no console, anote o emulador e as opções usadas e tente mudar uma opção de cada vez.
+• If the app says the Tools folder is missing, keep the Tools folder next to the program (see the README).	• Se o app disser que a pasta Tools não existe, mantenha a pasta Tools ao lado do programa (veja o README).
+• Optional: choose an icon and a background.	• Opcional: escolha um ícone e um fundo.
+• PS1: Disc 1, Title, NP Title. Optional: icon, background, discs 2 to 4, emulator options, TXT and LUA configs.	• PS1: Disco 1, Título, NP Title. Opcional: ícone, fundo, discos 2 a 4, opções do emulador, configs TXT e LUA.
+• PS1: the emulator is fixed (ps1hd). The options only change how it runs.	• PS1: o emulador é fixo (ps1hd). As opções só mudam como ele roda.
+• PS2: Disc 1, Title, NP Title. Optional: icon, background, discs 2 to 5, emulator options, database configs, your own TXT or LUA config, memory card.	• PS2: Disco 1, Título, NP Title. Opcional: ícone, fundo, discos 2 a 5, opções do emulador, configs do banco de dados, sua própria config TXT ou LUA, memory card.
+• PS2: choose between Jak v2 (the default) and Rogue v1. If a game does not start or crashes, try the other one.	• PS2: escolha entre Jak v2 (o padrão) e Rogue v1. Se um jogo não iniciar ou travar, tente o outro.
+• PSP: ISO file, Title, NP Title. Optional: icon, background, custom config.	• PSP: arquivo ISO, Título, NP Title. Opcional: ícone, fundo, config personalizada.
+• PSP: the emulator is fixed (psphd).	• PSP: o emulador é fixo (psphd).
+• Presets: in the Emulator section, choose Recommended, Most compatible or Best looking instead of changing each option.	• Predefinições: na seção Emulador, escolha Recomendado, Mais compatível ou Melhor imagem em vez de mudar cada opção.
+• Press Build fPKG and choose the output folder. The package is created there.	• Clique em Criar fPKG e escolha a pasta de saída. O pacote é criado lá.
+• Select Disc 1 (the BIN file for PS1, the ISO for PS2 and PSP). The game ID and the title are filled in when the game is recognized.	• Selecione o Disco 1 (o arquivo BIN no PS1, o ISO no PS2 e no PSP). O ID e o título do jogo são preenchidos quando o jogo é reconhecido.
+• Step-by-step mode (Settings): shows one step at a time with Next and Back buttons.	• Modo passo a passo (Configurações): mostra um passo de cada vez com botões Próximo e Voltar.
+• The preview on the right shows what the home screen will look like and warns when an image will be stretched or enlarged. For animated GIFs only the first frame is used.	• A prévia à direita mostra como ficará a tela inicial e avisa quando uma imagem será esticada ou ampliada. Em GIFs animados só o primeiro quadro é usado.
+• Use 'Check a .pkg' to verify a package you created.	• Use 'Verificar um .pkg' para conferir um pacote que você criou.
+Select a PS1 BIN file.	Selecione um arquivo BIN de PS1.
+Select a PS2 ISO file.	Selecione um arquivo ISO de PS2.
+Select a PSP ISO file.	Selecione um arquivo ISO de PSP.
+Select a TXT config file.	Selecione um arquivo de config TXT.
+Select a LUA config file.	Selecione um arquivo de config LUA.
+Select a PS2 Memory Card file.	Selecione um arquivo de memory card de PS2.
+Select a config-title.txt file.	Selecione um arquivo config-title.txt.
+Select the .pkg to check.	Selecione o .pkg para verificar.
+Select an image for the icon (PNG, JPG, BMP, GIF or WebP).	Selecione uma imagem para o ícone (PNG, JPG, BMP, GIF ou WebP).
+Select an image for the background (PNG, JPG, BMP, GIF or WebP).	Selecione uma imagem para o fundo (PNG, JPG, BMP, GIF ou WebP).
+This game is Libcrypt protected. Do you want to add --libcrypt to the configuration file ?	Este jogo tem proteção Libcrypt. Deseja adicionar --libcrypt ao arquivo de configuração?
+Libcrypt	Libcrypt

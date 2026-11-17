@@ -28,14 +28,19 @@ Shared/PSClassics.Core/                      lógica (RootNamespace PS_Classics_
   Platform.vb                                Platform (OS, caminho Wine Z:\), ToolRunner (exe direto ou via wine), Wine (achar, status, setup)
   ProcessRunner.vb                           ProcessRunner + PkgTools (gengp4 / orbis-pub-cmd)
   PackageVerifier.vb                         checagem de .pkg (img_verify + estrutura via LibOrbisPkg)
+  Localizer.vb Localization/pt-BR.tsv         tradução da UI (texto em inglês = chave; TAB; tradução). Usado pelas duas UIs
+  AppSettings.vb BuildHistory.vb             preferências e histórico (JSON em AppPaths.DataDirectory)
+  BuildPreflight.vb ErrorExplainer.vb        checagens antes do build (com a correção) e erros explicados em linguagem simples
+  EmulatorPresets.vb CoverArt.vb             predefinições do emulador; capas (xlenore/psx-covers e ps2-covers) e imagens do disco PSP
+  UpdateChecker.vb DroppedFiles.vb           aviso de nova versão (API do GitHub); classificação de arquivos arrastados
   AppPaths.vb FileUtils.vb
 Shared/PSClassics.Core.Tests/                xUnit (C#): unidade + integração com as ferramentas reais
-Windows/PS Classics fPKG Builder/            app WPF: PSClassicsfPKGBuilder.xaml(.vb), DashPreview, FieldLabel, GuideWindow, PackageReportWindow
+Windows/PS Classics fPKG Builder/            app WPF: PSClassicsfPKGBuilder.xaml(.vb), DashPreview, FieldLabel, StepBar, UiTranslator, janelas (Guide, PackageReport, BuildResult, History, Settings)
 Windows/PS Classics fPKG Builder.Tests/      testes de UI do WPF (preview, FieldLabel)
 Windows/PkgCheck/                            PkgCheck (linha de comando, net10.0, roda em todo OS); vai em todo release
-CrossPlatform/PSClassicsfPKGBuilder/         app Avalonia: MainWindow, Controls/ (DashPreview, FieldLabel), Dialogs/ (Guide, PackageReport, WineSetup, MessageDialog), Styles.axaml
+CrossPlatform/PSClassicsfPKGBuilder/         app Avalonia: MainWindow, UiTranslator, Controls/ (DashPreview, FieldLabel, StepBar), Dialogs/ (Guide, PackageReport, BuildResult, History, Settings, WineSetup, MessageDialog), Styles.axaml
 scripts/build-release.ps1                    release Windows (zip, 7-Zip)
-scripts/build-release.sh                     release Linux (tar.gz) e macOS (.app ad-hoc assinado em zip)
+scripts/build-release.sh                     release Linux (zip) e macOS (.app ad-hoc assinado em zip)
 .github/workflows/ci.yml                     Windows + Linux/macOS (build e testes) + integração no Linux com Wine
 .github/workflows/release-packages.yml       manual: gera os 4 pacotes como artefatos (não publica release)
 external/LibOrbisPkg/                        submódulo git (LGPL-3.0)
@@ -90,6 +95,8 @@ dotnet run --project CrossPlatform/PSClassicsfPKGBuilder
 8. **Paridade das UIs:** WPF e Avalonia têm os mesmos campos, textos, dicas e ordem. Mudou um, mude o outro (e o `GuideWindow` dos dois).
 9. **GP4:** editado por `Gp4Editor` (cabeçalho 1.1→1.0, `default_id` 1→0, entradas antes de `</files>`). Preserve esses ajustes.
 10. **Interface:** WPF-UI 4.x no Windows; no Avalonia, `Styles.axaml` reproduz o visual (tema escuro, azul `#0070D1`, cards, `Expander.section`, `RadioButton.mode`). Os `x:Name` são usados pelo code-behind e pela automação de testes/screenshots: **não renomeie**. Depois de mexer em XAML, abra o app (ícones e estilos só falham em runtime).
+11. **Textos visíveis:** escreva em inglês e traduza com `Localizer.T("...")` / `Localizer.F("... {0}", x)` (VB não tem escape de quebra de linha: escreva a barra-n literal dentro da string, o `T` converte). XAML fica em inglês: o `UiTranslator` de cada app traduz a janela (combo box items não são traduzidos: são valores). Todo texto novo precisa de uma linha em `Shared/PSClassics.Core/Localization/pt-BR.tsv`; o teste `TranslationCoverageTests` varre o XAML e o código dos dois apps e falha listando o que falta.
+12. **Recursos para iniciantes** (2.2): modo passo a passo (`StepBar` + seções nomeadas `<Plataforma>GameSection`...), arrastar e soltar, buscar capa, predefinições, preflight, janela de resultado (`BuildResultWindow`), histórico, configurações e aviso de atualização existem nos dois apps com os mesmos nomes. Mudou um, mude o outro.
 
 ## Pendências e riscos conhecidos
 

@@ -29,6 +29,11 @@ Where things are
   The packages are saved in the folder you choose. Temporary build files are kept in
   ~/Library/Application Support/PSClassicsfPKGBuilder (the Cache folder can be deleted at any time).
 
+Using the app
+  The Guide button explains every field. Settings: language (English / Português), step-by-step mode,
+  package check after building, update notice. History: the packages you built and how they ran on the console.
+  Tip: drag and drop the game (.bin, .cue, .iso), images or a .pkg anywhere on the window.
+
 PkgCheck (command line), inside the app bundle:
   "/Applications/PS Classics fPKG Builder.app/Contents/MacOS/PkgCheck" game.pkg [--quick] [--tool-output]
   Exit code: 0 = no problems, 1 = problems found, 2 = the check could not run.

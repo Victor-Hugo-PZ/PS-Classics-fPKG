@@ -23,15 +23,15 @@ public partial class PackageReportWindow : Window
         {
             ResultIcon.Kind = MaterialIconKind.CheckCircle;
             ResultIcon.Foreground = new SolidColorBrush(Color.Parse("#6CCB5F"));
-            ResultTitle.Text = "No problems found";
-            ResultSubtitle.Text = "The package is well formed. Sony certification rules that fake packages never meet are listed below and can be ignored.";
+            ResultTitle.Text = Localizer.T("No problems found");
+            ResultSubtitle.Text = Localizer.T("The package is well formed. Sony certification rules that fake packages never meet are listed below and can be ignored.");
         }
         else
         {
             ResultIcon.Kind = MaterialIconKind.AlertCircle;
             ResultIcon.Foreground = new SolidColorBrush(Color.Parse("#FF99A4"));
-            ResultTitle.Text = report.ProblemIssues.Count() + " problem(s) found";
-            ResultSubtitle.Text = "These findings may stop the package from installing or running. Details below.";
+            ResultTitle.Text = Localizer.F("{0} problem(s) found", report.ProblemIssues.Count());
+            ResultSubtitle.Text = Localizer.T("These findings may stop the package from installing or running. Details below.");
         }
 
         ReportTextBox.Text = report.ToText();
@@ -46,7 +46,7 @@ public partial class PackageReportWindow : Window
         {
             _showingToolOutput = !_showingToolOutput;
             ReportTextBox.Text = _showingToolOutput ? _report.ToolOutput : _report.ToText();
-            ToolOutputButton.Content = _showingToolOutput ? "Show summary" : "Show tool output";
+            ToolOutputButton.Content = _showingToolOutput ? Localizer.T("Show summary") : Localizer.T("Show tool output");
         };
         CloseButton.Click += (_, _) => Close();
     }

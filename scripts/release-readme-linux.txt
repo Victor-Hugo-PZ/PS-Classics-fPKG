@@ -13,8 +13,10 @@ Requirements
      Fedora:                  sudo dnf install wine winetricks
      Arch:                    sudo pacman -S wine winetricks   (enable the multilib repository first)
 
-2. Start the app
+2. Unzip the download and start the app
+     unzip PS.Classics.fPKG.Builder.*.Linux-x64.zip && cd "PS Classics fPKG Builder v"*
      ./PSClassicsfPKGBuilder
+   (If your file manager extracted it without permissions: chmod +x PSClassicsfPKGBuilder PkgCheck install-shortcut.sh)
    Optional: ./install-shortcut.sh adds it to your applications menu.
 
 3. Prepare Wine (once)
@@ -25,6 +27,11 @@ Contents
   PSClassicsfPKGBuilder   The app: creates PS1, PS2 and PSP fake packages for PS4/PS5.
   PkgCheck                Command line tool: checks a .pkg and tells you if something is wrong.
   Tools/                  Third-party tools and emulators. Keep this folder next to the programs.
+
+Using the app
+  The Guide button explains every field. Settings: language (English / Português), step-by-step mode,
+  package check after building, update notice. History: the packages you built and how they ran on the console.
+  Tip: drag and drop the game (.bin, .cue, .iso), images or a .pkg anywhere on the window.
 
 PkgCheck (command line)
   ./PkgCheck game.pkg                 Full check with the SDK checker (through Wine; can take minutes).

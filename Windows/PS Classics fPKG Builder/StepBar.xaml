@@ -1,0 +1,22 @@
+<UserControl x:Class="StepBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <!-- Step-by-step mode: shows one step of the form at a time (Game, Images, Options, Review). -->
+    <Border CornerRadius="8" Padding="12,10" Margin="0,0,0,12" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+        <DockPanel LastChildFill="True">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <ui:Button x:Name="BackButton" Content="Back" Icon="{ui:SymbolIcon ArrowLeft24}" Margin="0,0,8,0" MinWidth="90" />
+                <ui:Button x:Name="NextButton" Content="Next" Icon="{ui:SymbolIcon ArrowRight24}" Appearance="Primary" MinWidth="90" />
+            </StackPanel>
+            <StackPanel x:Name="StepsPanel" Orientation="Horizontal" VerticalAlignment="Center">
+                <Border x:Name="Step1Border" CornerRadius="12" Padding="10,3" Margin="0,0,6,0"><TextBlock x:Name="Step1Text" Text="1. Game" /></Border>
+                <Border x:Name="Step2Border" CornerRadius="12" Padding="10,3" Margin="0,0,6,0"><TextBlock x:Name="Step2Text" Text="2. Images" /></Border>
+                <Border x:Name="Step3Border" CornerRadius="12" Padding="10,3" Margin="0,0,6,0"><TextBlock x:Name="Step3Text" Text="3. Options" /></Border>
+                <Border x:Name="Step4Border" CornerRadius="12" Padding="10,3"><TextBlock x:Name="Step4Text" Text="4. Review" /></Border>
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</UserControl>

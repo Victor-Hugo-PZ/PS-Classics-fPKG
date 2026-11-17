@@ -9,8 +9,8 @@
     <!-- Label of a form row: help button, field name and a Required / Optional badge. Used with DockPanel.Dock="Left". -->
     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
         <ui:Button x:Name="HelpButton" Appearance="Transparent" Icon="{ui:SymbolIcon Info24}"
-                   Width="28" Height="28" Padding="0" Margin="0,0,6,0" ToolTip="Ajuda"
-                   AutomationProperties.Name="Ajuda" />
+                   Width="28" Height="28" Padding="0" Margin="0,0,6,0" ToolTip="Help"
+                   AutomationProperties.Name="Help" />
         <StackPanel VerticalAlignment="Center">
             <TextBlock x:Name="LabelTextBlock" TextTrimming="CharacterEllipsis" />
             <Border x:Name="BadgeBorder" CornerRadius="4" Padding="6,1" Margin="0,3,0,0" HorizontalAlignment="Left">

@@ -30,9 +30,12 @@ Public Class FieldLabel
         End Set
     End Property
 
+    Private _IsRequired As Boolean
+
     Public Property IsRequired As Boolean
         Set(value As Boolean)
-            BadgeText.Text = If(value, "Required", "Optional")
+            _IsRequired = value
+            BadgeText.Text = If(value, Localizer.T("Required"), Localizer.T("Optional"))
             BadgeText.Foreground = If(value,
                                       TryFindBrush("TextOnAccentFillColorPrimaryBrush", Brushes.White),
                                       TryFindBrush("TextFillColorSecondaryBrush", Brushes.LightGray))
@@ -41,7 +44,7 @@ Public Class FieldLabel
                                         TryFindBrush("ControlFillColorSecondaryBrush", Brushes.DimGray))
         End Set
         Get
-            Return BadgeText.Text = "Required"
+            Return _IsRequired
         End Get
     End Property
 

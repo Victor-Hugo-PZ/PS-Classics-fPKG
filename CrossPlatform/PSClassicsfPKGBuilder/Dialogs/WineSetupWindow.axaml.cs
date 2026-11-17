@@ -17,6 +17,7 @@ public partial class WineSetupWindow : Window
         CloseButton.Click += (_, _) => Close();
         SetUpButton.Click += async (_, _) => await SetUp();
         RefreshStatus();
+        UiTranslator.Attach(this);
     }
 
     private static string Line(bool ok, string text) => (ok ? "✔  " : "✘  ") + text;
@@ -24,13 +25,13 @@ public partial class WineSetupWindow : Window
     private void RefreshStatus()
     {
         var status = Wine.GetStatus();
-        WineLine.Text = Line(status.WineFound, status.WineFound ? "Wine: " + status.Executable : "Wine: not found");
+        WineLine.Text = Line(status.WineFound, status.WineFound ? "Wine: " + status.Executable : Localizer.T("Wine: not found"));
         WinetricksLine.Text = Line(status.WinetricksExecutable != null,
-            status.WinetricksExecutable != null ? "winetricks: " + status.WinetricksExecutable : "winetricks: not found");
-        PrefixLine.Text = Line(status.PrefixReady, "Wine folder of the app: " + Wine.PrefixDirectory);
-        RuntimeLine.Text = Line(status.Vc2008Installed, "Visual C++ 2008 runtime (needed by the tools)");
+            status.WinetricksExecutable != null ? "winetricks: " + status.WinetricksExecutable : Localizer.T("winetricks: not found"));
+        PrefixLine.Text = Line(status.PrefixReady, Localizer.F("Wine folder of the app: {0}", Wine.PrefixDirectory));
+        RuntimeLine.Text = Line(status.Vc2008Installed, Localizer.T("Visual C++ 2008 runtime (needed by the tools)"));
         SetUpButton.IsEnabled = !_running && status.WineFound && !status.IsReady;
-        SetUpButton.Content = status.IsReady ? "Ready" : "Set up Wine";
+        SetUpButton.Content = status.IsReady ? Localizer.T("Ready") : Localizer.T("Set up Wine");
     }
 
     private async Task SetUp()
@@ -56,7 +57,7 @@ public partial class WineSetupWindow : Window
             ok = false;
         }
 
-        Log(ok ? "Wine is ready." : "The setup did not finish. Check the messages above.");
+        Log(ok ? Localizer.T("Wine is ready.") : Localizer.T("The setup did not finish. Check the messages above."));
         _running = false;
         RefreshButton.IsEnabled = true;
         RefreshStatus();

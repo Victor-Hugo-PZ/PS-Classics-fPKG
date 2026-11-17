@@ -56,5 +56,4 @@ jobs:
           name: PS.Classics.fPKG.Builder.v${{ inputs.version }}.${{ matrix.rid }}
           path: |
             dist/*.zip
-            dist/*.tar.gz
           if-no-files-found: error

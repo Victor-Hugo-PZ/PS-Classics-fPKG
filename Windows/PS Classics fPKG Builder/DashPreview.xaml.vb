@@ -147,7 +147,7 @@ Public Class DashPreview
         PS4IconPlaceholder.Visibility = If(Icon Is Nothing, Visibility.Visible, Visibility.Collapsed)
         PS5IconPlaceholder.Visibility = PS4IconPlaceholder.Visibility
 
-        Dim TitleText As String = If(String.IsNullOrWhiteSpace(GameTitle), "Game title", GameTitle)
+        Dim TitleText As String = If(String.IsNullOrWhiteSpace(GameTitle), Localizer.T("Game title"), GameTitle)
         PS4TitleText.Text = TitleText
         PS5TitleText.Text = TitleText
 

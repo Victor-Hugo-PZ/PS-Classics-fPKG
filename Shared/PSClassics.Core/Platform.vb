@@ -178,45 +178,45 @@ Public Class Wine
     Public Shared Function SetUp(Log As Action(Of String)) As Boolean
         Dim Status As WineStatus = GetStatus()
         If Not Status.WineFound Then
-            Log?.Invoke("Wine was not found.")
+            Log?.Invoke(Localizer.T("Wine was not found."))
             Return False
         End If
 
         Directory.CreateDirectory(PrefixDirectory)
         If Not Status.PrefixReady Then
-            Log?.Invoke("Creating the Wine prefix (first run, this can take a minute)...")
+            Log?.Invoke(Localizer.T("Creating the Wine prefix (first run, this can take a minute)..."))
             Dim Boot As ProcessResult = ProcessRunner.Run(Status.Executable, "wineboot --init", Nothing, Environment())
             Log?.Invoke(Boot.Output + Boot.ErrorOutput)
         End If
 
         If Not GetStatus().Vc2008Installed Then
             If Status.WinetricksExecutable Is Nothing Then
-                Log?.Invoke("winetricks was not found: install it to set up the Visual C++ 2008 runtime.")
+                Log?.Invoke(Localizer.T("winetricks was not found: install it to set up the Visual C++ 2008 runtime."))
                 Return False
             End If
-            Log?.Invoke("Installing the Visual C++ 2008 runtime with winetricks (downloads it from Microsoft)...")
+            Log?.Invoke(Localizer.T("Installing the Visual C++ 2008 runtime with winetricks (downloads it from Microsoft)..."))
             Dim Tricks As ProcessResult = ProcessRunner.Run(Status.WinetricksExecutable, "-q vcrun2008", Nothing, Environment())
             Log?.Invoke(Tricks.Output + Tricks.ErrorOutput)
         End If
 
         Dim Final As WineStatus = GetStatus()
-        Log?.Invoke(If(Final.IsReady, "Wine is ready.", "Wine is not ready yet: check the messages above."))
+        Log?.Invoke(If(Final.IsReady, Localizer.T("Wine is ready."), Localizer.T("Wine is not ready yet: check the messages above.")))
         Return Final.IsReady
     End Function
 
     ''' <summary>Install instructions for the current OS, shown by the apps.</summary>
     Public Shared Function InstallInstructions() As String
         If Platform.IsMacOS Then
-            Return "Install Wine and winetricks with Homebrew (https://brew.sh):" + vbLf +
+            Return Localizer.T("Install Wine and winetricks with Homebrew (https://brew.sh):") + vbLf +
                    "  brew install --cask --no-quarantine wine-stable" + vbLf +
                    "  brew install winetricks" + vbLf +
-                   "Then press 'Set up Wine' in the app."
+                   Localizer.T("Then press 'Set up Wine' in the app.")
         End If
-        Return "Install Wine (64-bit, with 32-bit support) and winetricks from your distribution, for example:" + vbLf +
-               "  Ubuntu/Mint/Debian: sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install wine wine32 wine64 winetricks" + vbLf +
+        Return Localizer.T("Install Wine (64-bit, with 32-bit support) and winetricks from your distribution, for example:") + vbLf +
+               "  Ubuntu/Mint/Debian: sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install wine wine32:i386 winetricks" + vbLf +
                "  Fedora: sudo dnf install wine winetricks" + vbLf +
                "  Arch: sudo pacman -S wine winetricks" + vbLf +
-               "Then press 'Set up Wine' in the app."
+               Localizer.T("Then press 'Set up Wine' in the app.")
     End Function
 
 End Class

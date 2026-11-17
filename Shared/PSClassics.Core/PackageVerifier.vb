@@ -50,12 +50,12 @@ Public Class PackageReport
 
     Public Function ToText() As String
         Dim Text As New StringBuilder()
-        Text.AppendLine("Package: " + PackagePath)
-        Text.AppendLine(If(IsHealthy, "Result: no problems found.", "Result: " + ProblemIssues.Count().ToString() + " problem(s) found."))
+        Text.AppendLine(Localizer.F("Package: {0}", PackagePath))
+        Text.AppendLine(If(IsHealthy, Localizer.T("Result: no problems found."), Localizer.F("Result: {0} problem(s) found.", ProblemIssues.Count())))
         Text.AppendLine()
 
         If ProblemIssues.Any() Then
-            Text.AppendLine("PROBLEMS (may stop the package from installing or running)")
+            Text.AppendLine(Localizer.T("PROBLEMS (may stop the package from installing or running)"))
             For Each Issue In ProblemIssues
                 Text.AppendLine("  - " + Issue.Message)
             Next
@@ -64,7 +64,7 @@ Public Class PackageReport
 
         Dim Warnings As List(Of PackageIssue) = Issues.Where(Function(Issue) Issue.Severity = IssueSeverity.Warning AndAlso Not Issue.IsSubmissionCheck).ToList()
         If Warnings.Any() Then
-            Text.AppendLine("WARNINGS")
+            Text.AppendLine(Localizer.T("WARNINGS"))
             For Each Issue In Warnings
                 Text.AppendLine("  - " + Issue.Message)
             Next
@@ -72,7 +72,7 @@ Public Class PackageReport
         End If
 
         If SubmissionIssues.Any() Then
-            Text.AppendLine("EXPECTED FOR FAKE PACKAGES (Sony certification checks, safe to ignore)")
+            Text.AppendLine(Localizer.T("EXPECTED FOR FAKE PACKAGES (Sony certification checks, safe to ignore)"))
             For Each Issue In SubmissionIssues
                 Text.AppendLine("  - " + Issue.Message)
             Next
@@ -80,7 +80,7 @@ Public Class PackageReport
         End If
 
         If Info <> "" Then
-            Text.AppendLine("PACKAGE INFO")
+            Text.AppendLine(Localizer.T("PACKAGE INFO"))
             Text.AppendLine(Info.TrimEnd())
         End If
         Return Text.ToString()
@@ -155,19 +155,19 @@ Public Class PackageVerifier
                 Dim Pkg As Pkg = New PkgReader(PkgStream).ReadPkg()
 
                 If Pkg.Header.package_size <> CULng(PkgStream.Length) Then
-                    Issues.Add(New PackageIssue With {.Severity = IssueSeverity.Error, .Message = "The file size (" + PkgStream.Length.ToString() + " bytes) is different from the size in the package header (" + Pkg.Header.package_size.ToString() + " bytes): the file is incomplete or damaged."})
+                    Issues.Add(New PackageIssue With {.Severity = IssueSeverity.Error, .Message = Localizer.F("The file size ({0} bytes) is different from the size in the package header ({1} bytes): the file is incomplete or damaged.", PkgStream.Length, Pkg.Header.package_size)})
                 End If
 
                 Dim EntryIds As HashSet(Of EntryId) = New HashSet(Of EntryId)(Pkg.Metas.Metas.Select(Function(Meta) Meta.id))
                 If Not EntryIds.Contains(EntryId.PARAM_SFO) Then
-                    Issues.Add(New PackageIssue With {.Severity = IssueSeverity.Error, .Message = "The package has no param.sfo."})
+                    Issues.Add(New PackageIssue With {.Severity = IssueSeverity.Error, .Message = Localizer.T("The package has no param.sfo.")})
                 End If
                 If Not EntryIds.Contains(EntryId.ICON0_PNG) Then
-                    Issues.Add(New PackageIssue With {.Severity = IssueSeverity.Error, .Message = "The package has no icon0.png: the game tile will be empty or the console may refuse it."})
+                    Issues.Add(New PackageIssue With {.Severity = IssueSeverity.Error, .Message = Localizer.T("The package has no icon0.png: the game tile will be empty or the console may refuse it.")})
                 End If
             End Using
         Catch ex As Exception
-            Issues.Add(New PackageIssue With {.Severity = IssueSeverity.Error, .Message = "The file could not be read as a PS4 package: " + ex.Message})
+            Issues.Add(New PackageIssue With {.Severity = IssueSeverity.Error, .Message = Localizer.F("The file could not be read as a PS4 package: {0}", ex.Message)})
         End Try
 
         Return Issues
@@ -202,7 +202,7 @@ Public Class PackageVerifier
 
         'The tool could not run at all: do not report a clean package
         If Not Report.ToolOutput.Contains("Check started") AndAlso Not Report.Issues.Any(Function(Issue) Issue.Severity = IssueSeverity.Error) Then
-            Report.Issues.Add(New PackageIssue With {.Severity = IssueSeverity.Error, .Message = "The SDK checker did not run: " + Report.ToolOutput.Trim()})
+            Report.Issues.Add(New PackageIssue With {.Severity = IssueSeverity.Error, .Message = Localizer.F("The SDK checker did not run: {0}", Report.ToolOutput.Trim())})
         End If
         Return Report
     End Function

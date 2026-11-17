@@ -9,7 +9,7 @@
     <AssemblyName>PS Classics fPKG Builder</AssemblyName>
     <StartupObject>PS_Classics_fPKG_Builder.Application</StartupObject>
     <ApplicationIcon>v14Icon.ico</ApplicationIcon>
-    <Version>1.1.0</Version>
+    <Version>2.2.0</Version>
     <Deterministic>true</Deterministic>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>Off</OptionStrict>

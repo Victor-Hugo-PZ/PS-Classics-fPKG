@@ -74,11 +74,12 @@ Public Class ImageConverter
 
         Dim Ratio As Double = Width / Height
         Dim TargetRatio As Double = TargetWidth / TargetHeight
+        'Translated per image ("The icon is {0}×{1}: ..."), so each language can phrase it naturally
         If Math.Abs(Ratio - TargetRatio) / TargetRatio > 0.03 Then
-            Return ImageName + " is " + Width.ToString() + "×" + Height.ToString() + ": it will be stretched to " + TargetWidth.ToString() + "×" + TargetHeight.ToString() + "."
+            Return Localizer.F(ImageName + " is {0}×{1}: it will be stretched to {2}×{3}.", Width, Height, TargetWidth, TargetHeight)
         End If
         If Width < TargetWidth OrElse Height < TargetHeight Then
-            Return ImageName + " is " + Width.ToString() + "×" + Height.ToString() + ": it will be upscaled to " + TargetWidth.ToString() + "×" + TargetHeight.ToString() + " and may look blurry."
+            Return Localizer.F(ImageName + " is {0}×{1}: it will be upscaled to {2}×{3} and may look blurry.", Width, Height, TargetWidth, TargetHeight)
         End If
         Return ""
     End Function
@@ -95,7 +96,7 @@ Public Class ImageConverter
         If String.IsNullOrWhiteSpace(ImageFile) Then Return
         Dim Size = GetSize(ImageFile)
         If Size Is Nothing Then
-            Hints.Add(Name.Substring(0, 1).ToUpperInvariant() + Name.Substring(1) + " could not be read.")
+            Hints.Add(Localizer.T(Name + " could not be read."))
             Return
         End If
         Dim Hint As String = DescribeStretch(Name, Size.Value.Width, Size.Value.Height, TargetWidth, TargetHeight)

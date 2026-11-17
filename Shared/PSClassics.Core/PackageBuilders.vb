@@ -5,6 +5,8 @@ Public Class PackageBuildResult
     Public Property Success As Boolean
     ''' <summary>Output of the PS4 publishing tool (useful to show the reason of a failure).</summary>
     Public Property Output As String = ""
+    ''' <summary>The created .pkg file (empty when the build failed or the file was not found).</summary>
+    Public Property PackagePath As String = ""
 End Class
 
 ''' <summary>Image and folder helpers shared by the package builders.</summary>
@@ -31,8 +33,20 @@ Friend Class BuilderHelpers
     End Sub
 
     Friend Shared Function CreatePackage(Gp4File As String, OutputFolder As String) As PackageBuildResult
+        Dim Started As DateTime = DateTime.Now.AddSeconds(-2)
         Dim BuildResult As ProcessResult = PkgTools.CreatePKG(Gp4File, OutputFolder)
-        Return New PackageBuildResult With {.Success = PkgTools.IsSuccessful(BuildResult.Output), .Output = BuildResult.Output + BuildResult.ErrorOutput}
+        Dim Result As New PackageBuildResult With {.Success = PkgTools.IsSuccessful(BuildResult.Output), .Output = BuildResult.Output + BuildResult.ErrorOutput}
+        If Result.Success Then Result.PackagePath = FindNewPackage(OutputFolder, Started)
+        Return Result
+    End Function
+
+    ''' <summary>The .pkg written in <paramref name="OutputFolder"/> since <paramref name="Since"/> (the newest one), or an empty string.</summary>
+    Friend Shared Function FindNewPackage(OutputFolder As String, Since As DateTime) As String
+        If Not Directory.Exists(OutputFolder) Then Return ""
+        Return If(New DirectoryInfo(OutputFolder).GetFiles("*.pkg").
+                  Where(Function(Candidate) Candidate.LastWriteTime >= Since).
+                  OrderByDescending(Function(Candidate) Candidate.LastWriteTime).
+                  Select(Function(Candidate) Candidate.FullName).FirstOrDefault(), "")
     End Function
 
     ''' <summary>A file entry of the GP4 project. The original path is written as the publishing tool sees it (a Wine path on Linux and macOS).</summary>
@@ -349,12 +363,12 @@ Public Class PSPPackageBuilder
         'Copy the ISO as the user image and replace its encrypted EBOOT by the decrypted one
         File.Copy(Request.IsoFile, UserImage, True)
         If String.IsNullOrEmpty(IsoTools.ExtractFileFromPSPISO(Request.IsoFile, "\PSP_GAME\SYSDIR\EBOOT.BIN", TempEbootFile)) Then
-            Warn(Request, "Cannot read the EBOOT.BIN file from the ISO." + vbCrLf + "Warning: This game may not work!")
+            Warn(Request, Localizer.T("Cannot read the EBOOT.BIN file from the ISO.\nWarning: This game may not work!"))
         Else
             ToolRunner.Run(Path.Combine(AppPaths.ToolsDirectory, "pspdecrypt.exe"), {Platform.ToolPath(TempEbootFile)})
 
             If Not File.Exists(TempEbootFile + ".dec") OrElse Not PspTools.ReplaceEbootInImage(UserImage, TempEbootFile, TempEbootFile + ".dec") Then
-                Warn(Request, "Cannot decrypt the EBOOT.BIN file of the ISO." + vbCrLf + "Warning: This game may not work!")
+                Warn(Request, Localizer.T("Cannot decrypt the EBOOT.BIN file of the ISO.\nWarning: This game may not work!"))
             End If
         End If
 

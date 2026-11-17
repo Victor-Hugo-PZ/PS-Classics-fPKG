@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using PS_Classics_fPKG_Builder;
 
 namespace PSClassicsfPKGBuilder.Dialogs;
 
@@ -9,14 +10,13 @@ namespace PSClassicsfPKGBuilder.Dialogs;
 public static class MessageDialog
 {
     public static Task ShowInfo(Window owner, string title, string message) =>
-        Show(owner, title, message, "OK", null);
+        Show(owner, title, message, Localizer.T("OK"), null);
 
     public static Task ShowError(Window owner, string title, string message) =>
-        Show(owner, title, message, "OK", null, isError: true);
+        Show(owner, title, message, Localizer.T("OK"), null, isError: true);
 
     /// <summary>Asks a yes/no question. Returns true for yes.</summary>
-    public static async Task<bool> Confirm(Window owner, string title, string message, string yes = "Yes", string no = "No") =>
-        await Show(owner, title, message, yes, no);
+    public static async Task<bool> Confirm(Window owner, string title, string message, string yes = null, string no = null) =>        await Show(owner, title, message, yes ?? Localizer.T("Yes"), no ?? Localizer.T("No"));
 
     private static async Task<bool> Show(Window owner, string title, string message, string primary, string secondary, bool isError = false)
     {

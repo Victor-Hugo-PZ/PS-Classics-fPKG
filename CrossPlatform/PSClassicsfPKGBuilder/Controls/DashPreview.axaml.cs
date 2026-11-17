@@ -32,7 +32,7 @@ public partial class DashPreview : UserControl
         PS4IconPlaceholder.IsVisible = icon == null;
         PS5IconPlaceholder.IsVisible = icon == null;
 
-        var text = string.IsNullOrWhiteSpace(title) ? "Game title" : title;
+        var text = string.IsNullOrWhiteSpace(title) ? Localizer.T("Game title") : title;
         PS4TitleText.Text = text;
         PS5TitleText.Text = text;
 

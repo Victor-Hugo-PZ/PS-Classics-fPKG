@@ -15,6 +15,9 @@ Contents
 The app
   Run "PS Classics fPKG Builder.exe". The Guide button explains every field.
   The "Check a .pkg" button checks a package from inside the app.
+  Settings: language (English / Português), step-by-step mode, package check after building, update notice.
+  History: the packages you built, the options used and how each one ran on the console.
+  Tip: drag and drop the game (.bin, .cue, .iso), images or a .pkg anywhere on the window.
 
 PkgCheck (command line)
   PkgCheck.exe game.pkg              Full check with the SDK checker (can take minutes on large games).

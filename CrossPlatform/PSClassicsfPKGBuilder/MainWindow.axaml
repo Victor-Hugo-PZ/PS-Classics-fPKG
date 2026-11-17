@@ -5,7 +5,7 @@
         x:Class="PSClassicsfPKGBuilder.MainWindow"
         Title="PS Classics fPKG Builder" Width="1320" Height="860" MinWidth="1100" MinHeight="680"
         Icon="/Assets/app.ico"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" DragDrop.AllowDrop="True">
 
     <!-- Same layout, field names and texts as the Windows app (Windows/PS Classics fPKG Builder/PSClassicsfPKGBuilder.xaml).
          Keep both in sync. -->
@@ -14,6 +14,16 @@
         <!-- Navigation -->
         <DockPanel Grid.Column="0" Margin="12,16,8,16" LastChildFill="True">
             <StackPanel DockPanel.Dock="Bottom" Margin="8,0,0,0">
+                <!-- Shown when GitHub has a newer version -->
+                <Border x:Name="UpdatePanel" IsVisible="False" CornerRadius="6" Padding="10" Margin="0,0,0,12" Background="#1A0070D1" BorderBrush="#0070D1" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock x:Name="UpdateText" TextWrapping="Wrap" FontWeight="SemiBold" />
+                        <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
+                            <Button x:Name="DownloadUpdateButton" Content="Download" Classes="accent" />
+                            <Button x:Name="SkipUpdateButton" Content="Skip" Background="Transparent" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
                 <Button x:Name="VerifyPkgButton" HorizontalAlignment="Stretch" Margin="0,0,0,8"
                         ToolTip.Tip="Verifies a generated .pkg with the SDK checker and tells you if something is wrong">
                     <StackPanel Orientation="Horizontal" Spacing="8">
@@ -21,10 +31,24 @@
                         <TextBlock x:Name="VerifyPkgButtonText" Text="Check a .pkg" />
                     </StackPanel>
                 </Button>
+                <Button x:Name="HistoryButton" HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                        ToolTip.Tip="Packages you built, the options you used and how they run on the console">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <mi:MaterialIcon Kind="History" Width="18" Height="18" />
+                        <TextBlock Text="History" />
+                    </StackPanel>
+                </Button>
                 <Button x:Name="OpenGuideButton" HorizontalAlignment="Stretch" Margin="0,0,0,8">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <mi:MaterialIcon Kind="BookOpenVariant" Width="18" Height="18" />
                         <TextBlock Text="Guide" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="SettingsButton" HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                        ToolTip.Tip="Language, step-by-step mode, package check and updates">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <mi:MaterialIcon Kind="CogOutline" Width="18" Height="18" />
+                        <TextBlock Text="Settings" />
                     </StackPanel>
                 </Button>
                 <Button x:Name="WineSetupButton" HorizontalAlignment="Stretch" Margin="0,0,0,12"
@@ -71,9 +95,11 @@
             <ScrollViewer Grid.Column="0" Padding="16,16,16,24">
                 <StackPanel>
                     <TextBlock Text="PlayStation 1" Classes="pageTitle" />
-                    <TextBlock Text="Create a fake package from a .BIN game with its .CUE sheet (up to 4 discs). The game ID and title are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Classes="pageSubtitle" />
+                    <TextBlock Text="Create a fake package from a .BIN game with its .CUE sheet (up to 4 discs). The game ID and title are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Classes="pageSubtitle" Margin="0,2,0,6" />
+                    <TextBlock Text="Tip: drag and drop the game file, images or configs anywhere on this window." Classes="fieldHint" Margin="0,0,0,14" />
+                    <local:StepBar x:Name="PS1StepBar" />
 
-                    <Expander Classes="section" IsExpanded="True">
+                    <Expander x:Name="PS1GameSection" Classes="section" IsExpanded="True">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="GamepadVariantOutline" Width="20" Height="20" /><TextBlock Text="Game" /></StackPanel></Expander.Header>
                         <StackPanel>
                             <DockPanel Classes="row">
@@ -95,9 +121,16 @@
                         </StackPanel>
                     </Expander>
 
-                    <Expander Classes="section" IsExpanded="True">
+                    <Expander x:Name="PS1ImagesSection" Classes="section" IsExpanded="True">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="ImageOutline" Width="20" Height="20" /><TextBlock Text="Icon &amp; background · optional" /></StackPanel></Expander.Header>
                         <StackPanel>
+                            <DockPanel Classes="row">
+                                <Button x:Name="PS1FindCoverButton" DockPanel.Dock="Right" Margin="8,0,0,0"
+                                        ToolTip.Tip="Downloads the cover of the game by its ID and creates the icon and the background">
+                                    <StackPanel Orientation="Horizontal" Spacing="6"><mi:MaterialIcon Kind="ImageSearchOutline" Width="18" Height="18" /><TextBlock x:Name="PS1FindCoverButtonText" Text="Find cover" /></StackPanel>
+                                </Button>
+                                <TextBlock Text="No image? Find the cover of the game online (needs the game ID)." TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" />
+                            </DockPanel>
                             <DockPanel Classes="row">
                                 <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
                                                   HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the emulator." />
@@ -113,7 +146,7 @@
                         </StackPanel>
                     </Expander>
 
-                    <Expander Classes="section">
+                    <Expander x:Name="PS1DiscsSection" Classes="section">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="Album" Width="20" Height="20" /><TextBlock Text="Additional discs · optional" /></StackPanel></Expander.Header>
                         <StackPanel>
                             <TextBlock Text="Only for games with more than one disc. Each disc needs its own .CUE sheet." Classes="fieldHint" Margin="0,0,0,10" />
@@ -135,10 +168,16 @@
                         </StackPanel>
                     </Expander>
 
-                    <Expander Classes="section">
+                    <Expander x:Name="PS1EmulatorSection" Classes="section">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="CogOutline" Width="20" Height="20" /><TextBlock Text="Emulator · optional" /></StackPanel></Expander.Header>
                         <StackPanel>
                             <TextBlock Text="The PS1 emulator is fixed (ps1hd), so there is nothing to choose here. The options below only change how it runs." Classes="fieldHint" Margin="0,0,0,10" />
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Preset" IsRequired="False"
+                                                  HelpText="Ready-made settings. Choose one to fill the options below at once; you can still change any option afterwards." />
+                                <ComboBox x:Name="PS1PresetComboBox" Width="260" HorizontalAlignment="Left" />
+                            </DockPanel>
+                            <TextBlock x:Name="PS1PresetHint" Classes="fieldHint" Text="Choose a preset or set the options yourself." />
                             <DockPanel Classes="row">
                                 <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Upscaling" IsRequired="False"
                                                   HelpText="Internal rendering scale. Higher values look sharper but need more from the console. The default (2) is a good balance." />
@@ -159,7 +198,7 @@
                         </StackPanel>
                     </Expander>
 
-                    <Expander Classes="section">
+                    <Expander x:Name="PS1AdvancedSection" Classes="section">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="CodeBraces" Width="20" Height="20" /><TextBlock Text="Advanced configuration · optional" /></StackPanel></Expander.Header>
                         <StackPanel>
                             <DockPanel Classes="row">
@@ -176,6 +215,14 @@
                             </DockPanel>
                         </StackPanel>
                     </Expander>
+
+                    <Border x:Name="PS1ReviewCard" Classes="card" IsVisible="False" Margin="0,0,0,8">
+                        <StackPanel>
+                            <TextBlock Text="Review" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="Check the summary, then press Build fPKG. Use Back to change something." Classes="fieldHint" Margin="0,4,0,12" />
+                            <TextBlock x:Name="PS1ReviewText" TextWrapping="Wrap" FontFamily="Cascadia Mono,Consolas,Menlo,DejaVu Sans Mono,monospace" />
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
 
@@ -225,9 +272,11 @@
             <ScrollViewer Grid.Column="0" Padding="16,16,16,24">
                 <StackPanel>
                     <TextBlock Text="PlayStation 2" Classes="pageTitle" />
-                    <TextBlock Text="Create a fake package from an .ISO game (up to 5 discs). Game ID, title and the available configs are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Classes="pageSubtitle" />
+                    <TextBlock Text="Create a fake package from an .ISO game (up to 5 discs). Game ID, title and the available configs are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Classes="pageSubtitle" Margin="0,2,0,6" />
+                    <TextBlock Text="Tip: drag and drop the game file, images or configs anywhere on this window." Classes="fieldHint" Margin="0,0,0,14" />
+                    <local:StepBar x:Name="PS2StepBar" />
 
-                    <Expander Classes="section" IsExpanded="True">
+                    <Expander x:Name="PS2GameSection" Classes="section" IsExpanded="True">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="GamepadVariantOutline" Width="20" Height="20" /><TextBlock Text="Game" /></StackPanel></Expander.Header>
                         <StackPanel>
                             <DockPanel Classes="row">
@@ -249,9 +298,16 @@
                         </StackPanel>
                     </Expander>
 
-                    <Expander Classes="section" IsExpanded="True">
+                    <Expander x:Name="PS2ImagesSection" Classes="section" IsExpanded="True">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="ImageOutline" Width="20" Height="20" /><TextBlock Text="Icon &amp; background · optional" /></StackPanel></Expander.Header>
                         <StackPanel>
+                            <DockPanel Classes="row">
+                                <Button x:Name="PS2FindCoverButton" DockPanel.Dock="Right" Margin="8,0,0,0"
+                                        ToolTip.Tip="Downloads the cover of the game by its ID and creates the icon and the background">
+                                    <StackPanel Orientation="Horizontal" Spacing="6"><mi:MaterialIcon Kind="ImageSearchOutline" Width="18" Height="18" /><TextBlock x:Name="PS2FindCoverButtonText" Text="Find cover" /></StackPanel>
+                                </Button>
+                                <TextBlock Text="No image? Find the cover of the game online (needs the game ID)." TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" />
+                            </DockPanel>
                             <DockPanel Classes="row">
                                 <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
                                                   HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the selected emulator." />
@@ -267,7 +323,7 @@
                         </StackPanel>
                     </Expander>
 
-                    <Expander Classes="section">
+                    <Expander x:Name="PS2DiscsSection" Classes="section">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="Album" Width="20" Height="20" /><TextBlock Text="Additional discs · optional" /></StackPanel></Expander.Header>
                         <StackPanel>
                             <TextBlock Text="Only for games with more than one disc (up to 5 in total)." Classes="fieldHint" Margin="0,0,0,10" />
@@ -296,9 +352,15 @@
                         </StackPanel>
                     </Expander>
 
-                    <Expander Classes="section">
+                    <Expander x:Name="PS2EmulatorSection" Classes="section">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="CogOutline" Width="20" Height="20" /><TextBlock Text="Emulator · optional" /></StackPanel></Expander.Header>
                         <StackPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Preset" IsRequired="False"
+                                                  HelpText="Ready-made settings. Choose one to fill the options below at once; you can still change any option afterwards." />
+                                <ComboBox x:Name="PS2PresetComboBox" Width="260" HorizontalAlignment="Left" />
+                            </DockPanel>
+                            <TextBlock x:Name="PS2PresetHint" Classes="fieldHint" Text="Choose a preset or set the options yourself." />
                             <DockPanel Classes="row">
                                 <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Emulator" IsRequired="False"
                                                   HelpText="The emulator that runs the game. Jak v2 is the default. If a game does not start or crashes, try the other emulator. Each game may work better with one of them." />
@@ -373,7 +435,7 @@
                         </StackPanel>
                     </Expander>
 
-                    <Expander Classes="section">
+                    <Expander x:Name="PS2ConfigsSection" Classes="section">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="CodeBraces" Width="20" Height="20" /><TextBlock Text="Configs &amp; memory card · optional" /></StackPanel></Expander.Header>
                         <StackPanel>
                             <WrapPanel Margin="0,0,0,6">
@@ -404,6 +466,14 @@
                             </DockPanel>
                         </StackPanel>
                     </Expander>
+
+                    <Border x:Name="PS2ReviewCard" Classes="card" IsVisible="False" Margin="0,0,0,8">
+                        <StackPanel>
+                            <TextBlock Text="Review" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="Check the summary, then press Build fPKG. Use Back to change something." Classes="fieldHint" Margin="0,4,0,12" />
+                            <TextBlock x:Name="PS2ReviewText" TextWrapping="Wrap" FontFamily="Cascadia Mono,Consolas,Menlo,DejaVu Sans Mono,monospace" />
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
 
@@ -453,9 +523,11 @@
             <ScrollViewer Grid.Column="0" Padding="16,16,16,24">
                 <StackPanel>
                     <TextBlock Text="PlayStation Portable" Classes="pageTitle" />
-                    <TextBlock Text="Create a fake package from a PSP .ISO game. The NP title is read from the disc and the title from the file name. Fields marked Required must be filled; the others can be left empty." Classes="pageSubtitle" />
+                    <TextBlock Text="Create a fake package from a PSP .ISO game. The NP title is read from the disc and the title from the file name. Fields marked Required must be filled; the others can be left empty." Classes="pageSubtitle" Margin="0,2,0,6" />
+                    <TextBlock Text="Tip: drag and drop the game file, images or configs anywhere on this window." Classes="fieldHint" Margin="0,0,0,14" />
+                    <local:StepBar x:Name="PSPStepBar" />
 
-                    <Expander Classes="section" IsExpanded="True">
+                    <Expander x:Name="PSPGameSection" Classes="section" IsExpanded="True">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="GamepadVariantOutline" Width="20" Height="20" /><TextBlock Text="Game" /></StackPanel></Expander.Header>
                         <StackPanel>
                             <DockPanel Classes="row">
@@ -477,9 +549,16 @@
                         </StackPanel>
                     </Expander>
 
-                    <Expander Classes="section" IsExpanded="True">
+                    <Expander x:Name="PSPImagesSection" Classes="section" IsExpanded="True">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="ImageOutline" Width="20" Height="20" /><TextBlock Text="Icon &amp; background · optional" /></StackPanel></Expander.Header>
                         <StackPanel>
+                            <DockPanel Classes="row">
+                                <Button x:Name="PSPDiscImagesButton" DockPanel.Dock="Right" Margin="8,0,0,0"
+                                        ToolTip.Tip="Uses the icon and background stored on the PSP disc">
+                                    <StackPanel Orientation="Horizontal" Spacing="6"><mi:MaterialIcon Kind="ImageSearchOutline" Width="18" Height="18" /><TextBlock Text="Images from the disc" /></StackPanel>
+                                </Button>
+                                <TextBlock Text="No image? Use the icon and background stored on the PSP disc." TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" />
+                            </DockPanel>
                             <DockPanel Classes="row">
                                 <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
                                                   HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Recommended: PSP packages have no default icon, so without one the tile stays empty." />
@@ -495,7 +574,7 @@
                         </StackPanel>
                     </Expander>
 
-                    <Expander Classes="section">
+                    <Expander x:Name="PSPEmulatorSection" Classes="section">
                         <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="CogOutline" Width="20" Height="20" /><TextBlock Text="Emulator · optional" /></StackPanel></Expander.Header>
                         <StackPanel>
                             <TextBlock Text="The PSP emulator is fixed (psphd), so there is nothing to choose here. Use the field below only if you know which options you need." Classes="fieldHint" Margin="0,0,0,10" />
@@ -507,6 +586,14 @@
                             </DockPanel>
                         </StackPanel>
                     </Expander>
+
+                    <Border x:Name="PSPReviewCard" Classes="card" IsVisible="False" Margin="0,0,0,8">
+                        <StackPanel>
+                            <TextBlock Text="Review" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="Check the summary, then press Build fPKG. Use Back to change something." Classes="fieldHint" Margin="0,4,0,12" />
+                            <TextBlock x:Name="PSPReviewText" TextWrapping="Wrap" FontFamily="Cascadia Mono,Consolas,Menlo,DejaVu Sans Mono,monospace" />
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
 

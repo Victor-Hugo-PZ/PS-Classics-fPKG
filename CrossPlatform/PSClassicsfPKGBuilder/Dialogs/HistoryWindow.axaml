@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PSClassicsfPKGBuilder.Dialogs.HistoryWindow"
+        Title="History - PS Classics fPKG Builder" Width="1000" Height="680" MinWidth="760" MinHeight="460"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,Auto,*" Margin="24">
+        <TextBlock Grid.Row="0" Text="History" FontSize="24" FontWeight="SemiBold" />
+        <TextBlock Grid.Row="1" Margin="0,4,0,12" TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}"
+                   Text="Every package you build is listed here with the options you used. Write down how each one runs on the console to compare emulator settings." />
+
+        <Grid Grid.Row="2" ColumnDefinitions="360,16,*">
+            <DockPanel Grid.Column="0">
+                <TextBlock x:Name="EmptyText" DockPanel.Dock="Top" Text="No packages built yet." Margin="0,8" IsVisible="False" />
+                <ListBox x:Name="EntriesListBox" Background="Transparent" />
+            </DockPanel>
+
+            <ScrollViewer Grid.Column="2">
+                <StackPanel x:Name="DetailsPanel" IsEnabled="False">
+                    <TextBlock x:Name="DetailsTitle" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <TextBlock x:Name="DetailsInfo" TextWrapping="Wrap" Margin="0,4,0,12" Foreground="{DynamicResource SecondaryTextBrush}" />
+                    <TextBlock Text="Options used" FontWeight="SemiBold" Margin="0,0,0,4" />
+                    <TextBlock x:Name="DetailsSettings" TextWrapping="Wrap" FontFamily="Cascadia Mono,Consolas,Menlo,DejaVu Sans Mono,monospace" Margin="0,0,0,16" />
+                    <TextBlock Text="How did it run on the console?" FontWeight="SemiBold" Margin="0,0,0,6" />
+                    <ComboBox x:Name="ConsoleResultComboBox" Width="260" Margin="0,0,0,12" />
+                    <TextBlock Text="Notes" FontWeight="SemiBold" Margin="0,0,0,6" />
+                    <TextBox x:Name="NotesTextBox" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="90"
+                             PlaceholderText="For example: crashes after the menu, works with Rogue v1" />
+                    <WrapPanel Margin="0,12,0,0">
+                        <Button x:Name="SaveButton" Content="Save" Classes="accent" Margin="0,0,8,8" />
+                        <Button x:Name="OpenFolderButton" Content="Open folder" Margin="0,0,8,8" />
+                        <Button x:Name="DeleteButton" Content="Remove from history" Margin="0,0,8,8" />
+                    </WrapPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

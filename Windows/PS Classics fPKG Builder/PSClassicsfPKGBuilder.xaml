@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:PS_Classics_fPKG_Builder"
         mc:Ignorable="d"
         Title="PS Classics fPKG Builder" Width="1320" Height="860" MinWidth="1100" MinHeight="680"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="CenterScreen" AllowDrop="True"
         ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica" WindowCornerPreference="Round">
 
     <ui:FluentWindow.Resources>
@@ -80,9 +80,23 @@
             <!-- Navigation -->
             <DockPanel Grid.Column="0" Margin="12,8,8,16" LastChildFill="True">
                 <StackPanel DockPanel.Dock="Bottom" Margin="8,0,0,0">
+                    <!-- Shown when GitHub has a newer version -->
+                    <Border x:Name="UpdatePanel" Visibility="Collapsed" CornerRadius="6" Padding="10" Margin="0,0,0,12" Background="#1A0070D1" BorderBrush="#0070D1" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock x:Name="UpdateText" TextWrapping="Wrap" FontWeight="SemiBold" />
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <ui:Button x:Name="DownloadUpdateButton" Content="Download" Appearance="Primary" Icon="{ui:SymbolIcon ArrowDownload24}" Margin="0,0,6,0" />
+                                <ui:Button x:Name="SkipUpdateButton" Content="Skip" Appearance="Transparent" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                     <ui:Button x:Name="VerifyPkgButton" Content="Check a .pkg" Icon="{ui:SymbolIcon ShieldCheckmark24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,8"
                                ToolTip="Verifies a generated .pkg with the SDK checker and tells you if something is wrong" />
-                    <ui:Button x:Name="OpenGuideButton" Content="Guide" Icon="{ui:SymbolIcon Book24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,12" />
+                    <ui:Button x:Name="HistoryButton" Content="History" Icon="{ui:SymbolIcon History24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                               ToolTip="Packages you built, the options you used and how they run on the console" />
+                    <ui:Button x:Name="OpenGuideButton" Content="Guide" Icon="{ui:SymbolIcon Book24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,8" />
+                    <ui:Button x:Name="SettingsButton" Content="Settings" Icon="{ui:SymbolIcon Settings24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,12"
+                               ToolTip="Language, step-by-step mode, package check and updates" />
                     <StackPanel Orientation="Horizontal">
                         <ui:SymbolIcon x:Name="ToolsStatusIcon" Symbol="CheckmarkCircle24" Margin="0,0,6,0" />
                         <TextBlock x:Name="ToolsStatusText" Text="Tools folder found" VerticalAlignment="Center" />
@@ -121,9 +135,11 @@
                 <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="16,8,16,24">
                     <StackPanel>
                         <TextBlock Text="PlayStation 1" Style="{StaticResource PageTitle}" />
-                        <TextBlock Text="Create a fake package from a .BIN game with its .CUE sheet (up to 4 discs). The game ID and title are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Style="{StaticResource PageSubtitle}" />
+                        <TextBlock Text="Create a fake package from a .BIN game with its .CUE sheet (up to 4 discs). The game ID and title are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Style="{StaticResource PageSubtitle}" Margin="0,2,0,6" />
+                        <TextBlock Text="Tip: drag and drop the game file, images or configs anywhere on this window." Style="{StaticResource FieldHint}" Margin="0,0,0,14" />
+                        <local:StepBar x:Name="PS1StepBar" />
 
-                        <ui:CardExpander Header="Game" Icon="{ui:SymbolIcon Games24}" IsExpanded="True" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PS1GameSection" Header="Game" Icon="{ui:SymbolIcon Games24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 1" IsRequired="True"
@@ -144,8 +160,13 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Icon &amp; background · optional" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PS1ImagesSection" Header="Icon &amp; background · optional" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
+                                <DockPanel>
+                                    <ui:Button x:Name="PS1FindCoverButton" DockPanel.Dock="Right" Content="Find cover" Icon="{ui:SymbolIcon ImageSearch24}" Margin="8,0,0,0"
+                                               ToolTip="Downloads the cover of the game by its ID and creates the icon and the background" />
+                                    <TextBlock Text="No image? Find the cover of the game online (needs the game ID)." TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                </DockPanel>
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
                                                       HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the emulator." />
@@ -161,7 +182,7 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Additional discs · optional" Icon="{ui:SymbolIcon Album24}" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PS1DiscsSection" Header="Additional discs · optional" Icon="{ui:SymbolIcon Album24}" Style="{StaticResource Section}">
                             <StackPanel>
                                 <TextBlock Text="Only for games with more than one disc. Each disc needs its own .CUE sheet." Style="{StaticResource FieldHint}" Margin="0,0,0,10" />
                                 <DockPanel>
@@ -185,9 +206,15 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Emulator · optional" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PS1EmulatorSection" Header="Emulator · optional" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
                             <StackPanel>
                                 <TextBlock Text="The PS1 emulator is fixed (ps1hd), so there is nothing to choose here. The options below only change how it runs." Style="{StaticResource FieldHint}" Margin="0,0,0,10" />
+                                <DockPanel>
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Preset" IsRequired="False"
+                                                      HelpText="Ready-made settings. Choose one to fill the options below at once; you can still change any option afterwards." />
+                                    <ComboBox x:Name="PS1PresetComboBox" Width="260" HorizontalAlignment="Left" />
+                                </DockPanel>
+                                <TextBlock x:Name="PS1PresetHint" Style="{StaticResource FieldHint}" Text="Choose a preset or set the options yourself." />
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Upscaling" IsRequired="False"
                                                       HelpText="Internal rendering scale. Higher values look sharper but need more from the console. The default (2) is a good balance." />
@@ -208,7 +235,7 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Advanced configuration · optional" Icon="{ui:SymbolIcon Code24}" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PS1AdvancedSection" Header="Advanced configuration · optional" Icon="{ui:SymbolIcon Code24}" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="TXT config" IsRequired="False"
@@ -224,12 +251,21 @@
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
+
+                        <ui:Card x:Name="PS1ReviewCard" Visibility="Collapsed" Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="Review" FontSize="18" FontWeight="SemiBold" />
+                                <TextBlock Text="Check the summary, then press Build fPKG. Use Back to change something." Style="{StaticResource FieldHint}" Margin="0,4,0,12" />
+                                <TextBlock x:Name="PS1ReviewText" TextWrapping="Wrap" FontFamily="Consolas" />
+                            </StackPanel>
+                        </ui:Card>
                     </StackPanel>
                 </ScrollViewer>
 
                 <ui:Card Grid.Column="1" Margin="0,8,24,24" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
                     <DockPanel Margin="0" LastChildFill="True">
                         <ui:Button x:Name="BuildPS1fPKGButton" DockPanel.Dock="Bottom" Appearance="Primary" Content="Build fPKG" Icon="{ui:SymbolIcon Box24}" HorizontalAlignment="Stretch" Height="46" FontSize="16" Margin="0,16,0,0" />
+                        <ProgressBar x:Name="PS1BuildProgress" DockPanel.Dock="Bottom" IsIndeterminate="True" Visibility="Collapsed" Margin="0,16,0,0" />
                         <StackPanel>
                             <DockPanel Margin="0,0,0,10">
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
@@ -279,9 +315,11 @@
                 <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="16,8,16,24">
                     <StackPanel>
                         <TextBlock Text="PlayStation 2" Style="{StaticResource PageTitle}" />
-                        <TextBlock Text="Create a fake package from an .ISO game (up to 5 discs). Game ID, title and the available configs are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Style="{StaticResource PageSubtitle}" />
+                        <TextBlock Text="Create a fake package from an .ISO game (up to 5 discs). Game ID, title and the available configs are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Style="{StaticResource PageSubtitle}" Margin="0,2,0,6" />
+                        <TextBlock Text="Tip: drag and drop the game file, images or configs anywhere on this window." Style="{StaticResource FieldHint}" Margin="0,0,0,14" />
+                        <local:StepBar x:Name="PS2StepBar" />
 
-                        <ui:CardExpander Header="Game" Icon="{ui:SymbolIcon Games24}" IsExpanded="True" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PS2GameSection" Header="Game" Icon="{ui:SymbolIcon Games24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 1" IsRequired="True"
@@ -302,8 +340,13 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Icon &amp; background · optional" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PS2ImagesSection" Header="Icon &amp; background · optional" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
+                                <DockPanel>
+                                    <ui:Button x:Name="PS2FindCoverButton" DockPanel.Dock="Right" Content="Find cover" Icon="{ui:SymbolIcon ImageSearch24}" Margin="8,0,0,0"
+                                               ToolTip="Downloads the cover of the game by its ID and creates the icon and the background" />
+                                    <TextBlock Text="No image? Find the cover of the game online (needs the game ID)." TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                </DockPanel>
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
                                                       HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the selected emulator." />
@@ -319,7 +362,7 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Additional discs · optional" Icon="{ui:SymbolIcon Album24}" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PS2DiscsSection" Header="Additional discs · optional" Icon="{ui:SymbolIcon Album24}" Style="{StaticResource Section}">
                             <StackPanel>
                                 <TextBlock Text="Only for games with more than one disc (up to 5 in total)." Style="{StaticResource FieldHint}" Margin="0,0,0,10" />
                                 <DockPanel>
@@ -347,8 +390,14 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Emulator · optional" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PS2EmulatorSection" Header="Emulator · optional" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
                             <StackPanel>
+                                <DockPanel>
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Preset" IsRequired="False"
+                                                      HelpText="Ready-made settings. Choose one to fill the options below at once; you can still change any option afterwards." />
+                                    <ComboBox x:Name="PS2PresetComboBox" Width="260" HorizontalAlignment="Left" />
+                                </DockPanel>
+                                <TextBlock x:Name="PS2PresetHint" Style="{StaticResource FieldHint}" Text="Choose a preset or set the options yourself." />
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Emulator" IsRequired="False"
                                                       HelpText="The emulator that runs the game. Jak v2 is the default. If a game does not start or crashes, try the other emulator. Each game may work better with one of them." />
@@ -423,7 +472,7 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Configs &amp; memory card · optional" Icon="{ui:SymbolIcon Code24}" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PS2ConfigsSection" Header="Configs &amp; memory card · optional" Icon="{ui:SymbolIcon Code24}" Style="{StaticResource Section}">
                             <StackPanel>
                                 <WrapPanel Style="{StaticResource OptionsWrap}">
                                     <CheckBox x:Name="PS2AddTXTConfigFromDatabaseCheckBox" Content="TXT config from database" Style="{StaticResource Option}"
@@ -453,12 +502,21 @@
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
+
+                        <ui:Card x:Name="PS2ReviewCard" Visibility="Collapsed" Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="Review" FontSize="18" FontWeight="SemiBold" />
+                                <TextBlock Text="Check the summary, then press Build fPKG. Use Back to change something." Style="{StaticResource FieldHint}" Margin="0,4,0,12" />
+                                <TextBlock x:Name="PS2ReviewText" TextWrapping="Wrap" FontFamily="Consolas" />
+                            </StackPanel>
+                        </ui:Card>
                     </StackPanel>
                 </ScrollViewer>
 
                 <ui:Card Grid.Column="1" Margin="0,8,24,24" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
                     <DockPanel Margin="0" LastChildFill="True">
                         <ui:Button x:Name="BuildPS2fPKGButton" DockPanel.Dock="Bottom" Appearance="Primary" Content="Build fPKG" Icon="{ui:SymbolIcon Box24}" HorizontalAlignment="Stretch" Height="46" FontSize="16" Margin="0,16,0,0" />
+                        <ProgressBar x:Name="PS2BuildProgress" DockPanel.Dock="Bottom" IsIndeterminate="True" Visibility="Collapsed" Margin="0,16,0,0" />
                         <StackPanel>
                             <DockPanel Margin="0,0,0,10">
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
@@ -508,9 +566,11 @@
                 <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="16,8,16,24">
                     <StackPanel>
                         <TextBlock Text="PlayStation Portable" Style="{StaticResource PageTitle}" />
-                        <TextBlock Text="Create a fake package from a PSP .ISO game. The NP title is read from the disc and the title from the file name. Fields marked Required must be filled; the others can be left empty." Style="{StaticResource PageSubtitle}" />
+                        <TextBlock Text="Create a fake package from a PSP .ISO game. The NP title is read from the disc and the title from the file name. Fields marked Required must be filled; the others can be left empty." Style="{StaticResource PageSubtitle}" Margin="0,2,0,6" />
+                        <TextBlock Text="Tip: drag and drop the game file, images or configs anywhere on this window." Style="{StaticResource FieldHint}" Margin="0,0,0,14" />
+                        <local:StepBar x:Name="PSPStepBar" />
 
-                        <ui:CardExpander Header="Game" Icon="{ui:SymbolIcon Games24}" IsExpanded="True" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PSPGameSection" Header="Game" Icon="{ui:SymbolIcon Games24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="ISO file" IsRequired="True"
@@ -531,8 +591,13 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Icon &amp; background · optional" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PSPImagesSection" Header="Icon &amp; background · optional" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
+                                <DockPanel>
+                                    <ui:Button x:Name="PSPDiscImagesButton" DockPanel.Dock="Right" Content="Images from the disc" Icon="{ui:SymbolIcon ImageSearch24}" Margin="8,0,0,0"
+                                               ToolTip="Uses the icon and background stored on the PSP disc" />
+                                    <TextBlock Text="No image? Use the icon and background stored on the PSP disc." TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                </DockPanel>
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
                                                       HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Recommended: PSP packages have no default icon, so without one the tile stays empty." />
@@ -548,7 +613,7 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Emulator · optional" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
+                        <ui:CardExpander x:Name="PSPEmulatorSection" Header="Emulator · optional" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
                             <StackPanel>
                                 <TextBlock Text="The PSP emulator is fixed (psphd), so there is nothing to choose here. Use the field below only if you know which options you need." Style="{StaticResource FieldHint}" Margin="0,0,0,10" />
                                 <DockPanel Margin="0">
@@ -559,12 +624,21 @@
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
+
+                        <ui:Card x:Name="PSPReviewCard" Visibility="Collapsed" Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="Review" FontSize="18" FontWeight="SemiBold" />
+                                <TextBlock Text="Check the summary, then press Build fPKG. Use Back to change something." Style="{StaticResource FieldHint}" Margin="0,4,0,12" />
+                                <TextBlock x:Name="PSPReviewText" TextWrapping="Wrap" FontFamily="Consolas" />
+                            </StackPanel>
+                        </ui:Card>
                     </StackPanel>
                 </ScrollViewer>
 
                 <ui:Card Grid.Column="1" Margin="0,8,24,24" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
                     <DockPanel Margin="0" LastChildFill="True">
                         <ui:Button x:Name="BuildPSPfPKGButton" DockPanel.Dock="Bottom" Appearance="Primary" Content="Build fPKG" Icon="{ui:SymbolIcon Box24}" HorizontalAlignment="Stretch" Height="46" FontSize="16" Margin="0,16,0,0" />
+                        <ProgressBar x:Name="PSPBuildProgress" DockPanel.Dock="Bottom" IsIndeterminate="True" Visibility="Collapsed" Margin="0,16,0,0" />
                         <StackPanel>
                             <DockPanel Margin="0,0,0,10">
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">

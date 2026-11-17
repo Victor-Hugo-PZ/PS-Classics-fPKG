@@ -58,10 +58,30 @@
                 <TextBlock Style="{StaticResource Bullet}" Text="• PSP: the emulator is fixed (psphd)." />
                 <TextBlock Style="{StaticResource Body}" Margin="0,6,0,0" Text="The options under the emulator (upscaling, uprender, display mode, fixes) are optional. Start with the defaults; change one option at a time if a game has problems." />
 
-                <TextBlock Text="5. Problems?" Style="{StaticResource Heading}" />
+                <TextBlock Text="5. Helpers that save time" Style="{StaticResource Heading}" />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Drag and drop: drop the game (.bin, .cue or .iso), images, configs or a .pkg anywhere on the window. The app puts each file in the right field." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Find cover (PS1 and PS2): downloads the cover of the game by its ID and creates the icon and the background. PSP: 'Images from the disc' uses the icon and background stored on the disc." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Presets: in the Emulator section, choose Recommended, Most compatible or Best looking instead of changing each option." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Step-by-step mode (Settings): shows one step at a time with Next and Back buttons." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Before building, the app checks the files, the NP title and the free disk space, and tells you how to fix each problem." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• After building, the package is checked automatically and the History keeps the options you used, so you can compare what works." />
+
+                <TextBlock x:Name="InstallSection" Text="6. Install the package on the console" Style="{StaticResource Heading}" />
+                <TextBlock Style="{StaticResource Body}" Text="Fake packages only install on a console with homebrew enabled (a jailbroken PS4 or PS5). The app cannot do that part for you." />
+                <TextBlock Style="{StaticResource Bullet}" Text="1. Copy the .pkg file to the root folder of a USB drive formatted as exFAT (FAT32 also works for packages smaller than 4 GB)." />
+                <TextBlock Style="{StaticResource Bullet}" Text="2. PS4 with GoldHEN: plug in the drive, open Settings › Debug Settings › Game › Package Installer, choose the package and install it." />
+                <TextBlock Style="{StaticResource Bullet}" Text="3. PS5 with etaHEN: install the package from the USB drive with the package installer of your homebrew (for example the etaHEN debug settings or ItemzFlow)." />
+                <TextBlock Style="{StaticResource Bullet}" Text="4. The game appears on the home screen with the icon you chose. If it does not start, write what happened in the History and try another emulator preset." />
+                <TextBlock Style="{StaticResource Body}" Margin="0,6,0,0" Text="You can also send the package over the network with a remote package installer; see the documentation of your homebrew." />
+
+                <TextBlock Text="7. Wine (Linux and macOS)" Style="{StaticResource Heading}" />
+                <TextBlock Style="{StaticResource Body}" Text="The PS4 publishing tools are Windows programs: on Linux and macOS the app runs them through Wine. Install Wine and winetricks once, then press 'Wine setup' in the app: it prepares a Wine folder for the app and installs the Visual C++ 2008 runtime the tools need. The status at the bottom left tells you when everything is ready." />
+
+                <TextBlock Text="8. Problems?" Style="{StaticResource Heading}" />
                 <TextBlock Style="{StaticResource Bullet}" Text="• A yellow warning under the preview is about an image, not an error: it is only a suggestion." />
-                <TextBlock Style="{StaticResource Bullet}" Text="• If the app says the Tools folder is missing, copy it next to the program (see the README)." />
-                <TextBlock Style="{StaticResource Bullet}" Text="• The packages are generated without a console test in this version: if a game does not work on the console, note the emulator and the options you used." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• If the app says the Tools folder is missing, keep the Tools folder next to the program (see the README)." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Use 'Check a .pkg' to verify a package you created." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• If a game does not work on the console, note the emulator and the options you used and try changing one option at a time." />
             </StackPanel>
         </ScrollViewer>
     </Grid>
