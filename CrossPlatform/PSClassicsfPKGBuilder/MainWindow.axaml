@@ -1,0 +1,554 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:local="clr-namespace:PSClassicsfPKGBuilder.Controls"
+        x:Class="PSClassicsfPKGBuilder.MainWindow"
+        Title="PS Classics fPKG Builder" Width="1320" Height="860" MinWidth="1100" MinHeight="680"
+        Icon="/Assets/app.ico"
+        WindowStartupLocation="CenterScreen">
+
+    <!-- Same layout, field names and texts as the Windows app (Windows/PS Classics fPKG Builder/PSClassicsfPKGBuilder.xaml).
+         Keep both in sync. -->
+    <Grid ColumnDefinitions="220,*">
+
+        <!-- Navigation -->
+        <DockPanel Grid.Column="0" Margin="12,16,8,16" LastChildFill="True">
+            <StackPanel DockPanel.Dock="Bottom" Margin="8,0,0,0">
+                <Button x:Name="VerifyPkgButton" HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                        ToolTip.Tip="Verifies a generated .pkg with the SDK checker and tells you if something is wrong">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <mi:MaterialIcon Kind="ShieldCheckOutline" Width="18" Height="18" />
+                        <TextBlock x:Name="VerifyPkgButtonText" Text="Check a .pkg" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="OpenGuideButton" HorizontalAlignment="Stretch" Margin="0,0,0,8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <mi:MaterialIcon Kind="BookOpenVariant" Width="18" Height="18" />
+                        <TextBlock Text="Guide" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="WineSetupButton" HorizontalAlignment="Stretch" Margin="0,0,0,12"
+                        ToolTip.Tip="The PS4 tools run through Wine on Linux and macOS. Check and prepare it here.">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <mi:MaterialIcon Kind="GlassWine" Width="18" Height="18" />
+                        <TextBlock Text="Wine setup" />
+                    </StackPanel>
+                </Button>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <mi:MaterialIcon x:Name="ToolsStatusIcon" Kind="CheckCircleOutline" Width="20" Height="20" />
+                    <TextBlock x:Name="ToolsStatusText" Text="Tools folder found" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel x:Name="WineStatusPanel" Orientation="Horizontal" Spacing="6" Margin="0,6,0,0">
+                    <mi:MaterialIcon x:Name="WineStatusIcon" Kind="CheckCircleOutline" Width="20" Height="20" />
+                    <TextBlock x:Name="WineStatusText" Text="Wine ready" VerticalAlignment="Center" />
+                </StackPanel>
+                <TextBlock Text="Original version by Victor" Margin="0,8,0,0" FontSize="12" Foreground="{DynamicResource TertiaryTextBrush}" />
+            </StackPanel>
+            <ListBox x:Name="PlatformListBox" Classes="nav" SelectedIndex="0" Background="Transparent">
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <mi:MaterialIcon Kind="GamepadVariantOutline" Width="20" Height="20" />
+                        <TextBlock Text="PS1 Classics" VerticalAlignment="Center" />
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <mi:MaterialIcon Kind="GamepadVariantOutline" Width="20" Height="20" />
+                        <TextBlock Text="PS2 Classics" VerticalAlignment="Center" />
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <mi:MaterialIcon Kind="GamepadVariantOutline" Width="20" Height="20" />
+                        <TextBlock Text="PSP Classics" VerticalAlignment="Center" />
+                    </StackPanel>
+                </ListBoxItem>
+            </ListBox>
+        </DockPanel>
+
+        <!-- ============================== PS1 ============================== -->
+        <Grid x:Name="PS1Page" Grid.Column="1" ColumnDefinitions="*,460">
+            <ScrollViewer Grid.Column="0" Padding="16,16,16,24">
+                <StackPanel>
+                    <TextBlock Text="PlayStation 1" Classes="pageTitle" />
+                    <TextBlock Text="Create a fake package from a .BIN game with its .CUE sheet (up to 4 discs). The game ID and title are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Classes="pageSubtitle" />
+
+                    <Expander Classes="section" IsExpanded="True">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="GamepadVariantOutline" Width="20" Height="20" /><TextBlock Text="Game" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 1" IsRequired="True"
+                                                  HelpText="The .BIN file of the game. It needs a .CUE sheet with the same name in the same folder. The game ID and title are read from this disc." />
+                                <Button x:Name="BrowsePS1Disc1Button" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="PS1SelectedDisc1TextBox" PlaceholderText="Select the .BIN file of the game" />
+                            </DockPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Title" IsRequired="True"
+                                                  HelpText="The name shown on the PS4/PS5 home screen. It is filled automatically when the game is recognized, and you can change it." />
+                                <TextBox x:Name="PS1TitleTextBox" PlaceholderText="Name shown on the home screen" />
+                            </DockPanel>
+                            <DockPanel Classes="row" Margin="0">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="NP Title" IsRequired="True"
+                                                  HelpText="Exactly 9 characters, without _ or -. Example: SLUS00594. It is the game ID and it is filled automatically when detected. Only upper case letters and digits." />
+                                <TextBox x:Name="PS1NPTitleTextBox" PlaceholderText="9 characters, for example SLUS00594" MaxLength="9" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Classes="section" IsExpanded="True">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="ImageOutline" Width="20" Height="20" /><TextBlock Text="Icon &amp; background · optional" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
+                                                  HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the emulator." />
+                                <Button x:Name="BrowsePS1IconButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPS1IconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (optional)" />
+                            </DockPanel>
+                            <DockPanel Classes="row" Margin="0">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Background" IsRequired="False"
+                                                  HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to 1920×1080. A 16:9 image avoids distortion." />
+                                <Button x:Name="BrowsePS1StartupImageButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPS1BGTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (optional)" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Classes="section">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="Album" Width="20" Height="20" /><TextBlock Text="Additional discs · optional" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="Only for games with more than one disc. Each disc needs its own .CUE sheet." Classes="fieldHint" Margin="0,0,0,10" />
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 2" IsRequired="False" HelpText="Second disc of the game. Optional." />
+                                <Button x:Name="BrowsePS1Disc2Button" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="PS1SelectedDisc2TextBox" PlaceholderText="Optional .BIN file" />
+                            </DockPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 3" IsRequired="False" HelpText="Third disc of the game. Optional." />
+                                <Button x:Name="BrowsePS1Disc3Button" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="PS1SelectedDisc3TextBox" PlaceholderText="Optional .BIN file" />
+                            </DockPanel>
+                            <DockPanel Classes="row" Margin="0">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 4" IsRequired="False" HelpText="Fourth disc of the game. Optional." />
+                                <Button x:Name="BrowsePS1Disc4Button" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="PS1SelectedDisc4TextBox" PlaceholderText="Optional .BIN file" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Classes="section">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="CogOutline" Width="20" Height="20" /><TextBlock Text="Emulator · optional" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="The PS1 emulator is fixed (ps1hd), so there is nothing to choose here. The options below only change how it runs." Classes="fieldHint" Margin="0,0,0,10" />
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Upscaling" IsRequired="False"
+                                                  HelpText="Internal rendering scale. Higher values look sharper but need more from the console. The default (2) is a good balance." />
+                                <ComboBox x:Name="PS1UpscalingComboBox" SelectedIndex="2" Width="140" HorizontalAlignment="Left">
+                                    <ComboBoxItem Content="6" />
+                                    <ComboBoxItem Content="4" />
+                                    <ComboBoxItem Content="2" />
+                                    <ComboBoxItem Content="1" />
+                                </ComboBox>
+                            </DockPanel>
+                            <TextBlock Classes="fieldHint" Text="Tip: 2 is the default. Use 6 or 4 only if the game runs at full speed with it." />
+                            <WrapPanel Margin="0,0,0,6">
+                                <CheckBox x:Name="PS1SkipBootlogoCheckBox" Content="Skip boot logo" Classes="option" ToolTip.Tip="Skips the Sony logo at startup." />
+                                <CheckBox x:Name="PS1EmulateAnalogSticksCheckBox" Content="Emulate analog sticks" Classes="option" ToolTip.Tip="For games that only use the analog stick: makes the digital pad act as analog." />
+                                <CheckBox x:Name="PS1Force60HzCheckBox" Content="Force 60 Hz" Classes="option" ToolTip.Tip="Forces 60 Hz output. Can make some games smoother; check that the picture is not broken." />
+                                <CheckBox x:Name="PS1GunconCheckBox" Content="GunCon" Classes="option" ToolTip.Tip="Enables the GunCon light gun. Only for shooting games that use it." />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Classes="section">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="CodeBraces" Width="20" Height="20" /><TextBlock Text="Advanced configuration · optional" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="TXT config" IsRequired="False"
+                                                  HelpText="A .txt file with extra emulator options. Its content is added at the end of config-title.txt. Only use it if you know the options." />
+                                <Button x:Name="BrowsePS1TXTConfigButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPS1TXTConfigTextBox" PlaceholderText="Extra emulator options appended to config-title.txt" />
+                            </DockPanel>
+                            <DockPanel Classes="row" Margin="0">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="LUA config" IsRequired="False"
+                                                  HelpText="A game specific .lua script (patches). Only use it if you have a script made for this game." />
+                                <Button x:Name="BrowsePS1LUAConfigButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPS1LUAConfigTextBox" PlaceholderText="Game specific LUA script" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border Grid.Column="1" Classes="card" Margin="0,16,24,24">
+                <DockPanel LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Bottom" Margin="0,16,0,0">
+                        <ProgressBar x:Name="PS1BuildProgress" IsIndeterminate="True" IsVisible="False" Margin="0,0,0,8" />
+                        <Button x:Name="BuildPS1fPKGButton" Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Height="46" FontSize="16">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <mi:MaterialIcon Kind="PackageVariantClosed" Width="20" Height="20" />
+                                <TextBlock x:Name="BuildPS1fPKGButtonText" Text="Build fPKG" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,10">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <RadioButton x:Name="PS1PS4Radio" GroupName="PS1Mode" Content="PS4" IsChecked="True" Classes="mode" />
+                                <RadioButton x:Name="PS1PS5Radio" GroupName="PS1Mode" Content="PS5" Classes="mode" />
+                            </StackPanel>
+                            <TextBlock Text="Home screen preview" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <local:DashPreview x:Name="PS1Preview" />
+                        <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,14,0,0">
+                            <StackPanel>
+                                <Border Width="120" Height="120" CornerRadius="6" Background="#22FFFFFF" ClipToBounds="True">
+                                    <Image x:Name="PS1IconThumbnail" Stretch="Fill" />
+                                </Border>
+                                <TextBlock Text="icon0.png · 512×512" FontSize="12" Margin="0,6,0,0" Foreground="{DynamicResource TertiaryTextBrush}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <Border Width="213" Height="120" CornerRadius="6" Background="#22FFFFFF" ClipToBounds="True">
+                                    <Image x:Name="PS1BackgroundThumbnail" Stretch="Fill" />
+                                </Border>
+                                <TextBlock Text="Background · 1920×1080" FontSize="12" Margin="0,6,0,0" Foreground="{DynamicResource TertiaryTextBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock x:Name="PS1HintsText" Classes="warning" />
+                        <TextBlock Classes="hint" Text="Approximation of the console home screen. Without an icon, the default icon of the emulator is used." />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <!-- ============================== PS2 ============================== -->
+        <Grid x:Name="PS2Page" Grid.Column="1" ColumnDefinitions="*,460" IsVisible="False">
+            <ScrollViewer Grid.Column="0" Padding="16,16,16,24">
+                <StackPanel>
+                    <TextBlock Text="PlayStation 2" Classes="pageTitle" />
+                    <TextBlock Text="Create a fake package from an .ISO game (up to 5 discs). Game ID, title and the available configs are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Classes="pageSubtitle" />
+
+                    <Expander Classes="section" IsExpanded="True">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="GamepadVariantOutline" Width="20" Height="20" /><TextBlock Text="Game" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 1" IsRequired="True"
+                                                  HelpText="The .ISO file of the game. The game ID, title and the available database configs are read from this disc." />
+                                <Button x:Name="BrowsePS2Disc1Button" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedDisc1TextBox" PlaceholderText="Select the .ISO file of the game" />
+                            </DockPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Title" IsRequired="True"
+                                                  HelpText="The name shown on the PS4/PS5 home screen. It is filled automatically when the game is recognized, and you can change it." />
+                                <TextBox x:Name="PS2TitleTextBox" PlaceholderText="Name shown on the home screen" />
+                            </DockPanel>
+                            <DockPanel Classes="row" Margin="0">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="NP Title" IsRequired="True"
+                                                  HelpText="Exactly 9 characters, without _ or -. Example: SLUS21258. Filled automatically from the game ID; if the ID is not detected, it is derived from the NP title you type." />
+                                <TextBox x:Name="PS2NPTitleTextBox" PlaceholderText="9 characters, for example SLUS21258" MaxLength="9" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Classes="section" IsExpanded="True">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="ImageOutline" Width="20" Height="20" /><TextBlock Text="Icon &amp; background · optional" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
+                                                  HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the selected emulator." />
+                                <Button x:Name="BrowsePS2IconButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedIconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (optional)" />
+                            </DockPanel>
+                            <DockPanel Classes="row" Margin="0">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Background" IsRequired="False"
+                                                  HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to 1920×1080. A 16:9 image avoids distortion." />
+                                <Button x:Name="BrowsePS2StartupImageButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedStartupImageTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (optional)" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Classes="section">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="Album" Width="20" Height="20" /><TextBlock Text="Additional discs · optional" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="Only for games with more than one disc (up to 5 in total)." Classes="fieldHint" Margin="0,0,0,10" />
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 2" IsRequired="False" HelpText="Second disc of the game. Optional." />
+                                <Button x:Name="BrowsePS2Disc2Button" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedDisc2TextBox" PlaceholderText="Optional .ISO file" />
+                            </DockPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 3" IsRequired="False" HelpText="Third disc of the game. Optional." />
+                                <Button x:Name="BrowsePS2Disc3Button" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedDisc3TextBox" PlaceholderText="Optional .ISO file" />
+                            </DockPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 4" IsRequired="False" HelpText="Fourth disc of the game. Optional." />
+                                <Button x:Name="BrowsePS2Disc4Button" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedDisc4TextBox" PlaceholderText="Optional .ISO file" />
+                            </DockPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 5" IsRequired="False" HelpText="Fifth disc of the game. Optional." />
+                                <Button x:Name="BrowsePS2Disc5Button" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedDisc5TextBox" PlaceholderText="Optional .ISO file" />
+                            </DockPanel>
+                            <CheckBox x:Name="PS2RestartEmulatorOnDiscChangeCheckBox" Content="Restart the emulator when the disc changes" IsChecked="False" Margin="0,6,0,0"
+                                      ToolTip.Tip="Restarts the emulator when you switch discs. Use it for multi-disc games that do not switch discs by themselves." />
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Classes="section">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="CogOutline" Width="20" Height="20" /><TextBlock Text="Emulator · optional" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Emulator" IsRequired="False"
+                                                  HelpText="The emulator that runs the game. Jak v2 is the default. If a game does not start or crashes, try the other emulator. Each game may work better with one of them." />
+                                <ComboBox x:Name="PS2EmulatorComboBox" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                    <ComboBoxItem Content="Jak v2" />
+                                    <ComboBoxItem Content="Rogue v1" />
+                                </ComboBox>
+                            </DockPanel>
+                            <TextBlock x:Name="PS2EmulatorHint" Classes="fieldHint" Text="Default: Jak v2. If the game does not start or crashes, try Rogue v1." />
+
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Upscaling" IsRequired="False"
+                                                  HelpText="Filter used to scale the image. None keeps the original look. The other filters smooth or sharpen it. Some filters look wrong in some games, so try them if the default looks poor." />
+                                <ComboBox x:Name="PS2UpscalingComboBox" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                    <ComboBoxItem Content="None" />
+                                    <ComboBoxItem Content="GPU" />
+                                    <ComboBoxItem Content="Bilinear" />
+                                    <ComboBoxItem Content="Edgesmooth" />
+                                    <ComboBoxItem Content="Point" />
+                                </ComboBox>
+                            </DockPanel>
+                            <TextBlock Classes="fieldHint" Text="None keeps the original image. Bilinear and Edgesmooth smooth it; Point keeps hard pixels." />
+
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Uprender" IsRequired="False"
+                                                  HelpText="Renders the game at a higher internal resolution. 2x2 looks sharper but needs a stronger machine. None keeps the original resolution." />
+                                <ComboBox x:Name="PS2UprenderComboBox" SelectedIndex="1" Width="200" HorizontalAlignment="Left">
+                                    <ComboBoxItem Content="None" />
+                                    <ComboBoxItem Content="2x2" />
+                                </ComboBox>
+                            </DockPanel>
+                            <TextBlock Classes="fieldHint" Text="Default: 2x2 (sharper). Use None if the game runs slowly." />
+
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Display mode" IsRequired="False"
+                                                  HelpText="How the picture fills the screen. Normal keeps the original proportion. Full stretches it to the screen. 4:3 and 16:9 force that proportion." />
+                                <ComboBox x:Name="PS2DisplayModeComboBox" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                    <ComboBoxItem Content="Normal" />
+                                    <ComboBoxItem Content="Full" />
+                                    <ComboBoxItem Content="4:3" />
+                                    <ComboBoxItem Content="16:9" />
+                                </ComboBox>
+                            </DockPanel>
+                            <TextBlock Classes="fieldHint" Text="Default: Normal. Use 16:9 for a widescreen TV if the picture looks squeezed." />
+
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Multitap" IsRequired="False"
+                                                  HelpText="Enables the multitap adapter, for games that play with more than two controllers. Leave it disabled unless the game asks for it." />
+                                <ComboBox x:Name="PS2MultitapComboBox" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                    <ComboBoxItem Content="Disabled" />
+                                    <ComboBoxItem Content="On Port 1" />
+                                    <ComboBoxItem Content="On Port 2" />
+                                    <ComboBoxItem Content="On Port 1 and 2" />
+                                </ComboBox>
+                            </DockPanel>
+                            <TextBlock Classes="fieldHint" Text="Keep Disabled unless the game needs more than two controllers." />
+
+                            <WrapPanel Margin="0,6,0,6">
+                                <CheckBox x:Name="PS2FixGraphicsCheckBox" Content="Fix graphics" IsChecked="True" Classes="option"
+                                          ToolTip.Tip="Recommended. Fixes graphic glitches in many games." />
+                                <CheckBox x:Name="PS2ImproveSpeedCheckBox" Content="Improve speed" Classes="option"
+                                          ToolTip.Tip="Can raise the frame rate, but may cause glitches in some games." />
+                                <CheckBox x:Name="PS2DisableMTVUCheckBox" Content="Disable MTVU" Classes="option"
+                                          ToolTip.Tip="Try it if the game freezes or has strange sound or picture." />
+                                <CheckBox x:Name="PS2DisableInstantVIF1TransferCheckBox" Content="Disable instant VIF1 transfer" Classes="option"
+                                          ToolTip.Tip="Try it if there are graphic failures that the other options do not fix." />
+                                <CheckBox x:Name="PS2UseWidescreenPatchCheckBox" Content="Widescreen patch" IsEnabled="False" Classes="option"
+                                          ToolTip.Tip="Enabled automatically when the database has a widescreen patch for this game." />
+                                <CheckBox x:Name="PS2UseCompressionCheckBox" Content="Compress the discs in the package" IsChecked="True" Classes="option"
+                                          ToolTip.Tip="Recommended. Makes the package smaller. Turn it off only to speed up the build." />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Classes="section">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="CodeBraces" Width="20" Height="20" /><TextBlock Text="Configs &amp; memory card · optional" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <WrapPanel Margin="0,0,0,6">
+                                <CheckBox x:Name="PS2AddTXTConfigFromDatabaseCheckBox" Content="TXT config from database" Classes="option"
+                                          ToolTip.Tip="Uses the list of the app for this game, when it exists." />
+                                <CheckBox x:Name="PS2AddLUAConfigFromDatabaseCheckBox" Content="LUA config from database" Classes="option"
+                                          ToolTip.Tip="Uses the list of the app for this game, when it exists." />
+                                <CheckBox x:Name="PS2AddPS3ConfigFromDatabaseCheckBox" Content="PS3 config from database" Classes="option"
+                                          ToolTip.Tip="Uses the PS3 config of this game from the list of the app, when it exists." />
+                            </WrapPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="TXT config" IsRequired="False"
+                                                  HelpText="Your own emulator options file. It replaces the database TXT config. Leave it empty to use the database one (when the box above is checked)." />
+                                <Button x:Name="BrowsePS2TXTConfigButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPS2TXTConfigTextBox" PlaceholderText="Your own config (replaces the database config)" />
+                            </DockPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="LUA config" IsRequired="False"
+                                                  HelpText="Your own LUA script with patches. It replaces the database script. Only use it if you have a script made for this game." />
+                                <Button x:Name="BrowsePS2LUAConfigButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPS2LUAConfigTextBox" PlaceholderText="Your own LUA script (replaces the database script)" />
+                            </DockPanel>
+                            <DockPanel Classes="row" Margin="0">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Memory card" IsRequired="False"
+                                                  HelpText="Imports a PS2 memory card with your saves (8 MB). Use a .vm2, .ps2 or .bin file." />
+                                <Button x:Name="BrowsePS2MCButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPS2MemoryCardTextBox" PlaceholderText="Import an 8 MB PS2 memory card (.vm2, .ps2, .bin)" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border Grid.Column="1" Classes="card" Margin="0,16,24,24">
+                <DockPanel LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Bottom" Margin="0,16,0,0">
+                        <ProgressBar x:Name="PS2BuildProgress" IsIndeterminate="True" IsVisible="False" Margin="0,0,0,8" />
+                        <Button x:Name="BuildPS2fPKGButton" Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Height="46" FontSize="16">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <mi:MaterialIcon Kind="PackageVariantClosed" Width="20" Height="20" />
+                                <TextBlock x:Name="BuildPS2fPKGButtonText" Text="Build fPKG" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,10">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <RadioButton x:Name="PS2PS4Radio" GroupName="PS2Mode" Content="PS4" IsChecked="True" Classes="mode" />
+                                <RadioButton x:Name="PS2PS5Radio" GroupName="PS2Mode" Content="PS5" Classes="mode" />
+                            </StackPanel>
+                            <TextBlock Text="Home screen preview" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <local:DashPreview x:Name="PS2Preview" />
+                        <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,14,0,0">
+                            <StackPanel>
+                                <Border Width="120" Height="120" CornerRadius="6" Background="#22FFFFFF" ClipToBounds="True">
+                                    <Image x:Name="PS2IconThumbnail" Stretch="Fill" />
+                                </Border>
+                                <TextBlock Text="icon0.png · 512×512" FontSize="12" Margin="0,6,0,0" Foreground="{DynamicResource TertiaryTextBrush}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <Border Width="213" Height="120" CornerRadius="6" Background="#22FFFFFF" ClipToBounds="True">
+                                    <Image x:Name="PS2BackgroundThumbnail" Stretch="Fill" />
+                                </Border>
+                                <TextBlock Text="Background · 1920×1080" FontSize="12" Margin="0,6,0,0" Foreground="{DynamicResource TertiaryTextBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock x:Name="PS2HintsText" Classes="warning" />
+                        <TextBlock Classes="hint" Text="Approximation of the console home screen. Without an icon, the default icon of the selected emulator is used." />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <!-- ============================== PSP ============================== -->
+        <Grid x:Name="PSPPage" Grid.Column="1" ColumnDefinitions="*,460" IsVisible="False">
+            <ScrollViewer Grid.Column="0" Padding="16,16,16,24">
+                <StackPanel>
+                    <TextBlock Text="PlayStation Portable" Classes="pageTitle" />
+                    <TextBlock Text="Create a fake package from a PSP .ISO game. The NP title is read from the disc and the title from the file name. Fields marked Required must be filled; the others can be left empty." Classes="pageSubtitle" />
+
+                    <Expander Classes="section" IsExpanded="True">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="GamepadVariantOutline" Width="20" Height="20" /><TextBlock Text="Game" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="ISO file" IsRequired="True"
+                                                  HelpText="The .ISO file of the PSP game. The NP title and the title are read from it when possible." />
+                                <Button x:Name="BrowsePSPDiscButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPSPDiscTextBox" PlaceholderText="Select the .ISO file of the game" />
+                            </DockPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Title" IsRequired="True"
+                                                  HelpText="The name shown on the PS4/PS5 home screen. Filled from the file name; you can change it." />
+                                <TextBox x:Name="PSPTitleTextBox" PlaceholderText="Name shown on the home screen" />
+                            </DockPanel>
+                            <DockPanel Classes="row" Margin="0">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="NP Title" IsRequired="True"
+                                                  HelpText="Exactly 9 characters, without _ or -. Example: ULUS10041. Read from the disc when possible." />
+                                <TextBox x:Name="PSPNPTitleTextBox" PlaceholderText="9 characters, for example ULUS10041" MaxLength="9" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Classes="section" IsExpanded="True">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="ImageOutline" Width="20" Height="20" /><TextBlock Text="Icon &amp; background · optional" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <DockPanel Classes="row">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
+                                                  HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Recommended: PSP packages have no default icon, so without one the tile stays empty." />
+                                <Button x:Name="BrowsePSPIconButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPSPIconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (recommended)" />
+                            </DockPanel>
+                            <DockPanel Classes="row" Margin="0">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Background" IsRequired="False"
+                                                  HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to 1920×1080. A 16:9 image avoids distortion." />
+                                <Button x:Name="BrowsePSPBGButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPSPBGImageTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (optional)" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Classes="section">
+                        <Expander.Header><StackPanel Orientation="Horizontal" Spacing="10"><mi:MaterialIcon Kind="CogOutline" Width="20" Height="20" /><TextBlock Text="Emulator · optional" /></StackPanel></Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="The PSP emulator is fixed (psphd), so there is nothing to choose here. Use the field below only if you know which options you need." Classes="fieldHint" Margin="0,0,0,10" />
+                            <DockPanel Classes="row" Margin="0">
+                                <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Custom config" IsRequired="False"
+                                                  HelpText="A .txt file with options added to the default config-title.txt. Only use it if you know the emulator options." />
+                                <Button x:Name="BrowsePSPConfigButton" DockPanel.Dock="Right" Classes="browse" Content="Browse…" />
+                                <TextBox x:Name="SelectedPSPConfigTextBox" PlaceholderText="config-title.txt options appended to the default config" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border Grid.Column="1" Classes="card" Margin="0,16,24,24">
+                <DockPanel LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Bottom" Margin="0,16,0,0">
+                        <ProgressBar x:Name="PSPBuildProgress" IsIndeterminate="True" IsVisible="False" Margin="0,0,0,8" />
+                        <Button x:Name="BuildPSPfPKGButton" Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Height="46" FontSize="16">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <mi:MaterialIcon Kind="PackageVariantClosed" Width="20" Height="20" />
+                                <TextBlock x:Name="BuildPSPfPKGButtonText" Text="Build fPKG" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,10">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <RadioButton x:Name="PSPPS4Radio" GroupName="PSPMode" Content="PS4" IsChecked="True" Classes="mode" />
+                                <RadioButton x:Name="PSPPS5Radio" GroupName="PSPMode" Content="PS5" Classes="mode" />
+                            </StackPanel>
+                            <TextBlock Text="Home screen preview" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <local:DashPreview x:Name="PSPPreview" />
+                        <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,14,0,0">
+                            <StackPanel>
+                                <Border Width="120" Height="120" CornerRadius="6" Background="#22FFFFFF" ClipToBounds="True">
+                                    <Image x:Name="PSPIconThumbnail" Stretch="Fill" />
+                                </Border>
+                                <TextBlock Text="icon0.png · 512×512" FontSize="12" Margin="0,6,0,0" Foreground="{DynamicResource TertiaryTextBrush}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <Border Width="213" Height="120" CornerRadius="6" Background="#22FFFFFF" ClipToBounds="True">
+                                    <Image x:Name="PSPBackgroundThumbnail" Stretch="Fill" />
+                                </Border>
+                                <TextBlock Text="Background · 1920×1080" FontSize="12" Margin="0,6,0,0" Foreground="{DynamicResource TertiaryTextBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock x:Name="PSPHintsText" Classes="warning" />
+                        <TextBlock Classes="hint" Text="Approximation of the console home screen. PSP packages have no default icon, so choosing one is recommended." />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

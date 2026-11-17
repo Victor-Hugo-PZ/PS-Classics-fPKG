@@ -1,0 +1,63 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PSClassicsfPKGBuilder.Dialogs.GuideWindow"
+        Title="Guide - PS Classics fPKG Builder" Width="760" Height="720" MinWidth="560" MinHeight="480"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Styles>
+        <Style Selector="TextBlock.heading">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,22,0,8" />
+        </Style>
+        <Style Selector="TextBlock.body">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+        <Style Selector="TextBlock.bullet">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="8,0,0,4" />
+        </Style>
+    </Window.Styles>
+
+    <ScrollViewer Padding="28,16,28,28">
+        <StackPanel>
+            <TextBlock Text="How to create a fPKG" FontSize="26" FontWeight="SemiBold" />
+            <TextBlock Classes="body" Margin="0,4,0,0"
+                       Text="Pick a platform on the left, fill the fields and press Build fPKG. Every field has a help button (i) that explains it." />
+
+            <TextBlock Text="1. Quick start" Classes="heading" />
+            <TextBlock Classes="bullet" Text="• Select Disc 1 (the BIN file for PS1, the ISO for PS2 and PSP). The game ID and the title are filled in when the game is recognized." />
+            <TextBlock Classes="bullet" Text="• Check the NP Title: it must have exactly 9 characters, without _ or -." />
+            <TextBlock Classes="bullet" Text="• Optional: choose an icon and a background." />
+            <TextBlock Classes="bullet" Text="• Press Build fPKG and choose the output folder. The package is created there." />
+
+            <TextBlock Text="2. Required and optional fields" Classes="heading" />
+            <TextBlock Classes="body" Text="Fields marked Required must be filled, or the build stops with a message. Fields marked Optional can be left empty." />
+            <TextBlock Classes="bullet" Text="• PS1: Disc 1, Title, NP Title. Optional: icon, background, discs 2 to 4, emulator options, TXT and LUA configs." />
+            <TextBlock Classes="bullet" Text="• PS2: Disc 1, Title, NP Title. Optional: icon, background, discs 2 to 5, emulator options, database configs, your own TXT or LUA config, memory card." />
+            <TextBlock Classes="bullet" Text="• PSP: ISO file, Title, NP Title. Optional: icon, background, custom config." />
+
+            <TextBlock Text="3. Images (icon and background)" Classes="heading" />
+            <TextBlock Classes="body" Text="You do not need to convert images first. The app accepts PNG, JPG, BMP, GIF and WebP and converts them to PNG:" />
+            <TextBlock Classes="bullet" Text="• Icon: 512×512 pixels. A square image avoids distortion." />
+            <TextBlock Classes="bullet" Text="• Background: 1920×1080 pixels. A 16:9 image avoids distortion." />
+            <TextBlock Classes="bullet" Text="• The preview on the right shows what the home screen will look like and warns when an image will be stretched or enlarged. For animated GIFs only the first frame is used." />
+
+            <TextBlock Text="4. Emulators" Classes="heading" />
+            <TextBlock Classes="bullet" Text="• PS1: the emulator is fixed (ps1hd). The options only change how it runs." />
+            <TextBlock Classes="bullet" Text="• PS2: choose between Jak v2 (the default) and Rogue v1. If a game does not start or crashes, try the other one." />
+            <TextBlock Classes="bullet" Text="• PSP: the emulator is fixed (psphd)." />
+            <TextBlock Classes="body" Margin="0,6,0,0" Text="The options under the emulator (upscaling, uprender, display mode, fixes) are optional. Start with the defaults; change one option at a time if a game has problems." />
+
+            <TextBlock Text="5. Wine (Linux and macOS)" Classes="heading" />
+            <TextBlock Classes="body" Text="The PS4 publishing tools are Windows programs: on Linux and macOS the app runs them through Wine. Install Wine and winetricks once, then press 'Wine setup' in the app: it prepares a Wine folder for the app and installs the Visual C++ 2008 runtime the tools need. The status at the bottom left tells you when everything is ready." />
+
+            <TextBlock Text="6. Problems?" Classes="heading" />
+            <TextBlock Classes="bullet" Text="• A yellow warning under the preview is about an image, not an error: it is only a suggestion." />
+            <TextBlock Classes="bullet" Text="• If the app says the Tools folder is missing, keep the Tools folder next to the program (see the README)." />
+            <TextBlock Classes="bullet" Text="• Use 'Check a .pkg' to verify a package you created." />
+            <TextBlock Classes="bullet" Text="• If a game does not work on the console, note the emulator and the options you used and try changing one option at a time." />
+        </StackPanel>
+    </ScrollViewer>
+</Window>

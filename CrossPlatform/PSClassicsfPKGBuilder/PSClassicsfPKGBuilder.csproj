@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- PS Classics fPKG Builder for Linux and macOS (Avalonia). Same screens as the Windows (WPF) app and the same
+       shared Core library, so every OS builds the same packages. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>PSClassicsfPKGBuilder</RootNamespace>
+    <AssemblyName>PSClassicsfPKGBuilder</AssemblyName>
+    <Version>2.2.0</Version>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.6" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="3.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\PSClassics.Core\PSClassics.Core.vbproj" />
+  </ItemGroup>
+
+  <!-- Third-party tools and emulators (git-ignored) are copied next to the executable when present, like the Windows app. -->
+  <PropertyGroup>
+    <ToolsSourceDir>$(MSBuildThisFileDirectory)..\..\Tools\</ToolsSourceDir>
+  </PropertyGroup>
+  <ItemGroup Condition="Exists('$(ToolsSourceDir)') And '$(CopyToolsToOutput)' != 'false'">
+    <None Include="$(ToolsSourceDir)**\*" Link="Tools\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

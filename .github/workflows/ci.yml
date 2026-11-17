@@ -19,9 +19,13 @@ jobs:
       # so the integration tests that need it are skipped here.
       - run: dotnet test "Windows/PS Classics fPKG Builder.sln" -p:CopyToolsToOutput=false
 
-  linux:
-    name: Linux app (build + tests)
-    runs-on: ubuntu-latest
+  cross-platform:
+    name: Linux/macOS app (build + tests) - ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,4 +33,40 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
-      - run: dotnet test Linux/makePSClassicsfPKG.sln
+      - run: dotnet test CrossPlatform/PSClassicsfPKGBuilder.sln -p:CopyToolsToOutput=false
+
+  linux-wine:
+    # Runs the integration tests with the real tools through Wine, like the Linux app does:
+    # PS1/PS2/PSP packages are built from synthetic discs and checked with the SDK checker.
+    name: Linux integration (real tools via Wine)
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TOOLS_RELEASE: v2.1.0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Install Wine and winetricks
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends wine wine32:i386 wine64 winetricks xvfb cabextract unzip
+          wine --version
+      - name: Get the Tools folder from the Windows release
+        run: |
+          gh release download "$TOOLS_RELEASE" --repo "$GITHUB_REPOSITORY" --pattern '*.Windows.zip' --dir _release
+          unzip -q _release/*.zip 'Tools/*' -d _release/x
+          mv _release/x/Tools Tools
+          ls Tools/PS4
+      - name: Prepare the Wine prefix of the app (same as the Wine setup button)
+        run: |
+          export WINEPREFIX="$HOME/.local/share/PSClassicsfPKGBuilder/wine-prefix" WINEDEBUG=-all WINEDLLOVERRIDES="mscoree,mshtml="
+          mkdir -p "$(dirname "$WINEPREFIX")"
+          xvfb-run -a wineboot --init
+          xvfb-run -a winetricks -q vcrun2008
+          wineserver -w
+      - run: dotnet test Shared/PSClassics.Core.Tests -p:CopyToolsToOutput=false --logger "console;verbosity=normal"

@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="PSClassicsfPKGBuilder.Dialogs.PackageReportWindow"
+        Title="Package check - PS Classics fPKG Builder" Width="820" Height="640" MinWidth="560" MinHeight="420"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="24">
+        <DockPanel Grid.Row="0" Margin="0,0,0,16">
+            <materialIcons:MaterialIcon x:Name="ResultIcon" Kind="CheckCircle" Width="40" Height="40" Margin="0,0,14,0" VerticalAlignment="Top" />
+            <StackPanel>
+                <TextBlock x:Name="ResultTitle" FontSize="22" FontWeight="SemiBold" />
+                <TextBlock x:Name="ResultSubtitle" TextWrapping="Wrap" Opacity="0.8" Margin="0,4,0,0" />
+            </StackPanel>
+        </DockPanel>
+
+        <TextBox Grid.Row="1" x:Name="ReportTextBox" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                 FontFamily="Cascadia Mono,Consolas,Menlo,DejaVu Sans Mono,monospace" FontSize="13" />
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,16,0,0">
+            <Button x:Name="CopyButton" Content="Copy" MinWidth="90" />
+            <Button x:Name="ToolOutputButton" Content="Show tool output" />
+            <Button x:Name="CloseButton" Content="Close" Classes="accent" MinWidth="90" IsCancel="True" />
+        </StackPanel>
+    </Grid>
+</Window>

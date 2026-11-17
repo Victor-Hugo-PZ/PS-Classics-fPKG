@@ -1,0 +1,105 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Look shared with the Windows (WPF-UI) app: dark Fluent theme, PlayStation blue accent, cards and sections. -->
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Dark">
+                    <Color x:Key="SystemAccentColor">#0070D1</Color>
+                    <Color x:Key="SystemAccentColorLight1">#2E8BEA</Color>
+                    <Color x:Key="SystemAccentColorLight2">#5AA8F2</Color>
+                    <Color x:Key="SystemAccentColorLight3">#87C4F8</Color>
+                    <Color x:Key="SystemAccentColorDark1">#005BAA</Color>
+                    <Color x:Key="SystemAccentColorDark2">#004784</Color>
+                    <Color x:Key="SystemAccentColorDark3">#00335F</Color>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#202020" />
+            <SolidColorBrush x:Key="CardBackgroundBrush" Color="#2B2B2B" />
+            <SolidColorBrush x:Key="CardBorderBrush" Color="#3A3A3A" />
+            <SolidColorBrush x:Key="SecondaryTextBrush" Color="#C5C5C5" />
+            <SolidColorBrush x:Key="TertiaryTextBrush" Color="#9A9A9A" />
+            <SolidColorBrush x:Key="WarningTextBrush" Color="#FFC857" />
+            <SolidColorBrush x:Key="RequiredBadgeBrush" Color="#5AA8F2" />
+            <SolidColorBrush x:Key="OptionalBadgeBrush" Color="#3A3A3A" />
+        </ResourceDictionary>
+    </Styles.Resources>
+
+    <Style Selector="Window">
+        <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}" />
+    </Style>
+
+    <!-- Card on the right with the preview and the build button -->
+    <Style Selector="Border.card">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="16" />
+    </Style>
+
+    <!-- Collapsible sections of the form -->
+    <Style Selector="Expander.section">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+        <Setter Property="CornerRadius" Value="6" />
+    </Style>
+
+    <Style Selector="TextBlock.pageTitle">
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.pageSubtitle">
+        <Setter Property="Margin" Value="0,2,0,18" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+    </Style>
+    <Style Selector="TextBlock.hint">
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Margin" Value="0,10,0,0" />
+        <Setter Property="Foreground" Value="{DynamicResource TertiaryTextBrush}" />
+    </Style>
+    <Style Selector="TextBlock.fieldHint">
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Margin" Value="150,0,0,10" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+    </Style>
+    <Style Selector="TextBlock.warning">
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Margin" Value="0,10,0,0" />
+        <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+    </Style>
+
+    <!-- Form rows: label, field, browse button -->
+    <Style Selector="DockPanel.row">
+        <Setter Property="Margin" Value="0,0,0,10" />
+        <Setter Property="LastChildFill" Value="True" />
+    </Style>
+    <Style Selector="Button.browse">
+        <Setter Property="Margin" Value="8,0,0,0" />
+        <Setter Property="MinWidth" Value="96" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="CheckBox.option">
+        <Setter Property="Margin" Value="0,0,24,8" />
+        <Setter Property="MinWidth" Value="220" />
+    </Style>
+    <!-- PS4 / PS5 selector: radio buttons drawn as toggle buttons, like the Windows app -->
+    <Style Selector="RadioButton.mode">
+        <Setter Property="Theme" Value="{StaticResource {x:Type ToggleButton}}" />
+        <Setter Property="MinWidth" Value="56" />
+        <Setter Property="Margin" Value="4,0,0,0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+
+    <!-- Navigation list -->
+    <Style Selector="ListBox.nav > ListBoxItem">
+        <Setter Property="Padding" Value="12,10" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Margin" Value="0,0,0,2" />
+    </Style>
+</Styles>

@@ -1,0 +1,34 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PSClassicsfPKGBuilder.Dialogs.WineSetupWindow"
+        Title="Wine setup - PS Classics fPKG Builder" Width="760" Height="680" MinWidth="560" MinHeight="480"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="24">
+        <TextBlock Grid.Row="0" Text="Wine setup" FontSize="24" FontWeight="SemiBold" />
+        <TextBlock Grid.Row="1" TextWrapping="Wrap" Opacity="0.8" Margin="0,6,0,14"
+                   Text="The PS4 publishing tools are Windows programs. On Linux and macOS the app runs them through Wine, in a Wine folder of its own. This only has to be done once." />
+
+        <Border Grid.Row="2" Classes="card" Margin="0,0,0,14">
+            <StackPanel Spacing="6">
+                <TextBlock x:Name="WineLine" />
+                <TextBlock x:Name="WinetricksLine" />
+                <TextBlock x:Name="PrefixLine" />
+                <TextBlock x:Name="RuntimeLine" />
+                <TextBlock Text="How to install Wine and winetricks:" FontWeight="SemiBold" Margin="0,10,0,0" />
+                <SelectableTextBlock x:Name="InstructionsText" TextWrapping="Wrap"
+                                     FontFamily="Cascadia Mono,Consolas,Menlo,DejaVu Sans Mono,monospace" FontSize="13" />
+            </StackPanel>
+        </Border>
+
+        <TextBox Grid.Row="3" x:Name="LogTextBox" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                 FontFamily="Cascadia Mono,Consolas,Menlo,DejaVu Sans Mono,monospace" FontSize="12"
+                 PlaceholderText="Setup progress appears here." />
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,16,0,0">
+            <Button x:Name="RefreshButton" Content="Check again" />
+            <Button x:Name="SetUpButton" Content="Set up Wine" Classes="accent" />
+            <Button x:Name="CloseButton" Content="Close" MinWidth="90" IsCancel="True" />
+        </StackPanel>
+    </Grid>
+</Window>
