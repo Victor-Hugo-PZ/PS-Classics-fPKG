@@ -30,6 +30,9 @@ Windows/PS Classics fPKG Builder/            app WPF (projeto SDK-style, net10.0
     SfoBuilder.vb  Gp4Editor.vb              param.sfo e edição do .gp4
     IsoTools.vb  PspTools.vb                 ISO/UDF (DiscUtils), bancos .dat, patch do EBOOT do PSP
     ProcessRunner.vb                         ProcessRunner (+ PkgTools: gengp4 / orbis-pub-cmd)
+    PackageVerifier.vb                       checa um .pkg (img_verify do SDK + estrutura via LibOrbisPkg), separa problemas reais das regras de certificação da Sony
+Windows/PkgCheck/                            ferramenta de linha de comando (PkgCheck.exe) que compila AppPaths, ProcessRunner e PackageVerifier do app; vai em todo release
+scripts/build-release.ps1                    publica app + PkgCheck + Tools e gera o zip do release (7-Zip, caminhos com barra normal)
   PS1Game.vb PS2Game.vb                      IDs, títulos, libcrypt
   AppPaths.vb FileUtils.vb Utils.vb          caminhos, cópia de pastas, PNG
 Windows/PS Classics fPKG Builder.Tests/      xUnit (C#): testes unitários + integração com as ferramentas reais

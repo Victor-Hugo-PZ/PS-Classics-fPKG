@@ -69,7 +69,23 @@ The Windows app has a **Check a .pkg** button. It runs the checker of the PS4 pu
 - **Problems**: findings that may stop the package from installing or running.
 - **Expected for fake packages**: Sony certification rules that every fake package fails (`pronunciation.xml`, `changeinfo`, "test package, not for submission", SELF `sceversion` format…). They are safe to ignore.
 
-The same check from a command line: `Tools\PS4\mod-pub\orbis-pub-cmd-3.38.exe img_verify --passcode 00000000000000000000000000000000 game.pkg` (and `img_info` / `img_file_list --no_passcode` to inspect it). LibOrbisPkg's `PkgTool pkg_validate` is another option, but it always reports the three digests as invalid because packages are built with `--skip_digest`.
+### PkgCheck (command line tool)
+`PkgCheck.exe` is included in every release, next to the app, and does the same check without opening the app:
+
+```
+PkgCheck.exe game.pkg                 full check with the SDK checker (can take minutes on large games)
+PkgCheck.exe game.pkg --quick         structural checks only, instant, no Tools folder needed
+PkgCheck.exe game.pkg --tool-output   also prints the complete output of the SDK checker
+```
+Exit code: `0` no problems, `1` problems found, `2` the check could not run (bad arguments, missing file or tools). That makes it usable in scripts. It is built from `Windows/PkgCheck` and shares its code with the app.
+
+The same check with the SDK tool directly: `Tools\PS4\mod-pub\orbis-pub-cmd-3.38.exe img_verify --passcode 00000000000000000000000000000000 game.pkg` (and `img_info` / `img_file_list --no_passcode` to inspect it). LibOrbisPkg's `PkgTool pkg_validate` is another option, but it always reports the three digests as invalid because packages are built with `--skip_digest`.
+
+## Building a release
+```
+.\scripts\build-release.ps1 -Version 2.1.0
+```
+Publishes the app and PkgCheck, adds the `Tools` folder and a short `README.txt`, and creates `dist\PS.Classics.fPKG.Builder.v2.1.0.Windows.zip`.
 
 ## Running the tests
 ```

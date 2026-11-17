@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PS Classics fPKG Builder\PS Classics fPKG Builder.vbproj" />
+    <ProjectReference Include="..\PkgCheck\PkgCheck.vbproj" />
   </ItemGroup>
 
   <ItemGroup>

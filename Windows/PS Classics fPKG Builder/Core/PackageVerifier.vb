@@ -177,13 +177,19 @@ Public Class PackageVerifier
     ''' Verifies a package. The SDK checker reads the whole package, so this can take a while for large games.
     ''' Throws FileNotFoundException when the file or the Tools folder does not exist.
     ''' </summary>
-    Public Shared Function Verify(PkgPath As String) As PackageReport
+    Public Shared Function Verify(PkgPath As String, Optional RunSdkChecker As Boolean = True) As PackageReport
         If Not File.Exists(PkgPath) Then Throw New FileNotFoundException("The package was not found.", PkgPath)
+
+        Dim Report As New PackageReport With {.PackagePath = PkgPath}
+
+        'Quick mode: only the structural checks (instant, no Tools folder needed)
+        If Not RunSdkChecker Then
+            Report.Issues.AddRange(CheckStructure(PkgPath))
+            Return Report
+        End If
 
         Dim PubCmd As String = AppPaths.ToolsDirectory + "\PS4\mod-pub\orbis-pub-cmd-3.38.exe"
         If Not File.Exists(PubCmd) Then Throw New FileNotFoundException("The publishing tool was not found. Check the Tools folder.", PubCmd)
-
-        Dim Report As New PackageReport With {.PackagePath = PkgPath}
 
         Dim InfoResult As ProcessResult = ProcessRunner.Run(PubCmd, "img_info """ + PkgPath + """")
         Report.Info = InfoResult.Output

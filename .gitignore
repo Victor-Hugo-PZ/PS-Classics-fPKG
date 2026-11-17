@@ -73,3 +73,9 @@ Cache
 lib
 TestResults
 *.trx
+
+*.iso
+*.pkg
+*.bin
+*.cue
+dist
