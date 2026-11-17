@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- Single-file release (scripts/build-release.*): keep only the languages the app has -->
+    <SatelliteResourceLanguages>en;pt-BR</SatelliteResourceLanguages>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>PkgCheck</RootNamespace>

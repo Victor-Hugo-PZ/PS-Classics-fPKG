@@ -41,6 +41,7 @@ Windows/PkgCheck/                            PkgCheck (linha de comando, net10.0
 CrossPlatform/PSClassicsfPKGBuilder/         app Avalonia: MainWindow, UiTranslator, Controls/ (DashPreview, FieldLabel, StepBar), Dialogs/ (Guide, PackageReport, BuildResult, History, Settings, WineSetup, MessageDialog), Styles.axaml
 scripts/build-release.ps1                    release Windows (zip, 7-Zip)
 scripts/build-release.sh                     release Linux (zip) e macOS (.app ad-hoc assinado em zip)
+  (release: cada programa é UM arquivo autocontido (`PublishSingleFile`); a pasta Tools é copiada pelo script, não pelo MSBuild, que copiava arquivos faltando. O zip tem uma pasta de topo com o app, o PkgCheck, Tools e README.)
 .github/workflows/ci.yml                     Windows + Linux/macOS (build e testes) + integração no Linux com Wine
 .github/workflows/release-packages.yml       manual: gera os 4 pacotes como artefatos (não publica release)
 external/LibOrbisPkg/                        submódulo git (LGPL-3.0)
