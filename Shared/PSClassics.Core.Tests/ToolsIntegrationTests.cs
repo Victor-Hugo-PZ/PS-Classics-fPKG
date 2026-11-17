@@ -86,6 +86,7 @@ public class ToolsIntegrationTests
         using var ws = new TempWorkspace();
         var iso = CreateIso(Path.Combine(ws.Root, "game.iso"), ("SYSTEM.CNF", new byte[64]), ("SLUS_212.58", new byte[4096]));
 
+        // Regression: on Linux/macOS Path.GetFileName does not split "\SLUS_212.58" (ISO paths use backslashes)
         Assert.Equal("SLUS_212.58", PS2Game.GetPS2GameID(iso));
         Assert.Equal("", PS2Game.GetPS2GameID(ws.Write("notaniso.iso", "nope")));
     }

@@ -68,5 +68,9 @@ jobs:
           mkdir -p "$(dirname "$WINEPREFIX")"
           xvfb-run -a wineboot --init
           xvfb-run -a winetricks -q vcrun2008
-          wineserver -w
+          # wineserver is not on PATH on Ubuntu (/usr/lib/wine/wineserver64); wait for Wine to finish writing the prefix
+          for ws in wineserver /usr/lib/wine/wineserver64 /usr/lib/wine/wineserver32 /usr/lib/wine/wineserver; do
+            if command -v "$ws" >/dev/null 2>&1; then "$ws" -w; break; fi
+          done
+          ls "$WINEPREFIX/drive_c/windows/winsxs" | grep -i vc90 | head -5
       - run: dotnet test Shared/PSClassics.Core.Tests -p:CopyToolsToOutput=false --logger "console;verbosity=normal"

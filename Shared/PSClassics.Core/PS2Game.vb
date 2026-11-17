@@ -44,7 +44,7 @@ Public Class PS2Game
         Try
             Using IsoStream As FileStream = File.OpenRead(GameISO)
                 Dim Reader As New DiscUtils.Iso9660.CDReader(IsoStream, True)
-                Return FindGameIDInFileNames(Reader.GetFiles("\").Select(Function(Name) Path.GetFileName(Name)))
+                Return FindGameIDInFileNames(Reader.GetFiles("\").Select(Function(Name) Name.Substring(Name.LastIndexOf("\"c) + 1)))
             End Using
         Catch ex As Exception
             Return ""
