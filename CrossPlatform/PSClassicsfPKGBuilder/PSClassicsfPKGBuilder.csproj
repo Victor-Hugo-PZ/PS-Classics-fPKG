@@ -3,6 +3,8 @@
   <!-- PS Classics fPKG Builder for Linux and macOS (Avalonia). Same screens as the Windows (WPF) app and the same
        shared Core library, so every OS builds the same packages. -->
   <PropertyGroup>
+    <!-- Single-file release (scripts/build-release.*): keep only the languages the app has -->
+    <SatelliteResourceLanguages>en;pt-BR</SatelliteResourceLanguages>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>disable</Nullable>
