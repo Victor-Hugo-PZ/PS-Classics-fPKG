@@ -47,6 +47,29 @@ Public Class PSClassicsfPKGBuilder
         End Select
     End Sub
 
+    Private Async Sub VerifyPkgButton_Click(sender As Object, e As RoutedEventArgs) Handles VerifyPkgButton.Click
+        Dim OFD As New OpenFileDialog() With {.Title = "Select the .pkg to check.", .Multiselect = False, .Filter = "PS4 package (*.pkg)|*.pkg"}
+        If OFD.ShowDialog() <> Forms.DialogResult.OK Then Return
+
+        VerifyPkgButton.IsEnabled = False
+        VerifyPkgButton.Content = "Checking…"
+        Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait
+        Try
+            Dim PkgFile As String = OFD.FileName
+            Dim Report As PackageReport = Await Task.Run(Function() PackageVerifier.Verify(PkgFile))
+            Mouse.OverrideCursor = Nothing
+            Dim ReportWindow As New PackageReportWindow(Report) With {.Owner = Me}
+            ReportWindow.ShowDialog()
+        Catch ex As Exception
+            Mouse.OverrideCursor = Nothing
+            MsgBox("The package could not be checked:" + vbCrLf + ex.Message, MsgBoxStyle.Critical, "Check a .pkg")
+        Finally
+            Mouse.OverrideCursor = Nothing
+            VerifyPkgButton.Content = "Check a .pkg"
+            VerifyPkgButton.IsEnabled = True
+        End Try
+    End Sub
+
     Private Sub OpenGuideButton_Click(sender As Object, e As RoutedEventArgs) Handles OpenGuideButton.Click
         Dim Guide As New GuideWindow() With {.Owner = Me}
         Guide.ShowDialog()

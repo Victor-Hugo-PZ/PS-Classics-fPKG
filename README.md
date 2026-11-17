@@ -64,6 +64,13 @@ dotnet build "Windows/PS Classics fPKG Builder.sln"
 - The third-party tools and emulators are **not** part of this repository (they are git-ignored). Extract the `Tools` folder of the [original Windows release](https://github.com/SvenGDK/PS-Classics-fPKG-Builder/releases/tag/v1) into the repository root (`Tools/`). The build copies it next to the executable when it exists.
 - Run the app with `dotnet run --project "Windows/PS Classics fPKG Builder"`.
 
+## Checking a generated .pkg
+The Windows app has a **Check a .pkg** button. It runs the checker of the PS4 publishing tools (`orbis-pub-cmd img_verify`, with the standard fake package passcode) plus structural checks (file size, `param.sfo`, `icon0.png`), and shows the result in two groups:
+- **Problems**: findings that may stop the package from installing or running.
+- **Expected for fake packages**: Sony certification rules that every fake package fails (`pronunciation.xml`, `changeinfo`, "test package, not for submission", SELF `sceversion` format…). They are safe to ignore.
+
+The same check from a command line: `Tools\PS4\mod-pub\orbis-pub-cmd-3.38.exe img_verify --passcode 00000000000000000000000000000000 game.pkg` (and `img_info` / `img_file_list --no_passcode` to inspect it). LibOrbisPkg's `PkgTool pkg_validate` is another option, but it always reports the three digests as invalid because packages are built with `--skip_digest`.
+
 ## Running the tests
 ```
 dotnet test "Windows/PS Classics fPKG Builder.sln"

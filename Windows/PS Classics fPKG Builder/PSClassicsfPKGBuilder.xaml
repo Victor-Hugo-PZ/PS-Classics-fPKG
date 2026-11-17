@@ -80,6 +80,8 @@
             <!-- Navigation -->
             <DockPanel Grid.Column="0" Margin="12,8,8,16" LastChildFill="True">
                 <StackPanel DockPanel.Dock="Bottom" Margin="8,0,0,0">
+                    <ui:Button x:Name="VerifyPkgButton" Content="Check a .pkg" Icon="{ui:SymbolIcon ShieldCheckmark24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                               ToolTip="Verifies a generated .pkg with the SDK checker and tells you if something is wrong" />
                     <ui:Button x:Name="OpenGuideButton" Content="Guide" Icon="{ui:SymbolIcon Book24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,12" />
                     <StackPanel Orientation="Horizontal">
                         <ui:SymbolIcon x:Name="ToolsStatusIcon" Symbol="CheckmarkCircle24" Margin="0,0,6,0" />
