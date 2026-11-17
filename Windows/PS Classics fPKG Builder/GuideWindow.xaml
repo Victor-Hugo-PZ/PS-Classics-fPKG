@@ -1,0 +1,68 @@
+<ui:FluentWindow x:Class="GuideWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Guide - PS Classics fPKG Builder" Width="760" Height="720" MinWidth="560" MinHeight="480"
+        WindowStartupLocation="CenterOwner" ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica" WindowCornerPreference="Round">
+
+    <ui:FluentWindow.Resources>
+        <Style x:Key="Heading" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,22,0,8" />
+        </Style>
+        <Style x:Key="Body" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+        <Style x:Key="Bullet" TargetType="TextBlock" BasedOn="{StaticResource Body}">
+            <Setter Property="Margin" Value="8,0,0,4" />
+        </Style>
+    </ui:FluentWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Guide" />
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="28,4,28,28">
+            <StackPanel>
+                <TextBlock Text="How to create a fPKG" FontSize="26" FontWeight="SemiBold" />
+                <TextBlock Style="{StaticResource Body}" Margin="0,4,0,0"
+                           Text="Pick a platform on the left, fill the fields and press Build fPKG. Every field has a help button (i) that explains it." />
+
+                <TextBlock Text="1. Quick start" Style="{StaticResource Heading}" />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Select Disc 1 (the BIN file for PS1, the ISO for PS2 and PSP). The game ID and the title are filled in when the game is recognized." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Check the NP Title: it must have exactly 9 characters, without _ or -." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Optional: choose an icon and a background." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Press Build fPKG and choose the output folder. The package is created there." />
+
+                <TextBlock Text="2. Required and optional fields" Style="{StaticResource Heading}" />
+                <TextBlock Style="{StaticResource Body}" Text="Fields marked Required must be filled, or the build stops with a message. Fields marked Optional can be left empty." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• PS1: Disc 1, Title, NP Title. Optional: icon, background, discs 2 to 4, emulator options, TXT and LUA configs." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• PS2: Disc 1, Title, NP Title. Optional: icon, background, discs 2 to 5, emulator options, database configs, your own TXT or LUA config, memory card." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• PSP: ISO file, Title, NP Title. Optional: icon, background, custom config." />
+
+                <TextBlock Text="3. Images (icon and background)" Style="{StaticResource Heading}" />
+                <TextBlock Style="{StaticResource Body}" Text="You do not need to convert images first. The app accepts PNG, JPG, BMP, GIF and TIFF and converts them to PNG:" />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Icon: 512×512 pixels. A square image avoids distortion." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Background: 1920×1080 pixels. A 16:9 image avoids distortion." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• The preview on the right shows what the home screen will look like and warns when an image will be stretched or enlarged. For animated GIFs only the first frame is used." />
+
+                <TextBlock Text="4. Emulators" Style="{StaticResource Heading}" />
+                <TextBlock Style="{StaticResource Bullet}" Text="• PS1: the emulator is fixed (ps1hd). The options only change how it runs." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• PS2: choose between Jak v2 (the default) and Rogue v1. If a game does not start or crashes, try the other one." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• PSP: the emulator is fixed (psphd)." />
+                <TextBlock Style="{StaticResource Body}" Margin="0,6,0,0" Text="The options under the emulator (upscaling, uprender, display mode, fixes) are optional. Start with the defaults; change one option at a time if a game has problems." />
+
+                <TextBlock Text="5. Problems?" Style="{StaticResource Heading}" />
+                <TextBlock Style="{StaticResource Bullet}" Text="• A yellow warning under the preview is about an image, not an error: it is only a suggestion." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• If the app says the Tools folder is missing, copy it next to the program (see the README)." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• The packages are generated without a console test in this version: if a game does not work on the console, note the emulator and the options you used." />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</ui:FluentWindow>

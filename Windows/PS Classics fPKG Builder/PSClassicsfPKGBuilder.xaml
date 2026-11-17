@@ -11,16 +11,9 @@
         ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica" WindowCornerPreference="Round">
 
     <ui:FluentWindow.Resources>
-        <!-- A form row: label on the left, browse button on the right, text box filling the rest -->
         <Style TargetType="DockPanel">
             <Setter Property="Margin" Value="0,0,0,10" />
             <Setter Property="LastChildFill" Value="True" />
-        </Style>
-        <Style x:Key="FieldLabel" TargetType="TextBlock">
-            <Setter Property="Width" Value="130" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="DockPanel.Dock" Value="Left" />
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
         </Style>
         <Style x:Key="BrowseButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="DockPanel.Dock" Value="Right" />
@@ -57,6 +50,12 @@
             <Setter Property="Margin" Value="0,10,0,0" />
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}" />
         </Style>
+        <Style x:Key="FieldHint" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="150,0,0,10" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
         <Style x:Key="WarningText" TargetType="TextBlock">
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Margin" Value="0,10,0,0" />
@@ -81,6 +80,7 @@
             <!-- Navigation -->
             <DockPanel Grid.Column="0" Margin="12,8,8,16" LastChildFill="True">
                 <StackPanel DockPanel.Dock="Bottom" Margin="8,0,0,0">
+                    <ui:Button x:Name="OpenGuideButton" Content="Guide" Icon="{ui:SymbolIcon Book24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,12" />
                     <StackPanel Orientation="Horizontal">
                         <ui:SymbolIcon x:Name="ToolsStatusIcon" Symbol="CheckmarkCircle24" Margin="0,0,6,0" />
                         <TextBlock x:Name="ToolsStatusText" Text="Tools folder found" VerticalAlignment="Center" />
@@ -119,65 +119,76 @@
                 <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="16,8,16,24">
                     <StackPanel>
                         <TextBlock Text="PlayStation 1" Style="{StaticResource PageTitle}" />
-                        <TextBlock Text="Create a fake package from a .BIN game with its .CUE sheet (up to 4 discs). The game ID and title are detected from disc 1." Style="{StaticResource PageSubtitle}" />
+                        <TextBlock Text="Create a fake package from a .BIN game with its .CUE sheet (up to 4 discs). The game ID and title are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Style="{StaticResource PageSubtitle}" />
 
                         <ui:CardExpander Header="Game" Icon="{ui:SymbolIcon Games24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Disc 1" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 1" IsRequired="True"
+                                                      HelpText="The .BIN file of the game. It needs a .CUE sheet with the same name in the same folder. The game ID and title are read from this disc." />
                                     <Button x:Name="BrowsePS1Disc1Button" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="PS1SelectedDisc1TextBox" PlaceholderText="Select the .BIN file of the game" />
                                 </DockPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Title" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Title" IsRequired="True"
+                                                      HelpText="The name shown on the PS4/PS5 home screen. It is filled automatically when the game is recognized, and you can change it." />
                                     <ui:TextBox x:Name="PS1TitleTextBox" PlaceholderText="Name shown on the home screen" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
-                                    <TextBlock Text="NP Title" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="NP Title" IsRequired="True"
+                                                      HelpText="Exactly 9 characters, without _ or -. Example: SLUS00594. It is the game ID and it is filled automatically when detected. Only upper case letters and digits." />
                                     <ui:TextBox x:Name="PS1NPTitleTextBox" PlaceholderText="9 characters, for example SLUS00594" MaxLength="9" CharacterCasing="Upper" />
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Icon &amp; background" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
+                        <ui:CardExpander Header="Icon &amp; background · optional" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Icon" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
+                                                      HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the emulator." />
                                     <Button x:Name="BrowsePS1IconButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedPS1IconTextBox" PlaceholderText="PNG, ideally 512×512 (optional)" />
+                                    <ui:TextBox x:Name="SelectedPS1IconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (optional)" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
-                                    <TextBlock Text="Background" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Background" IsRequired="False"
+                                                      HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to 1920×1080. A 16:9 image avoids distortion." />
                                     <Button x:Name="BrowsePS1StartupImageButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedPS1BGTextBox" PlaceholderText="PNG, ideally 1920×1080 (optional)" />
+                                    <ui:TextBox x:Name="SelectedPS1BGTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (optional)" />
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Additional discs" Icon="{ui:SymbolIcon Album24}" Style="{StaticResource Section}">
+                        <ui:CardExpander Header="Additional discs · optional" Icon="{ui:SymbolIcon Album24}" Style="{StaticResource Section}">
                             <StackPanel>
+                                <TextBlock Text="Only for games with more than one disc. Each disc needs its own .CUE sheet." Style="{StaticResource FieldHint}" Margin="0,0,0,10" />
                                 <DockPanel>
-                                    <TextBlock Text="Disc 2" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 2" IsRequired="False"
+                                                      HelpText="Second disc of the game. Optional." />
                                     <Button x:Name="BrowsePS1Disc2Button" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="PS1SelectedDisc2TextBox" PlaceholderText="Optional .BIN file" />
                                 </DockPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Disc 3" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 3" IsRequired="False"
+                                                      HelpText="Third disc of the game. Optional." />
                                     <Button x:Name="BrowsePS1Disc3Button" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="PS1SelectedDisc3TextBox" PlaceholderText="Optional .BIN file" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
-                                    <TextBlock Text="Disc 4" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 4" IsRequired="False"
+                                                      HelpText="Fourth disc of the game. Optional." />
                                     <Button x:Name="BrowsePS1Disc4Button" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="PS1SelectedDisc4TextBox" PlaceholderText="Optional .BIN file" />
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Emulator" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
+                        <ui:CardExpander Header="Emulator · optional" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
                             <StackPanel>
+                                <TextBlock Text="The PS1 emulator is fixed (ps1hd), so there is nothing to choose here. The options below only change how it runs." Style="{StaticResource FieldHint}" Margin="0,0,0,10" />
                                 <DockPanel>
-                                    <TextBlock Text="Upscaling" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Upscaling" IsRequired="False"
+                                                      HelpText="Internal rendering scale. Higher values look sharper but need more from the console. The default (2) is a good balance." />
                                     <ComboBox x:Name="PS1UpscalingComboBox" SelectedIndex="2" Width="140" HorizontalAlignment="Left">
                                         <ComboBoxItem Content="6" />
                                         <ComboBoxItem Content="4" />
@@ -185,24 +196,27 @@
                                         <ComboBoxItem Content="1" />
                                     </ComboBox>
                                 </DockPanel>
+                                <TextBlock Style="{StaticResource FieldHint}" Text="Tip: 2 is the default. Use 6 or 4 only if the game runs at full speed with it." />
                                 <WrapPanel Style="{StaticResource OptionsWrap}">
-                                    <CheckBox x:Name="PS1SkipBootlogoCheckBox" Content="Skip boot logo" Style="{StaticResource Option}" />
-                                    <CheckBox x:Name="PS1EmulateAnalogSticksCheckBox" Content="Emulate analog sticks" Style="{StaticResource Option}" />
-                                    <CheckBox x:Name="PS1Force60HzCheckBox" Content="Force 60 Hz" Style="{StaticResource Option}" />
-                                    <CheckBox x:Name="PS1GunconCheckBox" Content="GunCon" Style="{StaticResource Option}" />
+                                    <CheckBox x:Name="PS1SkipBootlogoCheckBox" Content="Skip boot logo" Style="{StaticResource Option}" ToolTip="Skips the Sony logo at startup." />
+                                    <CheckBox x:Name="PS1EmulateAnalogSticksCheckBox" Content="Emulate analog sticks" Style="{StaticResource Option}" ToolTip="For games that only use the analog stick: makes the digital pad act as analog." />
+                                    <CheckBox x:Name="PS1Force60HzCheckBox" Content="Force 60 Hz" Style="{StaticResource Option}" ToolTip="Forces 60 Hz output. Can make some games smoother; check that the picture is not broken." />
+                                    <CheckBox x:Name="PS1GunconCheckBox" Content="GunCon" Style="{StaticResource Option}" ToolTip="Enables the GunCon light gun. Only for shooting games that use it." />
                                 </WrapPanel>
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Advanced configuration" Icon="{ui:SymbolIcon Code24}" Style="{StaticResource Section}">
+                        <ui:CardExpander Header="Advanced configuration · optional" Icon="{ui:SymbolIcon Code24}" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
-                                    <TextBlock Text="TXT config" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="TXT config" IsRequired="False"
+                                                      HelpText="A .txt file with extra emulator options. Its content is added at the end of config-title.txt. Only use it if you know the options." />
                                     <Button x:Name="BrowsePS1TXTConfigButton" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedPS1TXTConfigTextBox" PlaceholderText="Extra emulator options appended to config-title.txt" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
-                                    <TextBlock Text="LUA config" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="LUA config" IsRequired="False"
+                                                      HelpText="A game specific .lua script (patches). Only use it if you have a script made for this game." />
                                     <Button x:Name="BrowsePS1LUAConfigButton" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedPS1LUAConfigTextBox" PlaceholderText="Game specific LUA script" />
                                 </DockPanel>
@@ -247,7 +261,7 @@
                                 </StackPanel>
                             </Grid>
                             <TextBlock Text="{Binding Hints, ElementName=PS1Preview}" Style="{StaticResource WarningText}" />
-                            <TextBlock Style="{StaticResource HintText}" Text="Approximation of the console home screen. Without an icon, the default icon of the emulator is used. Images are resized to 512×512 (icon) and 1920×1080 (background)." />
+                            <TextBlock Style="{StaticResource HintText}" Text="Approximation of the console home screen. Without an icon, the default icon of the emulator is used." />
                         </StackPanel>
                     </DockPanel>
                 </ui:Card>
@@ -263,78 +277,89 @@
                 <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="16,8,16,24">
                     <StackPanel>
                         <TextBlock Text="PlayStation 2" Style="{StaticResource PageTitle}" />
-                        <TextBlock Text="Create a fake package from an .ISO game (up to 5 discs). Game ID, title and the available configs are detected from disc 1." Style="{StaticResource PageSubtitle}" />
+                        <TextBlock Text="Create a fake package from an .ISO game (up to 5 discs). Game ID, title and the available configs are detected from disc 1. Fields marked Required must be filled; the others can be left empty." Style="{StaticResource PageSubtitle}" />
 
                         <ui:CardExpander Header="Game" Icon="{ui:SymbolIcon Games24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Disc 1" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 1" IsRequired="True"
+                                                      HelpText="The .ISO file of the game. The game ID, title and the available database configs are read from this disc." />
                                     <Button x:Name="BrowsePS2Disc1Button" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedDisc1TextBox" PlaceholderText="Select the .ISO file of the game" />
                                 </DockPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Title" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Title" IsRequired="True"
+                                                      HelpText="The name shown on the PS4/PS5 home screen. It is filled automatically when the game is recognized, and you can change it." />
                                     <ui:TextBox x:Name="PS2TitleTextBox" PlaceholderText="Name shown on the home screen" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
-                                    <TextBlock Text="NP Title" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="NP Title" IsRequired="True"
+                                                      HelpText="Exactly 9 characters, without _ or -. Example: SLUS21258. Filled automatically from the game ID; if the ID is not detected, it is derived from the NP title you type." />
                                     <ui:TextBox x:Name="PS2NPTitleTextBox" PlaceholderText="9 characters, for example SLUS21258" MaxLength="9" CharacterCasing="Upper" />
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Icon &amp; background" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
+                        <ui:CardExpander Header="Icon &amp; background · optional" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Icon" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
+                                                      HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the selected emulator." />
                                     <Button x:Name="BrowsePS2IconButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedIconTextBox" PlaceholderText="PNG, ideally 512×512 (optional)" />
+                                    <ui:TextBox x:Name="SelectedIconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (optional)" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
-                                    <TextBlock Text="Background" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Background" IsRequired="False"
+                                                      HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to 1920×1080. A 16:9 image avoids distortion." />
                                     <Button x:Name="BrowsePS2StartupImageButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedStartupImageTextBox" PlaceholderText="PNG, ideally 1920×1080 (optional)" />
+                                    <ui:TextBox x:Name="SelectedStartupImageTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (optional)" />
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Additional discs" Icon="{ui:SymbolIcon Album24}" Style="{StaticResource Section}">
+                        <ui:CardExpander Header="Additional discs · optional" Icon="{ui:SymbolIcon Album24}" Style="{StaticResource Section}">
                             <StackPanel>
+                                <TextBlock Text="Only for games with more than one disc (up to 5 in total)." Style="{StaticResource FieldHint}" Margin="0,0,0,10" />
                                 <DockPanel>
-                                    <TextBlock Text="Disc 2" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 2" IsRequired="False" HelpText="Second disc of the game. Optional." />
                                     <Button x:Name="BrowsePS2Disc2Button" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedDisc2TextBox" PlaceholderText="Optional .ISO file" />
                                 </DockPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Disc 3" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 3" IsRequired="False" HelpText="Third disc of the game. Optional." />
                                     <Button x:Name="BrowsePS2Disc3Button" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedDisc3TextBox" PlaceholderText="Optional .ISO file" />
                                 </DockPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Disc 4" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 4" IsRequired="False" HelpText="Fourth disc of the game. Optional." />
                                     <Button x:Name="BrowsePS2Disc4Button" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedDisc4TextBox" PlaceholderText="Optional .ISO file" />
                                 </DockPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Disc 5" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Disc 5" IsRequired="False" HelpText="Fifth disc of the game. Optional." />
                                     <Button x:Name="BrowsePS2Disc5Button" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedDisc5TextBox" PlaceholderText="Optional .ISO file" />
                                 </DockPanel>
-                                <CheckBox x:Name="PS2RestartEmulatorOnDiscChangeCheckBox" Content="Restart the emulator when the disc changes" IsChecked="False" />
+                                <CheckBox x:Name="PS2RestartEmulatorOnDiscChangeCheckBox" Content="Restart the emulator when the disc changes" IsChecked="False" Margin="0,6,0,0"
+                                          ToolTip="Restarts the emulator when you switch discs. Use it for multi-disc games that do not switch discs by themselves." />
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Emulator" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
+                        <ui:CardExpander Header="Emulator · optional" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Emulator" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Emulator" IsRequired="False"
+                                                      HelpText="The emulator that runs the game. Jak v2 is the default. If a game does not start or crashes, try the other emulator. Each game may work better with one of them." />
                                     <ComboBox x:Name="PS2EmulatorComboBox" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
                                         <ComboBoxItem Content="Jak v2" />
                                         <ComboBoxItem Content="Rogue v1" />
                                     </ComboBox>
                                 </DockPanel>
+                                <TextBlock x:Name="PS2EmulatorHint" Style="{StaticResource FieldHint}" Text="Default: Jak v2. If the game does not start or crashes, try Rogue v1." />
+
                                 <DockPanel>
-                                    <TextBlock Text="Upscaling" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Upscaling" IsRequired="False"
+                                                      HelpText="Filter used to scale the image. None keeps the original look. The other filters smooth or sharpen it. Some filters look wrong in some games, so try them if the default looks poor." />
                                     <ComboBox x:Name="PS2UpscalingComboBox" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
                                         <ComboBoxItem Content="None" />
                                         <ComboBoxItem Content="GPU" />
@@ -343,15 +368,21 @@
                                         <ComboBoxItem Content="Point" />
                                     </ComboBox>
                                 </DockPanel>
+                                <TextBlock Style="{StaticResource FieldHint}" Text="None keeps the original image. Bilinear and Edgesmooth smooth it; Point keeps hard pixels." />
+
                                 <DockPanel>
-                                    <TextBlock Text="Uprender" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Uprender" IsRequired="False"
+                                                      HelpText="Renders the game at a higher internal resolution. 2x2 looks sharper but needs a stronger machine. None keeps the original resolution." />
                                     <ComboBox x:Name="PS2UprenderComboBox" SelectedIndex="1" Width="200" HorizontalAlignment="Left">
                                         <ComboBoxItem Content="None" />
                                         <ComboBoxItem Content="2x2" />
                                     </ComboBox>
                                 </DockPanel>
+                                <TextBlock Style="{StaticResource FieldHint}" Text="Default: 2x2 (sharper). Use None if the game runs slowly." />
+
                                 <DockPanel>
-                                    <TextBlock Text="Display mode" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Display mode" IsRequired="False"
+                                                      HelpText="How the picture fills the screen. Normal keeps the original proportion. Full stretches it to the screen. 4:3 and 16:9 force that proportion." />
                                     <ComboBox x:Name="PS2DisplayModeComboBox" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
                                         <ComboBoxItem Content="Normal" />
                                         <ComboBoxItem Content="Full" />
@@ -359,8 +390,11 @@
                                         <ComboBoxItem Content="16:9" />
                                     </ComboBox>
                                 </DockPanel>
+                                <TextBlock Style="{StaticResource FieldHint}" Text="Default: Normal. Use 16:9 for a widescreen TV if the picture looks squeezed." />
+
                                 <DockPanel>
-                                    <TextBlock Text="Multitap" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Multitap" IsRequired="False"
+                                                      HelpText="Enables the multitap adapter, for games that play with more than two controllers. Leave it disabled unless the game asks for it." />
                                     <ComboBox x:Name="PS2MultitapComboBox" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
                                         <ComboBoxItem Content="Disabled" />
                                         <ComboBoxItem Content="On Port 1" />
@@ -368,36 +402,50 @@
                                         <ComboBoxItem Content="On Port 1 and 2" />
                                     </ComboBox>
                                 </DockPanel>
-                                <WrapPanel Style="{StaticResource OptionsWrap}">
-                                    <CheckBox x:Name="PS2FixGraphicsCheckBox" Content="Fix graphics" IsChecked="True" Style="{StaticResource Option}" />
-                                    <CheckBox x:Name="PS2ImproveSpeedCheckBox" Content="Improve speed" Style="{StaticResource Option}" />
-                                    <CheckBox x:Name="PS2DisableMTVUCheckBox" Content="Disable MTVU" Style="{StaticResource Option}" />
-                                    <CheckBox x:Name="PS2DisableInstantVIF1TransferCheckBox" Content="Disable instant VIF1 transfer" Style="{StaticResource Option}" />
-                                    <CheckBox x:Name="PS2UseWidescreenPatchCheckBox" Content="Widescreen patch" IsEnabled="False" Style="{StaticResource Option}" ToolTip="Available when the game database has a widescreen patch for the selected game" />
-                                    <CheckBox x:Name="PS2UseCompressionCheckBox" Content="Compress the discs in the package" IsChecked="True" Style="{StaticResource Option}" />
+                                <TextBlock Style="{StaticResource FieldHint}" Text="Keep Disabled unless the game needs more than two controllers." />
+
+                                <WrapPanel Style="{StaticResource OptionsWrap}" Margin="0,6,0,6">
+                                    <CheckBox x:Name="PS2FixGraphicsCheckBox" Content="Fix graphics" IsChecked="True" Style="{StaticResource Option}"
+                                              ToolTip="Recommended. Fixes graphic glitches in many games." />
+                                    <CheckBox x:Name="PS2ImproveSpeedCheckBox" Content="Improve speed" Style="{StaticResource Option}"
+                                              ToolTip="Can raise the frame rate, but may cause glitches in some games." />
+                                    <CheckBox x:Name="PS2DisableMTVUCheckBox" Content="Disable MTVU" Style="{StaticResource Option}"
+                                              ToolTip="Try it if the game freezes or has strange sound or picture." />
+                                    <CheckBox x:Name="PS2DisableInstantVIF1TransferCheckBox" Content="Disable instant VIF1 transfer" Style="{StaticResource Option}"
+                                              ToolTip="Try it if there are graphic failures that the other options do not fix." />
+                                    <CheckBox x:Name="PS2UseWidescreenPatchCheckBox" Content="Widescreen patch" IsEnabled="False" Style="{StaticResource Option}"
+                                              ToolTip="Enabled automatically when the database has a widescreen patch for this game." />
+                                    <CheckBox x:Name="PS2UseCompressionCheckBox" Content="Compress the discs in the package" IsChecked="True" Style="{StaticResource Option}"
+                                              ToolTip="Recommended. Makes the package smaller. Turn it off only to speed up the build." />
                                 </WrapPanel>
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Configs &amp; memory card" Icon="{ui:SymbolIcon Code24}" Style="{StaticResource Section}">
+                        <ui:CardExpander Header="Configs &amp; memory card · optional" Icon="{ui:SymbolIcon Code24}" Style="{StaticResource Section}">
                             <StackPanel>
                                 <WrapPanel Style="{StaticResource OptionsWrap}">
-                                    <CheckBox x:Name="PS2AddTXTConfigFromDatabaseCheckBox" Content="TXT config from database" Style="{StaticResource Option}" />
-                                    <CheckBox x:Name="PS2AddLUAConfigFromDatabaseCheckBox" Content="LUA config from database" Style="{StaticResource Option}" />
-                                    <CheckBox x:Name="PS2AddPS3ConfigFromDatabaseCheckBox" Content="PS3 config from database" Style="{StaticResource Option}" />
+                                    <CheckBox x:Name="PS2AddTXTConfigFromDatabaseCheckBox" Content="TXT config from database" Style="{StaticResource Option}"
+                                              ToolTip="Uses the list of the app for this game, when it exists." />
+                                    <CheckBox x:Name="PS2AddLUAConfigFromDatabaseCheckBox" Content="LUA config from database" Style="{StaticResource Option}"
+                                              ToolTip="Uses the list of the app for this game, when it exists." />
+                                    <CheckBox x:Name="PS2AddPS3ConfigFromDatabaseCheckBox" Content="PS3 config from database" Style="{StaticResource Option}"
+                                              ToolTip="Uses the PS3 config of this game from the list of the app, when it exists." />
                                 </WrapPanel>
                                 <DockPanel>
-                                    <TextBlock Text="TXT config" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="TXT config" IsRequired="False"
+                                                      HelpText="Your own emulator options file. It replaces the database TXT config. Leave it empty to use the database one (when the box above is checked)." />
                                     <Button x:Name="BrowsePS2TXTConfigButton" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedPS2TXTConfigTextBox" PlaceholderText="Your own config (replaces the database config)" />
                                 </DockPanel>
                                 <DockPanel>
-                                    <TextBlock Text="LUA config" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="LUA config" IsRequired="False"
+                                                      HelpText="Your own LUA script with patches. It replaces the database script. Only use it if you have a script made for this game." />
                                     <Button x:Name="BrowsePS2LUAConfigButton" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedPS2LUAConfigTextBox" PlaceholderText="Your own LUA script (replaces the database script)" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
-                                    <TextBlock Text="Memory card" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Memory card" IsRequired="False"
+                                                      HelpText="Imports a PS2 memory card with your saves (8 MB). Use a .vm2, .ps2 or .bin file." />
                                     <Button x:Name="BrowsePS2MCButton" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedPS2MemoryCardTextBox" PlaceholderText="Import an 8 MB PS2 memory card (.vm2, .ps2, .bin)" />
                                 </DockPanel>
@@ -442,7 +490,7 @@
                                 </StackPanel>
                             </Grid>
                             <TextBlock Text="{Binding Hints, ElementName=PS2Preview}" Style="{StaticResource WarningText}" />
-                            <TextBlock Style="{StaticResource HintText}" Text="Approximation of the console home screen. Without an icon, the default icon of the selected emulator is used. Images are resized to 512×512 (icon) and 1920×1080 (background)." />
+                            <TextBlock Style="{StaticResource HintText}" Text="Approximation of the console home screen. Without an icon, the default icon of the selected emulator is used." />
                         </StackPanel>
                     </DockPanel>
                 </ui:Card>
@@ -458,47 +506,56 @@
                 <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="16,8,16,24">
                     <StackPanel>
                         <TextBlock Text="PlayStation Portable" Style="{StaticResource PageTitle}" />
-                        <TextBlock Text="Create a fake package from a PSP .ISO game. The NP title is read from the disc and the title from the file name." Style="{StaticResource PageSubtitle}" />
+                        <TextBlock Text="Create a fake package from a PSP .ISO game. The NP title is read from the disc and the title from the file name. Fields marked Required must be filled; the others can be left empty." Style="{StaticResource PageSubtitle}" />
 
                         <ui:CardExpander Header="Game" Icon="{ui:SymbolIcon Games24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
-                                    <TextBlock Text="ISO file" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="ISO file" IsRequired="True"
+                                                      HelpText="The .ISO file of the PSP game. The NP title and the title are read from it when possible." />
                                     <Button x:Name="BrowsePSPDiscButton" Style="{StaticResource BrowseButton}" />
                                     <ui:TextBox x:Name="SelectedPSPDiscTextBox" PlaceholderText="Select the .ISO file of the game" />
                                 </DockPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Title" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Title" IsRequired="True"
+                                                      HelpText="The name shown on the PS4/PS5 home screen. Filled from the file name; you can change it." />
                                     <ui:TextBox x:Name="PSPTitleTextBox" PlaceholderText="Name shown on the home screen" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
-                                    <TextBlock Text="NP Title" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="NP Title" IsRequired="True"
+                                                      HelpText="Exactly 9 characters, without _ or -. Example: ULUS10041. Read from the disc when possible." />
                                     <ui:TextBox x:Name="PSPNPTitleTextBox" PlaceholderText="9 characters, for example ULUS10041" MaxLength="9" CharacterCasing="Upper" />
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Icon &amp; background" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
+                        <ui:CardExpander Header="Icon &amp; background · optional" Icon="{ui:SymbolIcon Image24}" IsExpanded="True" Style="{StaticResource Section}">
                             <StackPanel>
                                 <DockPanel>
-                                    <TextBlock Text="Icon" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
+                                                      HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to a 512×512 PNG. Recommended: PSP packages have no default icon, so without one the tile stays empty." />
                                     <Button x:Name="BrowsePSPIconButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedPSPIconTextBox" PlaceholderText="PNG, ideally 512×512 (recommended)" />
+                                    <ui:TextBox x:Name="SelectedPSPIconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (recommended)" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
-                                    <TextBlock Text="Background" Style="{StaticResource FieldLabel}" />
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Background" IsRequired="False"
+                                                      HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to 1920×1080. A 16:9 image avoids distortion." />
                                     <Button x:Name="BrowsePSPBGButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedPSPBGImageTextBox" PlaceholderText="PNG, ideally 1920×1080 (optional)" />
+                                    <ui:TextBox x:Name="SelectedPSPBGImageTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (optional)" />
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Header="Advanced configuration" Icon="{ui:SymbolIcon Code24}" Style="{StaticResource Section}">
-                            <DockPanel Margin="0">
-                                <TextBlock Text="Custom config" Style="{StaticResource FieldLabel}" />
-                                <Button x:Name="BrowsePSPConfigButton" Style="{StaticResource BrowseButton}" />
-                                <ui:TextBox x:Name="SelectedPSPConfigTextBox" PlaceholderText="config-title.txt options appended to the default config" />
-                            </DockPanel>
+                        <ui:CardExpander Header="Emulator · optional" Icon="{ui:SymbolIcon Settings24}" Style="{StaticResource Section}">
+                            <StackPanel>
+                                <TextBlock Text="The PSP emulator is fixed (psphd), so there is nothing to choose here. Use the field below only if you know which options you need." Style="{StaticResource FieldHint}" Margin="0,0,0,10" />
+                                <DockPanel Margin="0">
+                                    <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Custom config" IsRequired="False"
+                                                      HelpText="A .txt file with options added to the default config-title.txt. Only use it if you know the emulator options." />
+                                    <Button x:Name="BrowsePSPConfigButton" Style="{StaticResource BrowseButton}" />
+                                    <ui:TextBox x:Name="SelectedPSPConfigTextBox" PlaceholderText="config-title.txt options appended to the default config" />
+                                </DockPanel>
+                            </StackPanel>
                         </ui:CardExpander>
                     </StackPanel>
                 </ScrollViewer>
@@ -539,7 +596,7 @@
                                 </StackPanel>
                             </Grid>
                             <TextBlock Text="{Binding Hints, ElementName=PSPPreview}" Style="{StaticResource WarningText}" />
-                            <TextBlock Style="{StaticResource HintText}" Text="Approximation of the console home screen. PSP packages have no default icon, so choosing one is recommended. Images are resized to 512×512 (icon) and 1920×1080 (background)." />
+                            <TextBlock Style="{StaticResource HintText}" Text="Approximation of the console home screen. PSP packages have no default icon, so choosing one is recommended." />
                         </StackPanel>
                     </DockPanel>
                 </ui:Card>

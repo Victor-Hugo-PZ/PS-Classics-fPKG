@@ -1,0 +1,21 @@
+<UserControl x:Class="FieldLabel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignHeight="40" d:DesignWidth="160">
+
+    <!-- Label of a form row: help button, field name and a Required / Optional badge. Used with DockPanel.Dock="Left". -->
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <ui:Button x:Name="HelpButton" Appearance="Transparent" Icon="{ui:SymbolIcon Info24}"
+                   Width="28" Height="28" Padding="0" Margin="0,0,6,0" ToolTip="Ajuda"
+                   AutomationProperties.Name="Ajuda" />
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock x:Name="LabelTextBlock" TextTrimming="CharacterEllipsis" />
+            <Border x:Name="BadgeBorder" CornerRadius="4" Padding="6,1" Margin="0,3,0,0" HorizontalAlignment="Left">
+                <TextBlock x:Name="BadgeText" FontSize="11" />
+            </Border>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
