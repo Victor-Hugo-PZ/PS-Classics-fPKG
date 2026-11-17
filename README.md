@@ -10,6 +10,9 @@
 - Configurate the used emulator
 - Select up to 4 discs on PS1 & up to 5 discs on PS2
 - Automatically apply game configs (Windows & Linux only atm)
+- Live preview of the icon and background on the PS4 / PS5 home screen (Windows)
+
+![PS Classics fPKG Builder on Windows, PS5 home screen preview](docs/screenshots/windows-ps1-ps5-preview.png)
 
 ## Notes for macOS users
 - Runs on macOS 12.0 or newer
@@ -80,4 +83,5 @@ This fork is being modernized step by step:
 - [ ] Linux app: extract the build logic out of `MainWindow.axaml.cs` (like the Windows `Core` classes) and test it
 - [ ] macOS app (`macOS/`): known crashes and config bugs (see `CLAUDE.md`)
 - [x] Windows: PS1 TOC for every disc (without leaving files in the game folder), PS2 game ID derived from the NP title when it is not detected, warning when the `Tools` folder is missing
-- [ ] Verify on a real console: PS2 `-vu0-opt-flags` (single dash in the original), the PS3 config (`--lopnor-config`) now enabled for database configs, and the new `disc2.toc` to `disc4.toc` of multi-disc PS1 games
+- [x] Windows: new Fluent (WPF-UI) interface with side navigation, collapsible sections and a live PS4/PS5 home screen preview that warns about stretched or low resolution images
+- [ ] Verify on a real console: which background the home screen shows (the user image is written as `pic0.png`, while the emulators ship a `pic1.png`), PS2 `-vu0-opt-flags` (single dash in the original), the PS3 config (`--lopnor-config`) now enabled for database configs, and the new `disc2.toc` to `disc4.toc` of multi-disc PS1 games

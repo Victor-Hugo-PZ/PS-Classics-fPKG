@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <Compile Include="**\*.vb" Exclude="obj\**;bin\**" />
-    <Page Include="PSClassicsfPKGBuilder.xaml" />
+    <Page Include="**\*.xaml" Exclude="Application.xaml;obj\**;bin\**" />
     <ApplicationDefinition Include="Application.xaml" />
     <Resource Include="v14Icon.ico" />
   </ItemGroup>
@@ -49,6 +49,7 @@
     <PackageReference Include="DiscUtils.Iso9660" Version="0.16.13" />
     <PackageReference Include="DiscUtils.Streams" Version="0.16.13" />
     <PackageReference Include="DiscUtils.Udf" Version="0.16.13" />
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
   </ItemGroup>
 
   <!-- LibOrbisPkg (LGPL-3.0, https://github.com/OpenOrbis/LibOrbisPkg) is built from source: it is a git submodule in external/LibOrbisPkg.

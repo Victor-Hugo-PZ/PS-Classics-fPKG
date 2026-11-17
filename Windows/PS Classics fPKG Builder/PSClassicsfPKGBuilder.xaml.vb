@@ -7,11 +7,45 @@ Public Class PSClassicsfPKGBuilder
 #Region "Shared helpers"
 
     Private Sub PSClassicsfPKGBuilder_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-        If Not AppPaths.ToolsAvailable() Then
+        'Default images of the emulators: they end up in the package when the user does not pick an icon
+        Dim EmulatorsDirectory As String = AppPaths.ToolsDirectory + "\PS4\emus"
+        PS1Preview.FallbackIconPath = EmulatorsDirectory + "\ps1hd\sce_sys\icon0.png"
+        PS1Preview.FallbackBackgroundPath = EmulatorsDirectory + "\ps1hd\sce_sys\pic1.png"
+        UpdatePS2PreviewFallbacks()
+
+        If AppPaths.ToolsAvailable() Then
+            ToolsStatusText.Text = "Tools folder found"
+            ToolsStatusIcon.Symbol = Wpf.Ui.Controls.SymbolRegular.CheckmarkCircle24
+        Else
+            ToolsStatusText.Text = "Tools folder missing"
+            ToolsStatusIcon.Symbol = Wpf.Ui.Controls.SymbolRegular.Warning24
+            ToolsStatusIcon.Foreground = New SolidColorBrush(Color.FromRgb(&HFF, &HC8, &H57))
             MsgBox("The 'Tools' folder was not found at:" + vbCrLf + AppPaths.ToolsDirectory + vbCrLf + vbCrLf +
                    "Building fPKGs will fail until it is copied next to the application (see README.md, 'Building from source').",
                    MsgBoxStyle.Exclamation, "Tools folder missing")
         End If
+    End Sub
+
+    ''' <summary>Shows the page of the platform selected in the navigation list.</summary>
+    Private Sub PlatformListBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles PlatformListBox.SelectionChanged
+        If PS1Page Is Nothing OrElse PS2Page Is Nothing OrElse PSPPage Is Nothing Then Return
+        PS1Page.Visibility = If(PlatformListBox.SelectedIndex = 0, Visibility.Visible, Visibility.Collapsed)
+        PS2Page.Visibility = If(PlatformListBox.SelectedIndex = 1, Visibility.Visible, Visibility.Collapsed)
+        PSPPage.Visibility = If(PlatformListBox.SelectedIndex = 2, Visibility.Visible, Visibility.Collapsed)
+    End Sub
+
+    Private Sub PS2EmulatorComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles PS2EmulatorComboBox.SelectionChanged
+        UpdatePS2PreviewFallbacks()
+    End Sub
+
+    ''' <summary>The default icon and background of a PS2 package come from the selected emulator.</summary>
+    Private Sub UpdatePS2PreviewFallbacks()
+        If PS2Preview Is Nothing OrElse PS2EmulatorComboBox Is Nothing Then Return
+        Dim SelectedItem As ComboBoxItem = TryCast(PS2EmulatorComboBox.SelectedItem, ComboBoxItem)
+        If SelectedItem Is Nothing Then Return
+        Dim EmulatorDirectory As String = AppPaths.ToolsDirectory + "\PS4\emus\" + CStr(SelectedItem.Content)
+        PS2Preview.FallbackIconPath = EmulatorDirectory + "\sce_sys\icon0.png"
+        PS2Preview.FallbackBackgroundPath = EmulatorDirectory + "\sce_sys\pic1.png"
     End Sub
 
     ''' <summary>Tells the user about the result of a package build.</summary>

@@ -20,7 +20,10 @@ O trabalho de modernização está sendo feito primeiro no Windows; Linux e macO
 
 ```
 Windows/PS Classics fPKG Builder/            app WPF (projeto SDK-style, net10.0-windows)
-  PSClassicsfPKGBuilder.xaml(.vb)            UI: lê os controles, monta um *BuildRequest e mostra resultados
+  Application.xaml(.vb)                      tema WPF-UI (Fluent, escuro) e cor de destaque azul PlayStation
+  PSClassicsfPKGBuilder.xaml(.vb)            UI (ui:FluentWindow): navegação lateral, uma página por plataforma com seções
+                                             (ui:CardExpander) e o card de preview; lê os controles, monta um *BuildRequest
+  DashPreview.xaml(.vb)                      preview ao vivo da tela inicial PS4/PS5 (canvas 1920x1080 num Viewbox)
   Core/                                      lógica sem UI (testável)
     PackageBuilders.vb                       PS1/PS2/PSP PackageBuilder + *BuildRequest (orquestra o build inteiro)
     EmulatorConfigs.vb                       texto dos config-title.txt / config-emu-ps4.txt (funções puras)
@@ -79,13 +82,14 @@ dotnet run --project "Windows/PS Classics fPKG Builder"
 5. **Testabilidade:** lógica nova = função pura ou recebendo caminhos por parâmetro, com teste. Não use `My.Computer` (não existe em WPF no .NET moderno; use `FileUtils`).
 6. **Paridade entre plataformas:** PS1/PS2/PSP e Windows/Linux/macOS repetem a mesma lógica. Ao corrigir um bug, procure o mesmo padrão nas outras cópias.
 7. **GP4:** editado por `Gp4Editor` (cabeçalho 1.1→1.0, `default_id` 1→0, entradas antes de `</files>`). Preserve esses ajustes.
-8. **macOS:** nunca force-unwrap `URL(string:)` com caminho de arquivo (use `URL(fileURLWithPath:)`); não concatene entrada do usuário em `sh -c`; não bloqueie a thread principal com `sleep`.
+8. **Interface (Windows):** WPF-UI 4.x (`xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"`). Os `x:Name` dos campos são usados pelo code-behind e pelos testes de automação: **não renomeie**. Linhas de formulário = `DockPanel` com `TextBlock Style=FieldLabel`, botão `Style=BrowseButton` e `ui:TextBox` com `PlaceholderText`. Ícones (`ui:SymbolIcon`) são validados só em tempo de execução: depois de mexer no XAML, abra o app. O preview segue o build (imagens esticadas para 512×512 e 1920×1080) e usa o ícone/fundo do emulador quando o usuário não escolhe um.
+9. **macOS:** nunca force-unwrap `URL(string:)` com caminho de arquivo (use `URL(fileURLWithPath:)`); não concatene entrada do usuário em `sh -c`; não bloqueie a thread principal com `sleep`.
 
 ## Pendências e riscos conhecidos
 
 Corrigidos no Windows (com testes): disco 3/4 do PS1, aspas de `--path-patches`, fixes do PS2 perdidos, `IndexOutOfRange` em `GetPS2GameID` (inclusive o caminho `Volume:` que nunca funcionava), deadlock de stdout, handles vazados, dependência do diretório de trabalho, `strings.exe` via `cmd`, `--lopnor-config=1` ausente quando a config PS3 vem do `.dat` (o caso comum), arquivo temporário do PSP, `Insert` do libcrypt com ID curto.
 
-**Precisam de validação em console real** (não dá para testar aqui): `-vu0-opt-flags` com um traço só (mantido como no original, comentado em `EmulatorConfigs.vb`) e o `--lopnor-config=1` agora ativo para configs PS3 do banco de dados.
+**Precisam de validação em console real** (não dá para testar aqui): qual fundo a tela inicial mostra (o app grava a imagem do usuário como `pic0.png`, mas os emuladores trazem um `pic1.png`, que continua no pacote de PS1/PS2; o preview mostra a imagem escolhida); `-vu0-opt-flags` com um traço só (mantido como no original, comentado em `EmulatorConfigs.vb`) e o `--lopnor-config=1` agora ativo para configs PS3 do banco de dados.
 
 Também corrigidos no Windows: PS2 com ID não detectado ("usar mesmo assim") agora deriva o ID do NP title (`SLUS21258` → `SLUS_212.58`) ou falha com mensagem clara; o PS1 gera `data/discN.toc` para **todos** os discos (antes só o 1) e roda o `cue2toc` numa pasta temporária (antes deixava `.TOC` e `.cu2` na pasta do jogo); o ID PS1 de um jogo anterior não vaza mais para o seguinte; o app avisa na abertura quando a pasta `Tools` não existe.
 
