@@ -34,28 +34,56 @@ Public Class IsoTools
                 Dim NewCDReader As New Iso9660.CDReader(NewFileStream, True)
                 'Open the source first so no empty file is created when the ELF is missing, and dispose both streams
                 Using ELFSourceStream As Streams.SparseStream = NewCDReader.OpenFile(GameELFName, FileMode.Open)
-                    Using ELFExtractionFileStream As New FileStream(CacheDir + "\" + GameELFName, FileMode.Create)
+                    Using ELFExtractionFileStream As New FileStream(Path.Combine(CacheDir, GameELFName), FileMode.Create)
                         ELFSourceStream.CopyTo(ELFExtractionFileStream)
                     End Using
                 End Using
             End Using
-            Return CacheDir + "\" + GameELFName
+            Return Path.Combine(CacheDir, GameELFName)
         Catch ex As Exception
             Return ""
         End Try
     End Function
 
-    ''' <summary>Runs "crc.exe" on the boot ELF of a PS2 game and returns the CRC as alphanumeric text.</summary>
+    ''' <summary>
+    ''' CRC of the boot ELF of a PS2 game, as used by the widescreen patch database ("973793E8"): the XOR of all the
+    ''' little endian 32 bit words of the file (trailing bytes that do not fill a word are ignored).
+    ''' Gives the same result as the original "crc.exe" without running it. Returns an empty string for a missing file.
+    ''' </summary>
     Public Shared Function GetGameCRC(PS2GamePath As String) As String
-        If String.IsNullOrEmpty(PS2GamePath) Then Return ""
+        If String.IsNullOrEmpty(PS2GamePath) OrElse Not File.Exists(PS2GamePath) Then Return ""
 
-        Dim NewProcessStartInfo As New ProcessStartInfo(AppPaths.ToolsDirectory + "\PS4\crc.exe") With {.UseShellExecute = False, .RedirectStandardOutput = True, .CreateNoWindow = True, .Arguments = """" + PS2GamePath + """"}
-        Using NewProcess As New Process With {.StartInfo = NewProcessStartInfo}
-            NewProcess.Start()
-            Dim Output As String = NewProcess.StandardOutput.ReadToEnd()
-            NewProcess.WaitForExit()
-            Return Regex.Replace(Output.Replace("crc:", "").Trim(), "[^a-zA-Z0-9]", "")
+        Dim Crc As UInteger = 0
+        Dim Buffer(1048575) As Byte
+        Dim Carry(3) As Byte
+        Dim CarryCount As Integer = 0
+        Using Input As FileStream = File.OpenRead(PS2GamePath)
+            Do
+                Dim ReadCount As Integer = Input.Read(Buffer, 0, Buffer.Length)
+                If ReadCount <= 0 Then Exit Do
+                Dim Index As Integer = 0
+                'Complete a word that was split between two reads
+                While CarryCount > 0 AndAlso CarryCount < 4 AndAlso Index < ReadCount
+                    Carry(CarryCount) = Buffer(Index)
+                    CarryCount += 1
+                    Index += 1
+                End While
+                If CarryCount = 4 Then
+                    Crc = Crc Xor BitConverter.ToUInt32(Carry, 0)
+                    CarryCount = 0
+                End If
+                While Index + 4 <= ReadCount
+                    Crc = Crc Xor BitConverter.ToUInt32(Buffer, Index)
+                    Index += 4
+                End While
+                While Index < ReadCount
+                    Carry(CarryCount) = Buffer(Index)
+                    CarryCount += 1
+                    Index += 1
+                End While
+            Loop
         End Using
+        Return Crc.ToString("X8")
     End Function
 
     ''' <summary>Extracts a file from a ".dat" (UDF) config database. Returns the destination path or an empty string.</summary>

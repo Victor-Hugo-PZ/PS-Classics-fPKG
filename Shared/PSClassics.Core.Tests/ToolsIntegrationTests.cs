@@ -5,8 +5,8 @@ using Xunit;
 namespace PSClassics.Tests;
 
 /// <summary>
-/// Integration tests that run the real third-party tools (7z, strings, crc, cue2toc, gengp4, orbis-pub-cmd).
-/// They are skipped when the git-ignored Tools folder is not available.
+/// Integration tests: game ID and CRC reading (every OS) and complete builds with the real tools (cue2toc, gengp4,
+/// orbis-pub-cmd, pspdecrypt), which run directly on Windows and through Wine on Linux/macOS. Builds are skipped when they cannot run.
 /// </summary>
 public class ToolsIntegrationTests
 {
@@ -37,48 +37,124 @@ public class ToolsIntegrationTests
         return binPath;
     }
 
-    [RequiresToolsFact]
-    public void PS1_GameIdIsReadFromTheBinWithStrings()
+    // Game IDs and the CRC are read without external programs, so these run on every OS.
+
+    [Fact]
+    public void PS1_GameIdIsReadFromTheBin()
     {
-        using var ws = new TempWorkspace(linkTools: true);
+        using var ws = new TempWorkspace();
         var bin = CreatePS1Disc(ws);
 
         Assert.Equal("SLUS-00594", PS1Game.GetPS1GameID(bin));
     }
 
-    [RequiresToolsFact]
+    [Fact]
     public void PS1_GameIdIsEmptyWhenTheBinHasNoBootEntry()
     {
-        using var ws = new TempWorkspace(linkTools: true);
+        using var ws = new TempWorkspace();
         var bin = ws.Write(@"games\empty.bin", new byte[2352 * 10]);
 
         Assert.Equal("", PS1Game.GetPS1GameID(bin));
     }
 
-    [RequiresToolsFact]
-    public void PS2_GameIdIsReadFromTheIsoWith7z()
+    [Fact]
+    public void PS1_GameIdIsOnlySearchedInTheFirstSevenMegabytes()
     {
-        using var ws = new TempWorkspace(linkTools: true);
-        var iso = CreateIso(Path.Combine(ws.Root, "game.iso"), ("SLUS_212.58", new byte[4096]), ("SYSTEM.CNF", new byte[64]));
+        using var ws = new TempWorkspace();
+        var bin = new byte[PS1Game.ScanLength + 4096];
+        var boot = System.Text.Encoding.ASCII.GetBytes("BOOT = cdrom:\\SLUS_005.94;1\r\n");
+        Array.Copy(boot, 0, bin, PS1Game.ScanLength + 100, boot.Length); // after the scanned area, like strings -b 7340032
+        var path = ws.Write(@"games\late.bin", bin);
+
+        Assert.Equal("", PS1Game.GetPS1GameID(path));
+    }
+
+    [Fact]
+    public void PS1_ExtractStrings_FindsPrintableRunsOfThreeOrMoreCharacters()
+    {
+        using var ws = new TempWorkspace();
+        var data = new byte[] { 0, (byte)'a', (byte)'b', 0, (byte)'a', (byte)'b', (byte)'c', 1, 2, (byte)'B', (byte)'O', (byte)'O', (byte)'T' };
+        var path = ws.Write("s.bin", data);
+
+        Assert.Equal(new[] { "abc", "BOOT" }, PS1Game.ExtractStrings(path, 1024));
+        Assert.Equal(new[] { "abc" }, PS1Game.ExtractStrings(path, 8)); // only the first bytes
+    }
+
+    [Fact]
+    public void PS2_GameIdIsReadFromTheIso()
+    {
+        using var ws = new TempWorkspace();
+        var iso = CreateIso(Path.Combine(ws.Root, "game.iso"), ("SYSTEM.CNF", new byte[64]), ("SLUS_212.58", new byte[4096]));
 
         Assert.Equal("SLUS_212.58", PS2Game.GetPS2GameID(iso));
+        Assert.Equal("", PS2Game.GetPS2GameID(ws.Write("notaniso.iso", "nope")));
     }
 
-    [RequiresToolsFact]
-    public void PS2_BootElfCrcIsComputedWithCrcExe()
+    [Theory]
+    [InlineData(new[] { "SYSTEM.CNF", "SLUS_212.58;1" }, "SLUS_212.58")]
+    [InlineData(new[] { "README.TXT", "SCES_500.01" }, "SCES_500.01")]
+    [InlineData(new[] { "IOP", "MODULES" }, "")]
+    public void PS2_FindGameIDInFileNames(string[] names, string expected)
+    {
+        Assert.Equal(expected, PS2Game.FindGameIDInFileNames(names));
+    }
+
+    [Fact]
+    public void PS2_BootElfCrcIsTheXorOfTheElfWords()
+    {
+        using var ws = new TempWorkspace();
+        var elf = ws.Write("elf.bin", new byte[] { 1, 0, 0, 0, 2, 0, 0, 0, 0xFF, 0, 0, 0x80, 0xAA }); // trailing byte ignored
+
+        Assert.Equal("800000FC", IsoTools.GetGameCRC(elf)); // 1 ^ 2 ^ 0x800000FF
+        Assert.Equal("", IsoTools.GetGameCRC(""));
+        Assert.Equal("", IsoTools.GetGameCRC(ws.PathOf("missing.elf")));
+    }
+
+    [Fact]
+    public void PS2_CrcOfALargeElfReadInSeveralChunks()
+    {
+        using var ws = new TempWorkspace();
+        var data = Noise(3 * 1048576 + 7, 11);
+        uint expected = 0;
+        for (int i = 0; i + 4 <= data.Length; i += 4) expected ^= BitConverter.ToUInt32(data, i);
+
+        Assert.Equal(expected.ToString("X8"), IsoTools.GetGameCRC(ws.Write("big.elf", data)));
+    }
+
+    // The managed implementations must give exactly what the original Windows tools gave.
+
+    [WindowsToolsFact]
+    public void Equivalence_CrcMatchesTheOriginalCrcExe()
     {
         using var ws = new TempWorkspace(linkTools: true);
-        var iso = CreateIso(Path.Combine(ws.Root, "game.iso"), ("SLUS_212.58", Noise(8192)));
-        var elf = IsoTools.GetELFfromISO(iso, "SLUS_212.58");
-
-        var crc = IsoTools.GetGameCRC(elf);
-
-        Assert.Matches("^[0-9A-Fa-f]{8}$", crc);
-        Assert.Equal(crc, IsoTools.GetGameCRC(elf)); // deterministic
-        Assert.Equal("", IsoTools.GetGameCRC(""));
+        foreach (var size in new[] { 4096, 8193, 1048579 })
+        {
+            var elf = ws.Write($"elf_{size}.bin", Noise(size, size));
+            var original = ProcessRunner.Run(Path.Combine(ws.Tools, "PS4", "crc.exe"), $"\"{elf}\"").Output.Replace("crc:", "").Trim();
+            Assert.Equal(original, IsoTools.GetGameCRC(elf));
+        }
     }
 
-    [RequiresToolsFact]
+    [WindowsToolsFact]
+    public void Equivalence_PS1IdMatchesTheOriginalStringsExe()
+    {
+        using var ws = new TempWorkspace(linkTools: true);
+        var bin = CreatePS1Disc(ws);
+        var output = ProcessRunner.Run(Path.Combine(ws.Tools, "strings.exe"), $"/accepteula -nobanner -b 7340032 \"{bin}\"").Output;
+
+        Assert.Equal(PS1Game.FindGameID(output.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)), PS1Game.GetPS1GameID(bin));
+    }
+
+    [WindowsToolsFact]
+    public void Equivalence_PS2IdMatchesTheOriginal7zListing()
+    {
+        using var ws = new TempWorkspace(linkTools: true);
+        var iso = CreateIso(Path.Combine(ws.Root, "game.iso"), ("SYSTEM.CNF", new byte[64]), ("SLUS_212.58", new byte[4096]));
+        var listing = ProcessRunner.Run(Path.Combine(ws.Tools, "7z.exe"), $"l -ba \"{iso}\"").Output;
+
+        Assert.Equal(PS2Game.ParseGameIDFromListing(listing.Split(new[] { "\r\n" }, StringSplitOptions.None)), PS2Game.GetPS2GameID(iso));
+    }
+    [RequiresToolRunnerFact]
     public void PS1_BuildsAPackageEndToEnd()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -107,7 +183,7 @@ public class ToolsIntegrationTests
         Assert.True(File.Exists(Path.Combine(ws.Cache, "PS1fPKG", "data", "disc1.toc")));
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PS1_MultiDiscPackageListsEveryDisc()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -133,7 +209,7 @@ public class ToolsIntegrationTests
         }
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PS1_MissingCueFileGivesAClearError()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -146,7 +222,7 @@ public class ToolsIntegrationTests
         Assert.Contains("CUE", ex.Message);
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PS1_TocMatchesWhatCue2tocWritesNextToTheGameAndLeavesTheGameFolderUntouched()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -171,7 +247,7 @@ public class ToolsIntegrationTests
         Assert.Equal(new[] { "game.bin", "game.cue" }, Directory.GetFiles(gameFolder).Select(Path.GetFileName).OrderBy(n => n));
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PS1_TocGenerationFailsClearlyForMissingFiles()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -182,7 +258,7 @@ public class ToolsIntegrationTests
         Assert.Throws<FileNotFoundException>(() => CueToc.Generate(cue, Path.Combine(ws.Root, "games", "ok.bin")));
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PS1_BuildLeavesTheGameFolderUntouchedAndCreatesATocPerDisc()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -204,7 +280,7 @@ public class ToolsIntegrationTests
         Assert.True(File.Exists(Path.Combine(ws.Cache, "PS1fPKG", "data", "disc2.toc")));
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PS2_DerivesTheGameIdFromTheNpTitleWhenItWasNotDetected()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -235,7 +311,7 @@ public class ToolsIntegrationTests
         Assert.False(Directory.Exists(ws.Cache));
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PS1_LibcryptProtectedGamesAskForConfirmation()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -254,7 +330,7 @@ public class ToolsIntegrationTests
         Assert.Contains("--libcrypt=03E7", File.ReadAllText(Path.Combine(ws.Cache, "PS1fPKG", "config-title.txt")));
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PSP_BuildsAPackageAndWarnsWhenTheEbootCannotBeDecrypted()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -278,7 +354,7 @@ public class ToolsIntegrationTests
         Assert.Contains("--image=\"data/USER_L0.IMG\"", File.ReadAllText(Path.Combine(ws.Cache, "PSPfPKG", "config-title.txt")));
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PS2_BuildsAPackageEndToEnd()
     {
         using var ws = new TempWorkspace(linkTools: true);

@@ -1,5 +1,6 @@
 Imports System.IO
 Imports System.Reflection
+Imports PS_Classics_fPKG_Builder
 
 ''' <summary>
 ''' PkgCheck: checks a PS4 fake package (.pkg) made by PS Classics fPKG Builder.

@@ -80,7 +80,7 @@ public class PkgCheckTests
         Assert.Contains("could not be read", output);
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void QuickCheck_OfAGeneratedPackage_ExitsWithZero()
     {
         using var ws = new TempWorkspace(linkTools: true);

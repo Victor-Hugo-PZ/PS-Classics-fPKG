@@ -188,13 +188,13 @@ Public Class PackageVerifier
             Return Report
         End If
 
-        Dim PubCmd As String = AppPaths.ToolsDirectory + "\PS4\mod-pub\orbis-pub-cmd-3.38.exe"
+        Dim PubCmd As String = PkgTools.PubCmdExecutable
         If Not File.Exists(PubCmd) Then Throw New FileNotFoundException("The publishing tool was not found. Check the Tools folder.", PubCmd)
 
-        Dim InfoResult As ProcessResult = ProcessRunner.Run(PubCmd, "img_info """ + PkgPath + """")
+        Dim InfoResult As ProcessResult = ToolRunner.Run(PubCmd, {"img_info", Platform.ToolPath(PkgPath)})
         Report.Info = InfoResult.Output
 
-        Dim VerifyResult As ProcessResult = ProcessRunner.Run(PubCmd, "img_verify --passcode " + FakePackagePasscode + " """ + PkgPath + """")
+        Dim VerifyResult As ProcessResult = ToolRunner.Run(PubCmd, {"img_verify", "--passcode", FakePackagePasscode, Platform.ToolPath(PkgPath)})
         Report.ToolOutput = VerifyResult.Output + VerifyResult.ErrorOutput
 
         Report.Issues.AddRange(CheckStructure(PkgPath))

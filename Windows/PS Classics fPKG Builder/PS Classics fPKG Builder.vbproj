@@ -45,25 +45,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DiscUtils.Core" Version="0.16.13" />
-    <PackageReference Include="DiscUtils.Iso9660" Version="0.16.13" />
-    <PackageReference Include="DiscUtils.Streams" Version="0.16.13" />
-    <PackageReference Include="DiscUtils.Udf" Version="0.16.13" />
     <PackageReference Include="WPF-UI" Version="4.3.0" />
   </ItemGroup>
 
-  <!-- LibOrbisPkg (LGPL-3.0, https://github.com/OpenOrbis/LibOrbisPkg) is built from source: it is a git submodule in external/LibOrbisPkg.
-       Clone with the recurse-submodules option of git clone, or run: git submodule update, with the init option -->
-
-  <PropertyGroup>
-    <LibOrbisPkgProject>$(MSBuildThisFileDirectory)..\..\external\LibOrbisPkg\LibOrbisPkg\LibOrbisPkg.csproj</LibOrbisPkgProject>
-  </PropertyGroup>
+  <!-- All the build logic lives in the shared Core library, used by the Linux/macOS app too (same results on every OS).
+       It brings DiscUtils, SkiaSharp and LibOrbisPkg (git submodule in external/LibOrbisPkg). -->
   <ItemGroup>
-    <ProjectReference Include="$(LibOrbisPkgProject)" />
+    <ProjectReference Include="..\..\Shared\PSClassics.Core\PSClassics.Core.vbproj" />
   </ItemGroup>
-  <Target Name="CheckLibOrbisPkg" BeforeTargets="ResolveProjectReferences;_CheckForInvalidConfigurationAndPlatform">
-    <Error Condition="!Exists('$(LibOrbisPkgProject)')" Text="The LibOrbisPkg submodule is missing. Run: git submodule update --init" />
-  </Target>
 
   <!-- Third-party tools and emulators (not part of the repository, git-ignored) are copied next to the executable when present. -->
   <PropertyGroup>

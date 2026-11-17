@@ -126,7 +126,7 @@ public class PackageVerifierIntegrationTests
         return Directory.GetFiles(output, "*.pkg").Single();
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PS1Package_HasNoProblemsBesidesSonyCertificationRules()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -138,7 +138,7 @@ public class PackageVerifierIntegrationTests
         Assert.NotEmpty(report.SubmissionIssues); // pronunciation.xml etc. are always reported for fake packages
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PS2Package_HasNoProblemsBesidesSonyCertificationRules()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -155,7 +155,7 @@ public class PackageVerifierIntegrationTests
         Assert.True(report.IsHealthy, report.ToText());
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void TruncatedPackage_IsReportedAsDamaged()
     {
         using var ws = new TempWorkspace(linkTools: true);
@@ -169,7 +169,7 @@ public class PackageVerifierIntegrationTests
         Assert.Contains(issues, i => i.Severity == IssueSeverity.Error && (i.Message.Contains("incomplete or damaged") || i.Message.Contains("could not be read")));
     }
 
-    [RequiresToolsFact]
+    [RequiresToolRunnerFact]
     public void PSPPackage_WithoutIcon_IsReportedAsProblem()
     {
         using var ws = new TempWorkspace(linkTools: true);

@@ -36,27 +36,34 @@ Public Class PS2Game
         Return NPTitle.Insert(4, "_").Insert(8, ".")
     End Function
 
+    ''' <summary>
+    ''' Reads the game ID of a PS2 ISO: the name of the boot ELF in the root of the disc ("SLUS_212.58").
+    ''' Uses the ISO 9660 reader directly (the original app listed the ISO with 7-Zip). Returns an empty string when no ID is found.
+    ''' </summary>
     Public Shared Function GetPS2GameID(GameISO As String) As String
-        Dim ProcessOutput As String()
+        Try
+            Using IsoStream As FileStream = File.OpenRead(GameISO)
+                Dim Reader As New DiscUtils.Iso9660.CDReader(IsoStream, True)
+                Return FindGameIDInFileNames(Reader.GetFiles("\").Select(Function(Name) Path.GetFileName(Name)))
+            End Using
+        Catch ex As Exception
+            Return ""
+        End Try
+    End Function
 
-        Using SevenZip As New Process()
-            SevenZip.StartInfo.FileName = AppPaths.ToolsDirectory + "\7z.exe"
-            SevenZip.StartInfo.Arguments = "l -ba """ + GameISO + """"
-            SevenZip.StartInfo.RedirectStandardOutput = True
-            SevenZip.StartInfo.UseShellExecute = False
-            SevenZip.StartInfo.CreateNoWindow = True
-            SevenZip.Start()
-
-            'Read the output before waiting for the exit
-            ProcessOutput = SevenZip.StandardOutput.ReadToEnd().Split(New String() {vbCrLf}, StringSplitOptions.None)
-            SevenZip.WaitForExit()
-        End Using
-
-        Return ParseGameIDFromListing(ProcessOutput)
+    ''' <summary>The first root file name that looks like a PS2 boot ELF ("SLUS_212.58"), without the ISO version suffix (";1").</summary>
+    Public Shared Function FindGameIDInFileNames(FileNames As IEnumerable(Of String)) As String
+        For Each Name As String In FileNames
+            Dim Clean As String = Name.Split(";"c)(0).Trim()
+            If Clean.Contains("SLES_") Or Clean.Contains("SLUS_") Or Clean.Contains("SCES_") Or Clean.Contains("SCUS_") Then
+                Return Clean
+            End If
+        Next
+        Return ""
     End Function
 
     Public Shared Function GetPS2GameTitleFromDatabaseList(GameID As String) As String
-        Return GetPS2GameTitleFromDatabaseList(GameID, AppPaths.ToolsDirectory + "\ps2ids.txt")
+        Return GetPS2GameTitleFromDatabaseList(GameID, Path.Combine(AppPaths.ToolsDirectory, "ps2ids.txt"))
     End Function
 
     ''' <summary>Looks up the title of a game in a "ID;Title" database file. Returns "Unknown PS2 game" when the game is not listed.</summary>

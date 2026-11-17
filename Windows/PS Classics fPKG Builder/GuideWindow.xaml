@@ -47,7 +47,7 @@
                 <TextBlock Style="{StaticResource Bullet}" Text="• PSP: ISO file, Title, NP Title. Optional: icon, background, custom config." />
 
                 <TextBlock Text="3. Images (icon and background)" Style="{StaticResource Heading}" />
-                <TextBlock Style="{StaticResource Body}" Text="You do not need to convert images first. The app accepts PNG, JPG, BMP, GIF and TIFF and converts them to PNG:" />
+                <TextBlock Style="{StaticResource Body}" Text="You do not need to convert images first. The app accepts PNG, JPG, BMP, GIF and WebP and converts them to PNG:" />
                 <TextBlock Style="{StaticResource Bullet}" Text="• Icon: 512×512 pixels. A square image avoids distortion." />
                 <TextBlock Style="{StaticResource Bullet}" Text="• Background: 1920×1080 pixels. A 16:9 image avoids distortion." />
                 <TextBlock Style="{StaticResource Bullet}" Text="• The preview on the right shows what the home screen will look like and warns when an image will be stretched or enlarged. For animated GIFs only the first frame is used." />

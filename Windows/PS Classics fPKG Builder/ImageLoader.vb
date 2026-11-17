@@ -11,8 +11,21 @@ Public Class ImageLoader
     Public Shared Function TryLoad(ImagePath As String, Optional DecodePixelWidth As Integer = 0) As BitmapSource
         If String.IsNullOrWhiteSpace(ImagePath) OrElse Not File.Exists(ImagePath) Then Return Nothing
 
+        Dim Loaded As BitmapSource = Decode(File.ReadAllBytes(ImagePath), DecodePixelWidth)
+        If Loaded IsNot Nothing Then Return Loaded
+
+        'Formats the Windows decoder may not know (WebP...) are converted by the shared Core library, like the build does
+        Dim Converted As Byte() = ImageConverter.ToPreviewPng(ImagePath, If(DecodePixelWidth > 0, DecodePixelWidth, 1920))
+        If Converted Is Nothing Then
+            Debug.WriteLine("Could not load image '" + ImagePath + "'")
+            Return Nothing
+        End If
+        Return Decode(Converted, 0)
+    End Function
+
+    Private Shared Function Decode(Data As Byte(), DecodePixelWidth As Integer) As BitmapSource
         Try
-            Using ImageStream As New MemoryStream(File.ReadAllBytes(ImagePath))
+            Using ImageStream As New MemoryStream(Data)
                 Dim NewBitmap As New BitmapImage()
                 NewBitmap.BeginInit()
                 NewBitmap.CacheOption = BitmapCacheOption.OnLoad
@@ -23,7 +36,6 @@ Public Class ImageLoader
                 Return NewBitmap
             End Using
         Catch ex As Exception
-            Debug.WriteLine("Could not load image '" + ImagePath + "': " + ex.Message)
             Return Nothing
         End Try
     End Function
@@ -33,17 +45,7 @@ Public Class ImageLoader
     ''' The build stretches images (it does not crop), so a different aspect ratio distorts them. Returns an empty string when the image fits.
     ''' </summary>
     Public Shared Function DescribeStretch(ImageName As String, Width As Integer, Height As Integer, TargetWidth As Integer, TargetHeight As Integer) As String
-        If Width <= 0 OrElse Height <= 0 Then Return ""
-
-        Dim Ratio As Double = Width / Height
-        Dim TargetRatio As Double = TargetWidth / TargetHeight
-        If Math.Abs(Ratio - TargetRatio) / TargetRatio > 0.03 Then
-            Return ImageName + " is " + Width.ToString() + "×" + Height.ToString() + ": it will be stretched to " + TargetWidth.ToString() + "×" + TargetHeight.ToString() + "."
-        End If
-        If Width < TargetWidth OrElse Height < TargetHeight Then
-            Return ImageName + " is " + Width.ToString() + "×" + Height.ToString() + ": it will be upscaled to " + TargetWidth.ToString() + "×" + TargetHeight.ToString() + " and may look blurry."
-        End If
-        Return ""
+        Return ImageConverter.DescribeStretch(ImageName, Width, Height, TargetWidth, TargetHeight)
     End Function
 
 End Class

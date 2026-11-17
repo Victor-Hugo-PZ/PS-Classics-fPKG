@@ -143,14 +143,14 @@ Public Class PSClassicsfPKGBuilder
     End Sub
 
     Private Sub BrowsePS1IconButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePS1IconButton.Click
-        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the icon (PNG, JPG, BMP, GIF or TIFF).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
+        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the icon (PNG, JPG, BMP, GIF or WebP).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
         If OFD.ShowDialog() = Forms.DialogResult.OK Then
             SelectedPS1IconTextBox.Text = OFD.FileName
         End If
     End Sub
 
     Private Sub BrowsePS1StartupImageButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePS1StartupImageButton.Click
-        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the background (PNG, JPG, BMP, GIF or TIFF).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
+        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the background (PNG, JPG, BMP, GIF or WebP).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
         If OFD.ShowDialog() = Forms.DialogResult.OK Then
             SelectedPS1BGTextBox.Text = OFD.FileName
         End If
@@ -313,14 +313,14 @@ Public Class PSClassicsfPKGBuilder
     End Sub
 
     Private Sub BrowsePS2IconButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePS2IconButton.Click
-        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the icon (PNG, JPG, BMP, GIF or TIFF).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
+        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the icon (PNG, JPG, BMP, GIF or WebP).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
         If OFD.ShowDialog() = Forms.DialogResult.OK Then
             SelectedIconTextBox.Text = OFD.FileName
         End If
     End Sub
 
     Private Sub BrowsePS2StartupImageButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePS2StartupImageButton.Click
-        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the background (PNG, JPG, BMP, GIF or TIFF).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
+        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the background (PNG, JPG, BMP, GIF or WebP).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
         If OFD.ShowDialog() = Forms.DialogResult.OK Then
             SelectedStartupImageTextBox.Text = OFD.FileName
         End If
@@ -448,14 +448,14 @@ Public Class PSClassicsfPKGBuilder
 #Region "PSP"
 
     Private Sub BrowsePSPIconButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePSPIconButton.Click
-        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the icon (PNG, JPG, BMP, GIF or TIFF).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
+        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the icon (PNG, JPG, BMP, GIF or WebP).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
         If OFD.ShowDialog() = Forms.DialogResult.OK Then
             SelectedPSPIconTextBox.Text = OFD.FileName
         End If
     End Sub
 
     Private Sub BrowsePSPBGButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePSPBGButton.Click
-        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the background (PNG, JPG, BMP, GIF or TIFF).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
+        Dim OFD As New OpenFileDialog() With {.Title = "Select an image for the background (PNG, JPG, BMP, GIF or WebP).", .Multiselect = False, .Filter = ImageFormats.OpenFilter()}
         If OFD.ShowDialog() = Forms.DialogResult.OK Then
             SelectedPSPBGImageTextBox.Text = OFD.FileName
         End If

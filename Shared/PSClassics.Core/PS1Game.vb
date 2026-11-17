@@ -16,28 +16,46 @@ Public Class PS1Game
         Return ""
     End Function
 
-    ''' <summary>Reads the game ID from the first 7 MB of a PS1 BIN file using "strings.exe". Returns an empty string when no ID is found.</summary>
+    ''' <summary>Number of bytes scanned at the start of a BIN file (the same 7 MB the original "strings -b 7340032" read).</summary>
+    Public Const ScanLength As Integer = 7340032
+
+    ''' <summary>
+    ''' Reads the game ID from the first 7 MB of a PS1 BIN file. Returns an empty string when no ID is found.
+    ''' The text lines are extracted like the Sysinternals "strings" tool did, without running an external program.
+    ''' </summary>
     Public Shared Function GetPS1GameID(BinFile As String) As String
-        Dim ProcessOutput As String()
+        Return FindGameID(ExtractStrings(BinFile, ScanLength))
+    End Function
 
-        Using StringsProcess As New Process()
-            StringsProcess.StartInfo.FileName = AppPaths.ToolsDirectory + "\strings.exe"
-            StringsProcess.StartInfo.Arguments = "/accepteula -nobanner -b 7340032 """ + BinFile + """"
-            StringsProcess.StartInfo.RedirectStandardOutput = True
-            StringsProcess.StartInfo.UseShellExecute = False
-            StringsProcess.StartInfo.CreateNoWindow = True
-            StringsProcess.Start()
+    ''' <summary>Returns the runs of at least <paramref name="MinimumLength"/> printable ASCII characters found in the first bytes of a file.</summary>
+    Public Shared Function ExtractStrings(FileName As String, MaximumBytes As Integer, Optional MinimumLength As Integer = 3) As List(Of String)
+        Dim Found As New List(Of String)
+        Dim Current As New Text.StringBuilder()
+        Dim Buffer(65535) As Byte
+        Dim Remaining As Integer = MaximumBytes
 
-            'Read the redirected output before waiting for the exit, otherwise a full pipe buffer blocks the child process forever
-            ProcessOutput = StringsProcess.StandardOutput.ReadToEnd().Split(New String() {vbCrLf}, StringSplitOptions.RemoveEmptyEntries)
-            StringsProcess.WaitForExit()
+        Using Input As FileStream = File.OpenRead(FileName)
+            While Remaining > 0
+                Dim ReadCount As Integer = Input.Read(Buffer, 0, Math.Min(Buffer.Length, Remaining))
+                If ReadCount <= 0 Then Exit While
+                Remaining -= ReadCount
+                For Index As Integer = 0 To ReadCount - 1
+                    Dim Value As Byte = Buffer(Index)
+                    If Value >= 32 AndAlso Value < 127 OrElse Value = 9 Then
+                        Current.Append(ChrW(Value))
+                    Else
+                        If Current.Length >= MinimumLength Then Found.Add(Current.ToString())
+                        Current.Clear()
+                    End If
+                Next
+            End While
         End Using
-
-        Return FindGameID(ProcessOutput)
+        If Current.Length >= MinimumLength Then Found.Add(Current.ToString())
+        Return Found
     End Function
 
     Public Shared Function GetPS1GameTitleFromDatabaseList(GameID As String) As String
-        Return GetPS1GameTitleFromDatabaseList(GameID, AppPaths.ToolsDirectory + "\ps1ids.txt")
+        Return GetPS1GameTitleFromDatabaseList(GameID, Path.Combine(AppPaths.ToolsDirectory, "ps1ids.txt"))
     End Function
 
     ''' <summary>Looks up the title of a game in a "ID;Title" database file. Returns an empty string when the game is unknown.</summary>
@@ -56,7 +74,7 @@ Public Class PS1Game
     End Function
 
     Public Shared Function IsGameProtected(GameID As String) As String
-        Return IsGameProtected(GameID, AppPaths.ToolsDirectory + "\libcrypt.txt")
+        Return IsGameProtected(GameID, Path.Combine(AppPaths.ToolsDirectory, "libcrypt.txt"))
     End Function
 
     ''' <summary>Returns the libcrypt value of a protected game ("SLES_012.26 03E7" lists), or an empty string when the game is not in the list.</summary>

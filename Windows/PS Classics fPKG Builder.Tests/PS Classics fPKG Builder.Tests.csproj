@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Tests of the Windows (WPF) user interface. The logic is tested in Shared/PSClassics.Core.Tests on every OS. -->
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
     <RootNamespace>PSClassics.Tests</RootNamespace>
@@ -11,7 +12,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PS Classics fPKG Builder\PS Classics fPKG Builder.vbproj" />
-    <ProjectReference Include="..\PkgCheck\PkgCheck.vbproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\Shared\PSClassics.Core.Tests\TestSupport.cs" Link="TestSupport.cs" />
   </ItemGroup>
 
   <ItemGroup>

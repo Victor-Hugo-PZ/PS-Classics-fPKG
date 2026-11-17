@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Logic shared by every version of the app (Windows WPF, Linux and macOS Avalonia) and by PkgCheck.
+       It must stay free of UI and Windows-only APIs so the three apps produce the same packages. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>PS_Classics_fPKG_Builder</RootNamespace>
+    <AssemblyName>PSClassics.Core</AssemblyName>
+    <Version>2.2.0</Version>
+    <Deterministic>true</Deterministic>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <OptionCompare>Binary</OptionCompare>
+    <NoWarn>$(NoWarn);41999;42016;42017;42018;42019;42020;42021;42022;42032;42036;42314</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DiscUtils.Core" Version="0.16.13" />
+    <PackageReference Include="DiscUtils.Iso9660" Version="0.16.13" />
+    <PackageReference Include="DiscUtils.Streams" Version="0.16.13" />
+    <PackageReference Include="DiscUtils.Udf" Version="0.16.13" />
+    <!-- Same SkiaSharp version as Avalonia 12, so images are converted identically on every OS -->
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.4" />
+  </ItemGroup>
+
+  <!-- LibOrbisPkg (LGPL-3.0) is a git submodule built from source -->
+  <PropertyGroup>
+    <LibOrbisPkgProject>$(MSBuildThisFileDirectory)..\..\external\LibOrbisPkg\LibOrbisPkg\LibOrbisPkg.csproj</LibOrbisPkgProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(LibOrbisPkgProject)" />
+  </ItemGroup>
+  <Target Name="CheckLibOrbisPkg" BeforeTargets="ResolveProjectReferences;_CheckForInvalidConfigurationAndPlatform">
+    <Error Condition="!Exists('$(LibOrbisPkgProject)')" Text="The LibOrbisPkg submodule is missing. Run: git submodule update --init" />
+  </Target>
+
+</Project>

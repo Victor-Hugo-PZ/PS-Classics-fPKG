@@ -148,15 +148,15 @@
                             <StackPanel>
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
-                                                      HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the emulator." />
+                                                      HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the emulator." />
                                     <Button x:Name="BrowsePS1IconButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedPS1IconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (optional)" />
+                                    <ui:TextBox x:Name="SelectedPS1IconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (optional)" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Background" IsRequired="False"
-                                                      HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to 1920×1080. A 16:9 image avoids distortion." />
+                                                      HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to 1920×1080. A 16:9 image avoids distortion." />
                                     <Button x:Name="BrowsePS1StartupImageButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedPS1BGTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (optional)" />
+                                    <ui:TextBox x:Name="SelectedPS1BGTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (optional)" />
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
@@ -306,15 +306,15 @@
                             <StackPanel>
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
-                                                      HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the selected emulator." />
+                                                      HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Leave it empty to use the default icon of the selected emulator." />
                                     <Button x:Name="BrowsePS2IconButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedIconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (optional)" />
+                                    <ui:TextBox x:Name="SelectedIconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (optional)" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Background" IsRequired="False"
-                                                      HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to 1920×1080. A 16:9 image avoids distortion." />
+                                                      HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to 1920×1080. A 16:9 image avoids distortion." />
                                     <Button x:Name="BrowsePS2StartupImageButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedStartupImageTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (optional)" />
+                                    <ui:TextBox x:Name="SelectedStartupImageTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (optional)" />
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>
@@ -535,15 +535,15 @@
                             <StackPanel>
                                 <DockPanel>
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Icon" IsRequired="False"
-                                                      HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to a 512×512 PNG. Recommended: PSP packages have no default icon, so without one the tile stays empty." />
+                                                      HelpText="The image shown on the game tile. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to a 512×512 PNG. Recommended: PSP packages have no default icon, so without one the tile stays empty." />
                                     <Button x:Name="BrowsePSPIconButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedPSPIconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (recommended)" />
+                                    <ui:TextBox x:Name="SelectedPSPIconTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (recommended)" />
                                 </DockPanel>
                                 <DockPanel Margin="0">
                                     <local:FieldLabel DockPanel.Dock="Left" Width="150" LabelText="Background" IsRequired="False"
-                                                      HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and TIFF. It is converted to 1920×1080. A 16:9 image avoids distortion." />
+                                                      HelpText="The image behind the game on the home screen. Accepts PNG, JPG, BMP, GIF and WebP. It is converted to 1920×1080. A 16:9 image avoids distortion." />
                                     <Button x:Name="BrowsePSPBGButton" Style="{StaticResource BrowseButton}" />
-                                    <ui:TextBox x:Name="SelectedPSPBGImageTextBox" PlaceholderText="PNG, JPG, BMP, GIF, TIFF (optional)" />
+                                    <ui:TextBox x:Name="SelectedPSPBGImageTextBox" PlaceholderText="PNG, JPG, BMP, GIF, WebP (optional)" />
                                 </DockPanel>
                             </StackPanel>
                         </ui:CardExpander>

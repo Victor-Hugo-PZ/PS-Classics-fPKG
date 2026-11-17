@@ -1,5 +1,3 @@
-using System.Drawing;
-using System.Drawing.Imaging;
 using DiscUtils.Iso9660;
 using PS_Classics_fPKG_Builder;
 using Xunit;
@@ -249,33 +247,6 @@ public class IsoToolsTests
     }
 }
 
-public class UtilsTests
-{
-    [Fact]
-    public void ResizeAsImage_ProducesTheRequestedSize()
-    {
-        using var source = new Bitmap(10, 20);
-        using var resized = Utils.ResizeAsImage(source, 512, 512);
-        Assert.Equal(new Size(512, 512), resized.Size);
-    }
-
-    [Fact]
-    public void ConvertTo24bppPNG_ReturnsAnOpaque24BitImageThatSavesAsPng()
-    {
-        using var source = new Bitmap(64, 64, PixelFormat.Format32bppArgb);
-        using var converted = Utils.ConvertTo24bppPNG(source);
-        Assert.Equal(PixelFormat.Format24bppRgb, converted.PixelFormat);
-
-        using var ws = new TempWorkspace();
-        var path = Path.Combine(ws.Root, "icon0.png");
-        converted.Save(path, ImageFormat.Png);
-
-        using var reloaded = Image.FromFile(path);
-        Assert.Equal(ImageFormat.Png.Guid, reloaded.RawFormat.Guid);
-        Assert.Equal(new Size(64, 64), reloaded.Size);
-    }
-}
-
 public class FileUtilsAndPathsTests
 {
     [Fact]
@@ -320,14 +291,25 @@ public class FileUtilsAndPathsTests
     public void AppPaths_ResolvesToolsAndCacheFromTheBaseDirectoryWithoutTrailingSeparator()
     {
         var previous = AppPaths.BaseDirectory;
+        var app = Path.Combine(Path.GetTempPath(), "Some App");
         try
         {
-            AppPaths.BaseDirectory = @"C:\Some App\";
-            Assert.Equal(@"C:\Some App", AppPaths.BaseDirectory);
-            Assert.Equal(@"C:\Some App\Tools", AppPaths.ToolsDirectory);
-            Assert.Equal(@"C:\Some App\Cache", AppPaths.CacheDirectory);
+            AppPaths.BaseDirectory = app + Path.DirectorySeparatorChar;
+            Assert.Equal(app, AppPaths.BaseDirectory);
+            Assert.Equal(Path.Combine(app, "Tools"), AppPaths.ToolsDirectory);
+
+            // Next to the program, except on macOS where the app bundle must not be written to
+            var expectedCache = OperatingSystem.IsMacOS() ? Path.Combine(AppPaths.DataDirectory, "Cache") : Path.Combine(app, "Cache");
+            Assert.Equal(expectedCache, AppPaths.CacheDirectory);
+
+            AppPaths.CacheDirectory = Path.Combine(app, "MyCache");
+            Assert.Equal(Path.Combine(app, "MyCache"), AppPaths.CacheDirectory);
         }
-        finally { AppPaths.BaseDirectory = previous; }
+        finally
+        {
+            AppPaths.BaseDirectory = previous;
+            AppPaths.CacheDirectory = null;
+        }
     }
 
     [Fact]
@@ -350,7 +332,7 @@ public class FileUtilsAndPathsTests
         try
         {
             Environment.CurrentDirectory = Path.GetTempPath();
-            Assert.Equal(AppContext.BaseDirectory.TrimEnd('\\'), AppPaths.BaseDirectory.TrimEnd('\\'));
+            Assert.Equal(AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar), AppPaths.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar));
         }
         finally { Environment.CurrentDirectory = oldWorkingDirectory; }
     }

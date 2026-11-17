@@ -124,29 +124,18 @@ Public Class DashPreview
     End Sub
 
     Private Sub UpdatePreview()
-        Dim HintLines As New List(Of String)
+        'Hints come from the shared Core library, so every version of the app shows the same text
+        Dim HintLines As List(Of String) = ImageConverter.PreviewHints(IconPath, BackgroundPath)
 
         'Icon: the selected one, otherwise the default icon of the emulator
         Dim Icon As BitmapSource = ImageLoader.TryLoad(IconPath, 512)
-        If Icon IsNot Nothing Then
-            Dim IconSize As System.Drawing.Size = OriginalSize(IconPath, Icon)
-            Dim IconHint As String = ImageLoader.DescribeStretch("The icon", IconSize.Width, IconSize.Height, 512, 512)
-            If IconHint <> "" Then HintLines.Add(IconHint)
-        ElseIf Not String.IsNullOrWhiteSpace(IconPath) Then
-            HintLines.Add("The icon could not be read.")
-        Else
+        If Icon Is Nothing AndAlso String.IsNullOrWhiteSpace(IconPath) Then
             Icon = ImageLoader.TryLoad(FallbackIconPath, 512)
         End If
 
         'Background: the selected one, otherwise the fallback
         Dim Background As BitmapSource = ImageLoader.TryLoad(BackgroundPath, 1280)
-        If Background IsNot Nothing Then
-            Dim BackgroundSize As System.Drawing.Size = OriginalSize(BackgroundPath, Background)
-            Dim BackgroundHint As String = ImageLoader.DescribeStretch("The background", BackgroundSize.Width, BackgroundSize.Height, 1920, 1080)
-            If BackgroundHint <> "" Then HintLines.Add(BackgroundHint)
-        ElseIf Not String.IsNullOrWhiteSpace(BackgroundPath) Then
-            HintLines.Add("The background could not be read.")
-        Else
+        If Background Is Nothing AndAlso String.IsNullOrWhiteSpace(BackgroundPath) Then
             Background = ImageLoader.TryLoad(FallbackBackgroundPath, 1280)
         End If
 
@@ -167,17 +156,5 @@ Public Class DashPreview
 
         Hints = String.Join(vbCrLf, HintLines)
     End Sub
-
-    'The preview decodes images at a reduced width, so the original size is read from the file header for the hints.
-    Private Shared Function OriginalSize(ImagePath As String, Loaded As BitmapSource) As System.Drawing.Size
-        Try
-            Using ImageStream As New IO.FileStream(ImagePath, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.ReadWrite)
-                Dim Frame As BitmapFrame = BitmapFrame.Create(ImageStream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None)
-                Return New System.Drawing.Size(Frame.PixelWidth, Frame.PixelHeight)
-            End Using
-        Catch ex As Exception
-            Return New System.Drawing.Size(Loaded.PixelWidth, Loaded.PixelHeight)
-        End Try
-    End Function
 
 End Class

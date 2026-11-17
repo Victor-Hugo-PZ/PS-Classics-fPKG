@@ -8,14 +8,14 @@ Public Class ProcessResult
     Public Property ErrorOutput As String = ""
 End Class
 
-''' <summary>Runs the external tools (without a console window) and captures their output.</summary>
+''' <summary>Runs external programs (without a console window) and captures their output.</summary>
 Public Class ProcessRunner
 
     ''' <summary>
     ''' Starts a process and waits for it to exit. The output is read before waiting for the exit
     ''' (and the error output in parallel), otherwise a full pipe buffer would block the child process forever.
     ''' </summary>
-    Public Shared Function Run(FileName As String, Arguments As String, Optional WorkingDirectory As String = Nothing) As ProcessResult
+    Public Shared Function Run(FileName As String, Arguments As String, Optional WorkingDirectory As String = Nothing, Optional Environment As IDictionary(Of String, String) = Nothing) As ProcessResult
         Using NewProcess As New Process()
             NewProcess.StartInfo.FileName = FileName
             NewProcess.StartInfo.Arguments = Arguments
@@ -25,6 +25,11 @@ Public Class ProcessRunner
             NewProcess.StartInfo.RedirectStandardError = True
             If Not String.IsNullOrEmpty(WorkingDirectory) Then
                 NewProcess.StartInfo.WorkingDirectory = WorkingDirectory
+            End If
+            If Environment IsNot Nothing Then
+                For Each Variable In Environment
+                    NewProcess.StartInfo.Environment(Variable.Key) = Variable.Value
+                Next
             End If
 
             NewProcess.Start()
@@ -38,20 +43,31 @@ Public Class ProcessRunner
 
 End Class
 
-''' <summary>Wrappers for the PS4 publishing tools.</summary>
+''' <summary>Wrappers for the PS4 publishing tools (Windows programs, run through Wine on Linux and macOS).</summary>
 Public Class PkgTools
 
     Public Const SuccessMarker As String = "Create image Process finished with warning"
 
+    Public Shared ReadOnly Property GenGp4Executable As String
+        Get
+            Return Path.Combine(AppPaths.ToolsDirectory, "PS4", "gengp4_patch.exe")
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property PubCmdExecutable As String
+        Get
+            Return Path.Combine(AppPaths.ToolsDirectory, "PS4", "mod-pub", "orbis-pub-cmd-3.38.exe")
+        End Get
+    End Property
+
     ''' <summary>Generates the GP4 project of a prepared cache folder (the ".gp4" file is written next to the folder).</summary>
     Public Shared Function GenerateGp4(GameCacheDirectory As String) As ProcessResult
-        Return ProcessRunner.Run(AppPaths.ToolsDirectory + "\PS4\gengp4_patch.exe", """" + GameCacheDirectory + """")
+        Return ToolRunner.Run(GenGp4Executable, {Platform.ToolPath(GameCacheDirectory)})
     End Function
 
     ''' <summary>Builds the fake package of a GP4 project into the output folder.</summary>
     Public Shared Function CreatePKG(Gp4File As String, OutputFolder As String) As ProcessResult
-        Return ProcessRunner.Run(AppPaths.ToolsDirectory + "\PS4\mod-pub\orbis-pub-cmd-3.38.exe",
-                                 "img_create --oformat pkg --skip_digest --no_progress_bar """ + Gp4File + """ """ + OutputFolder + """")
+        Return ToolRunner.Run(PubCmdExecutable, {"img_create", "--oformat", "pkg", "--skip_digest", "--no_progress_bar", Platform.ToolPath(Gp4File), Platform.ToolPath(OutputFolder)})
     End Function
 
     ''' <summary>The publishing tool reports a successful build with this marker in its output.</summary>

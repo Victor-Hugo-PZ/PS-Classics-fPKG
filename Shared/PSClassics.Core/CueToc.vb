@@ -23,11 +23,12 @@ Public Class CueToc
             Dim CueCopy As String = Path.Combine(WorkDirectory, Path.GetFileName(CueFile))
             File.Copy(CueFile, CueCopy)
 
-            Dim Result As ProcessResult = ProcessRunner.Run(AppPaths.ToolsDirectory + "\cue2toc.exe",
-                                                            """" + CueCopy + """ --size " + New FileInfo(BinFile).Length.ToString() + " --quiet",
-                                                            WorkDirectory)
+            Dim Result As ProcessResult = ToolRunner.Run(Path.Combine(AppPaths.ToolsDirectory, "cue2toc.exe"),
+                                                         {Platform.ToolPath(CueCopy), "--size", New FileInfo(BinFile).Length.ToString(), "--quiet"},
+                                                         WorkDirectory)
 
-            Dim TocFiles As String() = Directory.GetFiles(WorkDirectory, "*.toc")
+            'cue2toc writes "<name>.TOC": compare without case (file names are case sensitive on Linux)
+            Dim TocFiles As String() = Directory.GetFiles(WorkDirectory).Where(Function(Name) Name.EndsWith(".toc", StringComparison.OrdinalIgnoreCase)).ToArray()
             If Result.ExitCode <> 0 OrElse TocFiles.Length <> 1 Then
                 Throw New InvalidOperationException("The TOC file could not be created from '" + Path.GetFileName(CueFile) + "'." + vbCrLf + Result.ErrorOutput + Result.Output)
             End If
