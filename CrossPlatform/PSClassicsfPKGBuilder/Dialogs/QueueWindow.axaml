@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PSClassicsfPKGBuilder.Dialogs.QueueWindow"
+        Title="Queue - PS Classics fPKG Builder" Width="900" Height="680" MinWidth="720" MinHeight="480"
+        WindowStartupLocation="CenterOwner" DragDrop.AllowDrop="True">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="24">
+        <TextBlock Grid.Row="0" Text="Queue" FontSize="24" FontWeight="SemiBold" />
+        <TextBlock Grid.Row="1" Margin="0,4,0,12" TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}"
+                   Text="Add several games as .zip or .7z files and build them one after the other, with no questions. Each package is made with the emulator settings of the preset you choose." />
+
+        <StackPanel Grid.Row="2" Margin="0,0,0,12">
+            <DockPanel Margin="0,0,0,8">
+                <Button x:Name="BrowseOutputButton" DockPanel.Dock="Right" Content="Browse…" Margin="8,0,0,0" />
+                <TextBox x:Name="OutputFolderTextBox" PlaceholderText="Folder where the packages are written" />
+            </DockPanel>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="Emulator settings" VerticalAlignment="Center" />
+                <ComboBox x:Name="PresetComboBox" Width="200" />
+                <CheckBox x:Name="OnlineCheckBox" Content="Look for covers and titles on the internet" IsChecked="True" Margin="14,0,0,0" />
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Grid.Row="3" Margin="0,0,0,12">
+            <ListBox x:Name="ItemsListBox" SelectionMode="Multiple" />
+            <TextBlock x:Name="EmptyText" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
+                       Text="Drop .zip or .7z files here, or press Add archives." />
+        </Grid>
+
+        <StackPanel Grid.Row="4">
+            <ProgressBar x:Name="QueueProgress" IsIndeterminate="True" IsVisible="False" Margin="0,0,0,8" />
+            <TextBlock x:Name="SummaryText" Margin="0,0,0,8" />
+            <WrapPanel HorizontalAlignment="Right">
+                <Button x:Name="AddButton" Content="Add archives" Margin="0,0,8,8" />
+                <Button x:Name="RemoveButton" Content="Remove" Margin="0,0,8,8" />
+                <Button x:Name="ClearDoneButton" Content="Clear finished" Margin="0,0,8,8" />
+                <Button x:Name="StartButton" Content="Start" Classes="accent" Margin="0,0,8,8" />
+                <Button x:Name="CancelButton" Content="Stop after this game" IsVisible="False" Margin="0,0,8,8" />
+                <Button x:Name="CloseButton" Content="Close" Margin="0,0,0,8" />
+            </WrapPanel>
+        </StackPanel>
+    </Grid>
+</Window>

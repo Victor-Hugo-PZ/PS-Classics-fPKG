@@ -81,6 +81,7 @@ public partial class MainWindow : Window
             if (pkgFile != null) await CheckPackage(pkgFile);
         };
         HistoryButton.Click += async (_, _) => await new HistoryWindow().ShowDialog(this);
+        QueueButton.Click += async (_, _) => await new QueueWindow().ShowDialog(this);
         OpenGuideButton.Click += async (_, _) => await new GuideWindow().ShowDialog(this);
         SettingsButton.Click += async (_, _) =>
         {

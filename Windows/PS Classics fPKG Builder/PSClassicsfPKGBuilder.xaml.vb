@@ -78,6 +78,11 @@ Public Class PSClassicsfPKGBuilder
         History.ShowDialog()
     End Sub
 
+    Private Sub QueueButton_Click(sender As Object, e As RoutedEventArgs) Handles QueueButton.Click
+        Dim Queue As New QueueWindow() With {.Owner = Me}
+        Queue.ShowDialog()
+    End Sub
+
     Private Sub SettingsButton_Click(sender As Object, e As RoutedEventArgs) Handles SettingsButton.Click
         Dim Settings As New SettingsWindow() With {.Owner = Me}
         Settings.ShowDialog()

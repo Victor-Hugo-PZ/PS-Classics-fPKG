@@ -94,6 +94,8 @@
                                ToolTip="Verifies a generated .pkg with the SDK checker and tells you if something is wrong" />
                     <ui:Button x:Name="HistoryButton" Content="History" Icon="{ui:SymbolIcon History24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,8"
                                ToolTip="Packages you built, the options you used and how they run on the console" />
+                    <ui:Button x:Name="QueueButton" Content="Queue" Icon="{ui:SymbolIcon TaskListSquareLtr24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                               ToolTip="Build several games from .zip or .7z files, one after the other, with no questions" />
                     <ui:Button x:Name="OpenGuideButton" Content="Guide" Icon="{ui:SymbolIcon Book24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,8" />
                     <ui:Button x:Name="SettingsButton" Content="Settings" Icon="{ui:SymbolIcon Settings24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,12"
                                ToolTip="Language, step-by-step mode, package check and updates" />
