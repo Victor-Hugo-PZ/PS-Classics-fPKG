@@ -16,7 +16,7 @@ Get the package for your system from the [Releases](https://github.com/Victor-Hu
 All versions share the same build code (`Shared/PSClassics.Core`), so they produce the same packages, and have the same screens.
 
 - Easily create PS1, PS2 & PSP game fake packages for the PS4 / PS5 on Windows, Linux and macOS
-- Supports .BIN files (PS1) & .ISO files (PS2 & PSP)
+- Supports .BIN files (PS1), .ISO files (PS2 & PSP) and compressed .CSO files (PSP, converted to .ISO automatically)
 - Detects PS1 game protection and can apply the required patch
 - Automatic PS1 game TOC generation for games using CDDA music, including discs with one BIN file per track (the tracks are joined automatically)
 - Add a game from a .zip or .7z: drop the archive on the window, the app extracts it and finds the game files
@@ -36,6 +36,10 @@ All versions share the same build code (`Shared/PSClassics.Core`), so they produ
 - **Checks before building** (missing files and `.cue`, invalid NP title, free disk space) with the fix for each problem
 - **Errors explained in plain words**, with the technical details below
 - The package is **checked automatically** after building
+- **Queue** of several games: drop or add many `.zip` or `.7z` files and build them one after the other with no questions (cover and title are looked up, a game that fails does not stop the others)
+- **Archive check**: a `.zip` or `.7z` is looked into before it is extracted (no game files, a track missing from the `.cue`, a password, not enough disk space)
+- **Fix buttons**: an error or a problem found before building can offer the fix (select the game again, Wine setup, show the Tools folder, clear the images, build again)
+- **Titles** of PSP games come from the disc; PS1 and PS2 games that are not in the title list get theirs from the Redump database
 - **History** of the packages you built, the options used and how each one ran on the console
 - Guide section on **installing the package on the console**
 - **Update notice** when a new version is released (Settings can turn it off)
@@ -131,6 +135,7 @@ dotnet test CrossPlatform/PSClassicsfPKGBuilder.sln    # any OS: Core tests
 ## Project status
 - [x] Windows app migrated from .NET Framework 4.8.1 to .NET 10, LibOrbisPkg built from source
 - [x] Build logic extracted into a cross-platform, tested library (`Shared/PSClassics.Core`)
+- [x] 2.2.4 (next): PSP .cso support, queue of several games, archive check, fix buttons, titles from the PSP disc and Redump
 - [x] 2.2.3: PS1 games with one BIN file per track (for example Tekken 3) build; the game ID no longer keeps the folder of the BOOT file; the cover search reads the serials of multi-track games; drop a .zip or .7z to add a game
 - [x] Fixed: PS1 discs 3/4 ignored, unterminated `--path-patches`, lost PS2 emulator fixes, pipe deadlocks, leaked file handles, working-directory dependent paths, PS1 TOC for every disc, PS2 game ID derived from the NP title when it is not detected
 - [x] Fluent interface with a live PS4/PS5 home screen preview, help buttons, Required/Optional badges and hints

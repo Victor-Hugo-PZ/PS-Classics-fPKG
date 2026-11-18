@@ -36,6 +36,9 @@ Shared/PSClassics.Core/                      lógica (RootNamespace PS_Classics_
   CoverSources.vb                            Buscar capa (PS1/PS2): coleção por ID -> nome do banco Redump pelo serial -> título (libretro)
   DiscImages.vb                              CUE de um disco (acha o .cue que lista o .bin) e junção de discos com um BIN por faixa (cue2toc lê um BIN só)
   ArchiveImport.vb                           .zip/.7z arrastado: extração com 7z e achado dos arquivos do jogo (mesmo caminho do arrastar)
+  ArchiveInspector.vb                        olha dentro do .zip/.7z antes de extrair (sem jogo, faixa faltando no .cue, senha, espaço)
+  CsoReader.vb SfoReader.vb                  PSP .cso (CISO) -> .iso; PARAM.SFO (título do PSP)
+  BatchBuilder.vb                            fila: BatchBuilder (zip -> extrai -> detecta -> capa -> build com predefinição) e BatchQueue (lista da janela Fila)
   AppPaths.vb FileUtils.vb
 Shared/PSClassics.Core.Tests/                xUnit (C#): unidade + integração com as ferramentas reais
 Windows/PS Classics fPKG Builder/            app WPF: PSClassicsfPKGBuilder.xaml(.vb), DashPreview, FieldLabel, StepBar, UiTranslator, janelas (Guide, PackageReport, BuildResult, History, Settings)
