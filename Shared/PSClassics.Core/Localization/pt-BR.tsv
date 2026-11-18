@@ -367,7 +367,7 @@ winetricks: not found	winetricks: não encontrado
 • Background: 1920×1080 pixels. A 16:9 image avoids distortion.	• Fundo: 1920×1080 pixels. Uma imagem 16:9 evita distorção.
 • Before building, the app checks the files, the NP title and the free disk space, and tells you how to fix each problem.	• Antes de criar, o app confere os arquivos, o NP Title e o espaço livre no disco, e diz como corrigir cada problema.
 • Check the NP Title: it must have exactly 9 characters, without _ or -.	• Confira o NP Title: ele precisa ter exatamente 9 caracteres, sem _ ou -.
-• Drag and drop: drop the game (.bin, .cue or .iso), images, configs or a .pkg anywhere on the window. The app puts each file in the right field.	• Arrastar e soltar: solte o jogo (.bin, .cue ou .iso), imagens, configs ou um .pkg em qualquer lugar da janela. O app coloca cada arquivo no campo certo.
+• Drag and drop: drop the game (.bin, .cue or .iso), images, configs or a .pkg anywhere on the window. A .zip or .7z is opened by itself: the game files inside are found. The app puts each file in the right field.	• Arrastar e soltar: solte o jogo (.bin, .cue ou .iso), imagens, configs ou um .pkg em qualquer lugar da janela. Um .zip ou .7z é aberto sozinho: os arquivos do jogo dentro dele são encontrados. O app coloca cada arquivo no campo certo.
 • Find cover (PS1 and PS2): downloads the cover of the game by its ID and creates the icon and the background. PSP: 'Images from the disc' uses the icon and background stored on the disc.	• Buscar capa (PS1 e PS2): baixa a capa do jogo pelo ID e cria o ícone e o fundo. PSP: 'Imagens do disco' usa o ícone e o fundo gravados no disco.
 • Icon: 512×512 pixels. A square image avoids distortion.	• Ícone: 512×512 pixels. Uma imagem quadrada evita distorção.
 • If a game does not work on the console, note the emulator and the options you used and try changing one option at a time.	• Se um jogo não funcionar no console, anote o emulador e as opções usadas e tente mudar uma opção de cada vez.
@@ -398,3 +398,11 @@ Select an image for the background (PNG, JPG, BMP, GIF or WebP).	Selecione uma i
 This game is Libcrypt protected. Do you want to add --libcrypt to the configuration file ?	Este jogo tem proteção Libcrypt. Deseja adicionar --libcrypt ao arquivo de configuração?
 Libcrypt	Libcrypt
 The cover was found by the game name, not by its ID. Check the icon and the background in the preview before building.	A capa foi encontrada pelo nome do jogo, e não pelo ID. Confira o ícone e o fundo na prévia antes de criar.
+No game files were found in this archive. A PS1 game needs its .bin and .cue files, a PS2 or PSP game its .iso file.	Nenhum arquivo de jogo foi encontrado neste arquivo compactado. Um jogo de PS1 precisa dos arquivos .bin e .cue; um de PS2 ou PSP, do arquivo .iso.
+The archive could not be opened: {0}	Não foi possível abrir o arquivo compactado: {0}
+The archive was not found.	O arquivo compactado não foi encontrado.
+Only .zip and .7z archives can be opened.	Só é possível abrir arquivos .zip e .7z.
+The archive could not be extracted.	Não foi possível extrair o arquivo compactado.
+No CUE sheet lists this BIN file. Put a .cue file next to the .bin file (same name, or one that lists it).	Nenhum arquivo .cue lista este .bin. Coloque um arquivo .cue ao lado do .bin (mesmo nome, ou um que o liste).
+A BIN file of the CUE sheet was not found. Every track needs its .bin file next to the .cue file.	Um arquivo .bin do .cue não foi encontrado. Cada faixa precisa do seu .bin ao lado do .cue.
+The BIN file '{0}' is not a whole number of 2352 byte sectors, so its tracks cannot be joined.	O arquivo .bin '{0}' não tem um número inteiro de setores de 2352 bytes, então as faixas não podem ser unidas.

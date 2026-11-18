@@ -476,14 +476,39 @@ Public Class PSClassicsfPKGBuilder
         If Not e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop) Then Return
         e.Handled = True
         For Each DroppedFile As String In CType(e.Data.GetData(System.Windows.DataFormats.FileDrop), String())
-            Await HandleDroppedFile(DroppedFile)
+            If ArchiveImport.IsArchive(DroppedFile) Then
+                Await HandleDroppedArchive(DroppedFile)
+            Else
+                Await HandleDroppedFile(DroppedFile)
+            End If
         Next
     End Sub
 
+    ''' <summary>Extracts a dropped .zip or .7z and handles the game files in it as if they were dropped one by one.</summary>
+    Private Async Function HandleDroppedArchive(ArchiveFile As String) As Task
+        Dim Found As List(Of ImportedFile)
+        Try
+            Found = Await Task.Run(Function()
+                                       Dim Folder As String = ArchiveImport.Extract(ArchiveFile)
+                                       Return ArchiveImport.FindGameFiles(Folder)
+                                   End Function)
+        Catch ex As Exception
+            MsgBox(Localizer.F("The archive could not be opened: {0}", ex.Message), MsgBoxStyle.Exclamation)
+            Return
+        End Try
+        If Found.Count = 0 Then
+            MsgBox(Localizer.T("No game files were found in this archive. A PS1 game needs its .bin and .cue files, a PS2 or PSP game its .iso file."), MsgBoxStyle.Information)
+            Return
+        End If
+        For Each Item As ImportedFile In Found
+            Await HandleDroppedFile(Item.Path, Item.Kind)
+        Next
+    End Function
+
     ''' <summary>Puts a dropped file in the right field (switching to the right platform for games).</summary>
-    Private Async Function HandleDroppedFile(DroppedFile As String) As Task
+    Private Async Function HandleDroppedFile(DroppedFile As String, Optional KnownKind As DroppedFileKind? = Nothing) As Task
         Dim Page As Integer = PlatformListBox.SelectedIndex
-        Select Case DroppedFiles.Classify(DroppedFile)
+        Select Case If(KnownKind, DroppedFiles.Classify(DroppedFile))
             Case DroppedFileKind.PS1Disc
                 Dim Bin As String = DroppedFiles.DiscFile(DroppedFile)
                 If Bin = "" Then

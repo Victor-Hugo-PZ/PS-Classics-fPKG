@@ -53,6 +53,15 @@ public class CoverSourcesTests
     }
 
     [Fact]
+    public void ParseSerialNames_ReadsTheSerialOfAMultiTrackGameFromItsRomLines()
+    {
+        // Regression: Tekken 3 (Europe, Australia) has no "serial" line of its own, only the serial of its track 1 rom
+        var names = CoverSources.ParseSerialNames(
+            "game (\n\tname \"Tekken 3 (Europe, Australia)\"\n\trom ( name \"Tekken 3 (Europe, Australia) (Track 1).bin\" size 632530416 crc 7EB2AE00 serial \"SCES-01237\" )\n)\n");
+        Assert.Equal("Tekken 3 (Europe, Australia)", names["SCES-01237"]);
+    }
+
+    [Fact]
     public void ParseSerialNames_KeepsTheFirstNameOfASerial()
     {
         var names = CoverSources.ParseSerialNames("game (\n\tname \"First (USA)\"\n\tserial \"SLUS-1\"\n)\ngame (\n\tname \"Second (USA)\"\n\tserial \"SLUS-1\"\n)\n");

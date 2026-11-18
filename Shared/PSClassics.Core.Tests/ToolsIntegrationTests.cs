@@ -48,6 +48,15 @@ public class ToolsIntegrationTests
         Assert.Equal("SLUS-00594", PS1Game.GetPS1GameID(bin));
     }
 
+    [Theory]
+    [InlineData("BOOT = cdrom:\\SLUS_005.94;1", "SLUS-00594")]
+    [InlineData("BOOT = cdrom:\\TEKKEN3\\SLUS_004.02;1", "SLUS-00402")] // Regression: the folder of the executable was kept in the ID
+    [InlineData("BOOT=cdrom:\\MGS\\SLES_123.45;1", "SLES-12345")]
+    public void PS1_GameIdIgnoresTheFolderOfTheBootFile(string bootLine, string expected)
+    {
+        Assert.Equal(expected, PS1Game.FindGameID(new[] { "TCB = 4", bootLine }));
+    }
+
     [Fact]
     public void PS1_GameIdIsEmptyWhenTheBinHasNoBootEntry()
     {

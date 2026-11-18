@@ -51,10 +51,13 @@ Public Class DroppedFiles
         Return If(Size.Value.Width >= Size.Value.Height * 1.3, DroppedFileKind.Background, DroppedFileKind.Icon)
     End Function
 
-    ''' <summary>For a PS1 game the .BIN file is selected: a dropped .CUE is replaced by the .BIN with the same name.</summary>
+    ''' <summary>For a PS1 game the .BIN file is selected: a dropped .CUE is replaced by its first .BIN file (the one with the same name, or the first one it lists).</summary>
     Public Shared Function DiscFile(FilePath As String) As String
         If Not Path.GetExtension(FilePath).Equals(".cue", StringComparison.OrdinalIgnoreCase) Then Return FilePath
         Dim Folder As String = Path.GetDirectoryName(FilePath)
+        Dim Listed As String = DiscImages.ReferencedFiles(FilePath).
+            Select(Function(Name) Path.Combine(Folder, Name)).FirstOrDefault(Function(Candidate) File.Exists(Candidate))
+        If Listed IsNot Nothing Then Return Listed
         Dim BaseName As String = Path.GetFileNameWithoutExtension(FilePath)
         Dim Bin As String = Directory.GetFiles(Folder).FirstOrDefault(Function(Candidate) Path.GetFileNameWithoutExtension(Candidate).Equals(BaseName, StringComparison.OrdinalIgnoreCase) AndAlso
                                                                          Path.GetExtension(Candidate).Equals(".bin", StringComparison.OrdinalIgnoreCase))

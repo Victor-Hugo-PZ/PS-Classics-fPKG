@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Text.RegularExpressions
 
 Public Class PS1Game
 
@@ -9,6 +10,10 @@ Public Class PS1Game
     Public Shared Function FindGameID(OutputLines As IEnumerable(Of String)) As String
         For Each OutputLine As String In OutputLines
             If OutputLine.Contains("BOOT =") Or OutputLine.Contains("BOOT=") Then
+                ' Regression: some discs put the executable in a folder ("BOOT = cdrom:\TEKKEN3\SLUS_004.02;1"),
+                ' so the ID is the last "XXXX_999.99" name of the line, whatever folder comes before it.
+                Dim Match As Match = Regex.Match(OutputLine, "BOOT\s*=\s*cdrom\d*:\S*?([A-Za-z]{4})_(\d{3})\.(\d{2})", RegexOptions.IgnoreCase)
+                If Match.Success Then Return UCase(Match.Groups(1).Value) + "-" + Match.Groups(2).Value + Match.Groups(3).Value
                 Dim GameID As String = OutputLine.Replace("BOOT = cdrom:\", "").Replace("BOOT=cdrom:\", "").Replace("BOOT = cdrom:", "").Replace(";1", "").Replace("_", "-").Replace(".", "").Replace("MGS\", "").Trim()
                 Return UCase(GameID).Trim()
             End If

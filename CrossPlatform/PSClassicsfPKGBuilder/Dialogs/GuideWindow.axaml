@@ -51,7 +51,7 @@
                 <TextBlock Classes="body" Margin="0,6,0,0" Text="The options under the emulator (upscaling, uprender, display mode, fixes) are optional. Start with the defaults; change one option at a time if a game has problems." />
 
                 <TextBlock Text="5. Helpers that save time" Classes="heading" />
-                <TextBlock Classes="bullet" Text="• Drag and drop: drop the game (.bin, .cue or .iso), images, configs or a .pkg anywhere on the window. The app puts each file in the right field." />
+                <TextBlock Classes="bullet" Text="• Drag and drop: drop the game (.bin, .cue or .iso), images, configs or a .pkg anywhere on the window. A .zip or .7z is opened by itself: the game files inside are found. The app puts each file in the right field." />
                 <TextBlock Classes="bullet" Text="• Find cover (PS1 and PS2): downloads the cover of the game by its ID and creates the icon and the background. PSP: 'Images from the disc' uses the icon and background stored on the disc." />
                 <TextBlock Classes="bullet" Text="• Presets: in the Emulator section, choose Recommended, Most compatible or Best looking instead of changing each option." />
                 <TextBlock Classes="bullet" Text="• Step-by-step mode (Settings): shows one step at a time with Next and Back buttons." />

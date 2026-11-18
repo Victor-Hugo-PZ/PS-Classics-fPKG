@@ -47,9 +47,13 @@ Public Class BuildPreflight
             If String.IsNullOrWhiteSpace(Disc) Then Continue For
             If Not File.Exists(Disc) Then
                 Issues.Add(Problem(Localizer.F("Disc {0} was not found: {1}", Index + 1, Disc), "The file was moved or deleted. Select it again."))
-            ElseIf Not File.Exists(Path.ChangeExtension(Disc, ".cue")) Then
-                Issues.Add(Problem(Localizer.F("The .CUE file of disc {0} is missing.", Index + 1),
-                                   Localizer.F("Put {0} next to the .BIN file (same name, .cue extension).", Path.GetFileNameWithoutExtension(Disc) + ".cue")))
+            Else
+                Try
+                    DiscImages.FindCueFile(Disc)
+                Catch ex As FileNotFoundException
+                    Issues.Add(Problem(Localizer.F("The .CUE file of disc {0} is missing.", Index + 1),
+                                       Localizer.F("Put {0} next to the .BIN file (same name, .cue extension).", Path.GetFileNameWithoutExtension(Disc) + ".cue")))
+                End Try
             End If
         Next
         CheckTitle(Issues, Request.Title)
