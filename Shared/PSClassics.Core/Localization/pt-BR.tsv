@@ -406,3 +406,7 @@ The archive could not be extracted.	Não foi possível extrair o arquivo compact
 No CUE sheet lists this BIN file. Put a .cue file next to the .bin file (same name, or one that lists it).	Nenhum arquivo .cue lista este .bin. Coloque um arquivo .cue ao lado do .bin (mesmo nome, ou um que o liste).
 A BIN file of the CUE sheet was not found. Every track needs its .bin file next to the .cue file.	Um arquivo .bin do .cue não foi encontrado. Cada faixa precisa do seu .bin ao lado do .cue.
 The BIN file '{0}' is not a whole number of 2352 byte sectors, so its tracks cannot be joined.	O arquivo .bin '{0}' não tem um número inteiro de setores de 2352 bytes, então as faixas não podem ser unidas.
+This archive has a password. Extract it yourself and drop the game files instead.	Este arquivo compactado tem senha. Extraia você mesmo e solte os arquivos do jogo.
+The archive is incomplete: '{0}' lists the file '{1}', which is not in the archive.	O arquivo compactado está incompleto: '{0}' lista o arquivo '{1}', que não está no arquivo compactado.
+Not enough free space to extract this archive: {0} needed, {1} free.	Espaço livre insuficiente para extrair este arquivo compactado: {0} necessários, {1} livres.
+The archive could not be opened. It may be damaged or not complete.	Não foi possível abrir o arquivo compactado. Ele pode estar danificado ou incompleto.
