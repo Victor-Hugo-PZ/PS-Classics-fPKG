@@ -422,3 +422,27 @@ Show the Tools folder	Mostrar a pasta Tools
 Clear the icon and the background	Limpar o ícone e o fundo
 Choose another output folder and build again	Escolher outra pasta de saída e criar de novo
 Fix	Corrigir
+Looking inside the archive…	Olhando dentro do arquivo compactado…
+Extracting…	Extraindo…
+Package created.	Pacote criado.
+Building {0}…	Criando {0}…
+Looking for the cover…	Procurando a capa…
+{0} of {1} packages were made.	{0} de {1} pacotes foram criados.
+Queue - PS Classics fPKG Builder	Fila - PS Classics fPKG Builder
+Queue	Fila
+Add several games as .zip or .7z files and build them one after the other, with no questions. Each package is made with the emulator settings of the preset you choose.	Adicione vários jogos como arquivos .zip ou .7z e crie um depois do outro, sem perguntas. Cada pacote é feito com as configurações de emulador da predefinição que você escolher.
+Folder where the packages are written	Pasta onde os pacotes são gravados
+Emulator settings	Configurações do emulador
+Look for covers and titles on the internet	Procurar capas e títulos na internet
+Drop .zip or .7z files here, or press Add archives.	Solte arquivos .zip ou .7z aqui, ou aperte Adicionar arquivos.
+Add archives	Adicionar arquivos
+Remove	Remover
+Clear finished	Limpar concluídos
+Start	Iniciar
+Stop after this game	Parar depois deste jogo
+Select the game archives	Escolha os arquivos dos jogos
+Choose the output folder first.	Escolha primeiro a pasta de saída.
+The output folder cannot be used: {0}	Não é possível usar a pasta de saída: {0}
+The queue is still building. Press 'Stop after this game' and wait before closing.	A fila ainda está criando. Aperte 'Parar depois deste jogo' e espere antes de fechar.
+Queue of several games	Fila de vários jogos
+Build several games from .zip or .7z files, one after the other, with no questions	Cria vários jogos a partir de arquivos .zip ou .7z, um depois do outro, sem perguntas

@@ -17,6 +17,8 @@ Public Class AppSettings
     ''' <summary>Latest release found by the last update check (shown until the user updates or skips it).</summary>
     Public Property LatestVersionTag As String = ""
     Public Property LatestVersionUrl As String = ""
+    ''' <summary>Output folder of the queue window, kept for the next time.</summary>
+    Public Property QueueOutputFolder As String = ""
 
     Private Shared _Current As AppSettings
 

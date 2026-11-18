@@ -38,6 +38,13 @@
                         <TextBlock Text="History" />
                     </StackPanel>
                 </Button>
+                <Button x:Name="QueueButton" HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                        ToolTip.Tip="Build several games from .zip or .7z files, one after the other, with no questions">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <mi:MaterialIcon Kind="PlaylistPlay" Width="18" Height="18" />
+                        <TextBlock Text="Queue" />
+                    </StackPanel>
+                </Button>
                 <Button x:Name="OpenGuideButton" HorizontalAlignment="Stretch" Margin="0,0,0,8">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <mi:MaterialIcon Kind="BookOpenVariant" Width="18" Height="18" />

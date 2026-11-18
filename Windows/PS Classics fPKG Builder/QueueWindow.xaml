@@ -1,0 +1,55 @@
+<ui:FluentWindow x:Class="QueueWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Queue - PS Classics fPKG Builder" Width="900" Height="680" MinWidth="720" MinHeight="480"
+        WindowStartupLocation="CenterOwner" ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica" WindowCornerPreference="Round"
+        AllowDrop="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Queue" />
+
+        <TextBlock Grid.Row="1" Margin="24,0,24,12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="Add several games as .zip or .7z files and build them one after the other, with no questions. Each package is made with the emulator settings of the preset you choose." />
+
+        <StackPanel Grid.Row="2" Margin="24,0,24,12">
+            <DockPanel Margin="0,0,0,8">
+                <ui:Button x:Name="BrowseOutputButton" DockPanel.Dock="Right" Content="Browse…" Margin="8,0,0,0" />
+                <ui:TextBox x:Name="OutputFolderTextBox" PlaceholderText="Folder where the packages are written" />
+            </DockPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Emulator settings" VerticalAlignment="Center" Margin="0,0,10,0" />
+                <ComboBox x:Name="PresetComboBox" Width="200" Margin="0,0,24,0" />
+                <CheckBox x:Name="OnlineCheckBox" Content="Look for covers and titles on the internet" IsChecked="True" />
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Grid.Row="3" Margin="24,0,24,12">
+            <ListBox x:Name="ItemsListBox" SelectionMode="Extended" BorderThickness="1" />
+            <TextBlock x:Name="EmptyText" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       Text="Drop .zip or .7z files here, or press Add archives." />
+        </Grid>
+
+        <StackPanel Grid.Row="4" Margin="24,0,24,20">
+            <ProgressBar x:Name="QueueProgress" IsIndeterminate="True" Visibility="Collapsed" Margin="0,0,0,8" />
+            <TextBlock x:Name="SummaryText" Margin="0,0,0,8" />
+            <WrapPanel HorizontalAlignment="Right">
+                <ui:Button x:Name="AddButton" Content="Add archives" Icon="{ui:SymbolIcon Add24}" Margin="0,0,8,8" />
+                <ui:Button x:Name="RemoveButton" Content="Remove" Icon="{ui:SymbolIcon Delete24}" Margin="0,0,8,8" />
+                <ui:Button x:Name="ClearDoneButton" Content="Clear finished" Icon="{ui:SymbolIcon Broom24}" Margin="0,0,8,8" />
+                <ui:Button x:Name="StartButton" Content="Start" Appearance="Primary" Icon="{ui:SymbolIcon Play24}" Margin="0,0,8,8" />
+                <ui:Button x:Name="CancelButton" Content="Stop after this game" Icon="{ui:SymbolIcon Stop24}" Visibility="Collapsed" Margin="0,0,8,8" />
+                <ui:Button x:Name="CloseButton" Content="Close" Margin="0,0,0,8" />
+            </WrapPanel>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>
