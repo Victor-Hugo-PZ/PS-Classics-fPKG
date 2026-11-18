@@ -52,6 +52,9 @@
 
                 <TextBlock Text="5. Helpers that save time" Classes="heading" />
                 <TextBlock Classes="bullet" Text="• Drag and drop: drop the game (.bin, .cue or .iso), images, configs or a .pkg anywhere on the window. A .zip or .7z is opened by itself: the game files inside are found. The app puts each file in the right field." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• Queue: the Queue button builds several games from .zip or .7z files, one after the other, with no questions. Choose the output folder and a preset, then press Start." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• PSP games in .cso (compressed) are accepted: the app converts them to .iso by itself." />
+                <TextBlock Style="{StaticResource Bullet}" Text="• When something goes wrong, the message can have a Fix button (select the game again, show the Tools folder, clear the images...) that does it for you." />
                 <TextBlock Classes="bullet" Text="• Find cover (PS1 and PS2): downloads the cover of the game by its ID and creates the icon and the background. PSP: 'Images from the disc' uses the icon and background stored on the disc." />
                 <TextBlock Classes="bullet" Text="• Presets: in the Emulator section, choose Recommended, Most compatible or Best looking instead of changing each option." />
                 <TextBlock Classes="bullet" Text="• Step-by-step mode (Settings): shows one step at a time with Next and Back buttons." />

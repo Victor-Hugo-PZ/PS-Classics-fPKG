@@ -141,5 +141,6 @@ dotnet test CrossPlatform/PSClassicsfPKGBuilder.sln    # any OS: Core tests
 - [x] Fluent interface with a live PS4/PS5 home screen preview, help buttons, Required/Optional badges and hints
 - [x] `.pkg` checker in the app and as `PkgCheck`
 - [x] One Linux/macOS app (Avalonia) with the same screens and the same build code as Windows; `strings`, `7z` and `crc` replaced by managed code (same results, verified by tests against the original tools)
+- [ ] Try the 2.2.4 features with real files: a PSP `.cso` of a real game, the Queue window with several games, the Fix buttons (they are tested by code, not by clicking)
 - [ ] Test the Linux and macOS packages on real machines (the Linux build is tested by the CI with Wine; macOS only builds in the CI)
 - [ ] Verify on a real console: which background the home screen shows (the user image is written as `pic0.png`, while the emulators ship a `pic1.png`), PS2 `-vu0-opt-flags` (single dash in the original), the PS3 config (`--lopnor-config`) for database configs, and `disc2.toc` to `disc4.toc` of multi-disc PS1 games

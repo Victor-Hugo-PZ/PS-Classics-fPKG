@@ -446,3 +446,6 @@ The output folder cannot be used: {0}	Não é possível usar a pasta de saída: 
 The queue is still building. Press 'Stop after this game' and wait before closing.	A fila ainda está criando. Aperte 'Parar depois deste jogo' e espere antes de fechar.
 Queue of several games	Fila de vários jogos
 Build several games from .zip or .7z files, one after the other, with no questions	Cria vários jogos a partir de arquivos .zip ou .7z, um depois do outro, sem perguntas
+• Queue: the Queue button builds several games from .zip or .7z files, one after the other, with no questions. Choose the output folder and a preset, then press Start.	• Fila: o botão Fila cria vários jogos a partir de arquivos .zip ou .7z, um depois do outro, sem perguntas. Escolha a pasta de saída e uma predefinição e aperte Iniciar.
+• PSP games in .cso (compressed) are accepted: the app converts them to .iso by itself.	• Jogos de PSP em .cso (compactado) são aceitos: o app converte para .iso sozinho.
+• When something goes wrong, the message can have a Fix button (select the game again, show the Tools folder, clear the images...) that does it for you.	• Quando algo dá errado, a mensagem pode ter um botão Corrigir (escolher o jogo de novo, mostrar a pasta Tools, limpar as imagens...) que faz isso por você.
