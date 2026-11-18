@@ -15,6 +15,9 @@ public partial class BuildResultWindow : Window
     private readonly string _packagePath = "";
     private readonly string _outputFolder = "";
 
+    /// <summary>The fix the user chose with the button (FixAction.None when the window was just closed).</summary>
+    public FixAction RequestedAction { get; private set; } = FixAction.None;
+
     public BuildResultWindow() => InitializeComponent();
 
     public BuildResultWindow(PackageBuildResult result, string outputFolder, PackageReport report, string errorDetails)
@@ -58,6 +61,18 @@ public partial class BuildResultWindow : Window
             DetailsTextBox.Text = errorDetails;
             FullCheckButton.IsVisible = false;
             InstallGuideButton.IsVisible = false;
+            // A button for the fix (the Wine setup only exists on Linux and macOS)
+            if (friendly.Action != FixAction.None && !(friendly.Action == FixAction.WineSetup && Platform.IsWindows))
+            {
+                var fix = friendly.Action;
+                FixButton.Content = friendly.ActionLabel;
+                FixButton.IsVisible = true;
+                FixButton.Click += (_, _) =>
+                {
+                    RequestedAction = fix;
+                    Close();
+                };
+            }
         }
         if (_packagePath == "") FullCheckButton.IsVisible = false;
 

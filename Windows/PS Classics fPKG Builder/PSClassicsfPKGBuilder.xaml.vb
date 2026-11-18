@@ -403,13 +403,39 @@ Public Class PSClassicsfPKGBuilder
 
         Dim ResultWindow As New BuildResultWindow(Result, OutputFolder, Report, ErrorDetails) With {.Owner = Me}
         ResultWindow.ShowDialog()
+        RunFixAction(ResultWindow.RequestedAction)
     End Function
 
+    ''' <summary>Does what a fix button promised (see <see cref="FixAction"/>), on the page that is open.</summary>
+    Private Sub RunFixAction(Action As FixAction)
+        Dim Page As Integer = PlatformListBox.SelectedIndex
+        Select Case Action
+            Case FixAction.SelectGame
+                Dim Buttons As Wpf.Ui.Controls.Button() = {BrowsePS1Disc1Button, BrowsePS2Disc1Button, BrowsePSPDiscButton}
+                If Page >= 0 AndAlso Page < Buttons.Length Then Buttons(Page).RaiseEvent(New RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent))
+            Case FixAction.ClearImages
+                SetText(Page, "", SelectedPS1IconTextBox, SelectedIconTextBox, SelectedPSPIconTextBox)
+                SetText(Page, "", SelectedPS1BGTextBox, SelectedStartupImageTextBox, SelectedPSPBGImageTextBox)
+            Case FixAction.OpenToolsFolder
+                Dim Folder As String = If(Directory.Exists(AppPaths.ToolsDirectory), AppPaths.ToolsDirectory, AppContext.BaseDirectory)
+                Process.Start(New ProcessStartInfo("explorer", """" + Folder + """") With {.UseShellExecute = True})
+            Case FixAction.TryAgain
+                Dim Buttons As Wpf.Ui.Controls.Button() = {BuildPS1fPKGButton, BuildPS2fPKGButton, BuildPSPfPKGButton}
+                If Page >= 0 AndAlso Page < Buttons.Length Then Buttons(Page).RaiseEvent(New RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent))
+        End Select
+    End Sub
+
     ''' <summary>Shows the problems found before a build. Returns False when the build must not start.</summary>
-    Private Shared Function ConfirmPreflight(Issues As List(Of PreflightIssue)) As Boolean
+    Private Function ConfirmPreflight(Issues As List(Of PreflightIssue)) As Boolean
         If Issues.Count = 0 Then Return True
         If Issues.Any(Function(Issue) Issue.IsError) Then
-            MsgBox(BuildPreflight.Describe(Issues), MsgBoxStyle.Critical, Localizer.T("Cannot create fPKG"))
+            'A problem that the app can help with gets a question with the fix; the others only a message
+            Dim Fix As FixAction = BuildPreflight.FirstAction(Issues)
+            If Fix <> FixAction.None AndAlso Not (Fix = FixAction.WineSetup AndAlso Platform.IsWindows) Then
+                If MsgBox(BuildPreflight.Describe(Issues) + vbLf + vbLf + FixActions.Label(Fix) + "?", MsgBoxStyle.YesNo Or MsgBoxStyle.Critical, Localizer.T("Cannot create fPKG")) = MsgBoxResult.Yes Then RunFixAction(Fix)
+            Else
+                MsgBox(BuildPreflight.Describe(Issues), MsgBoxStyle.Critical, Localizer.T("Cannot create fPKG"))
+            End If
             Return False
         End If
         Return MsgBox(BuildPreflight.Describe(Issues) + vbLf + vbLf + Localizer.T("Continue anyway?"), MsgBoxStyle.YesNo Or MsgBoxStyle.Exclamation, Localizer.T("Before building")) = MsgBoxResult.Yes

@@ -32,6 +32,7 @@
         </DockPanel>
 
         <WrapPanel Grid.Row="3" HorizontalAlignment="Right" Margin="24,0,24,20">
+            <ui:Button x:Name="FixButton" Content="Fix" Icon="{ui:SymbolIcon Wrench24}" Appearance="Primary" Visibility="Collapsed" Margin="0,0,8,8" />
             <ui:Button x:Name="CopyButton" Content="Copy" Icon="{ui:SymbolIcon Copy24}" Margin="0,0,8,8" />
             <ui:Button x:Name="FullCheckButton" Content="Full check" Icon="{ui:SymbolIcon ShieldCheckmark24}" Margin="0,0,8,8"
                        ToolTip="Runs the SDK checker on the package (can take minutes on large games)" />

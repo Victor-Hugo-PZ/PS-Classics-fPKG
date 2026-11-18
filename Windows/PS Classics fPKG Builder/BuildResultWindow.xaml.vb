@@ -8,6 +8,10 @@ Public Class BuildResultWindow
 
     Private ReadOnly _PackagePath As String
     Private ReadOnly _OutputFolder As String
+    Private _FixAction As FixAction = FixAction.None
+
+    ''' <summary>The fix the user chose with the button (FixAction.None when the window was just closed).</summary>
+    Public ReadOnly Property RequestedAction As FixAction = FixAction.None
 
     Public Sub New(Result As PackageBuildResult, OutputFolder As String, Report As PackageReport, ErrorDetails As String)
         InitializeComponent()
@@ -43,10 +47,21 @@ Public Class BuildResultWindow
             DetailsTextBox.Text = ErrorDetails
             FullCheckButton.Visibility = Visibility.Collapsed
             InstallGuideButton.Visibility = Visibility.Collapsed
+            'A button for the fix (the Wine setup only exists on Linux and macOS)
+            If Friendly.Action <> FixAction.None AndAlso Not (Friendly.Action = FixAction.WineSetup AndAlso Platform.IsWindows) Then
+                _FixAction = Friendly.Action
+                FixButton.Content = Friendly.ActionLabel
+                FixButton.Visibility = Visibility.Visible
+            End If
         End If
 
         If _PackagePath = "" Then FullCheckButton.Visibility = Visibility.Collapsed
         UiTranslator.Attach(Me)
+    End Sub
+
+    Private Sub FixButton_Click(sender As Object, e As RoutedEventArgs) Handles FixButton.Click
+        _RequestedAction = _FixAction
+        Close()
     End Sub
 
     Private Sub CopyButton_Click(sender As Object, e As RoutedEventArgs) Handles CopyButton.Click

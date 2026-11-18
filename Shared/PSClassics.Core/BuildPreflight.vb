@@ -8,6 +8,8 @@ Public Class PreflightIssue
     Public Property Message As String = ""
     ''' <summary>How to fix it (already translated, may be empty).</summary>
     Public Property Suggestion As String = ""
+    ''' <summary>What the app can do to fix it (a button).</summary>
+    Public Property Action As FixAction = FixAction.None
 End Class
 
 ''' <summary>
@@ -40,19 +42,19 @@ Public Class BuildPreflight
         CheckTools(Issues)
         Dim Discs As String() = {Request.Disc1, Request.Disc2, Request.Disc3, Request.Disc4}
         If String.IsNullOrWhiteSpace(Request.Disc1) Then
-            Issues.Add(Problem("No disc 1 specified.", "Select the .BIN file of the game in the Game section."))
+            Issues.Add(Problem("No disc 1 specified.", "Select the .BIN file of the game in the Game section.", FixAction.SelectGame))
         End If
         For Index As Integer = 0 To Discs.Length - 1
             Dim Disc As String = Discs(Index)
             If String.IsNullOrWhiteSpace(Disc) Then Continue For
             If Not File.Exists(Disc) Then
-                Issues.Add(Problem(Localizer.F("Disc {0} was not found: {1}", Index + 1, Disc), "The file was moved or deleted. Select it again."))
+                Issues.Add(Problem(Localizer.F("Disc {0} was not found: {1}", Index + 1, Disc), "The file was moved or deleted. Select it again.", FixAction.SelectGame))
             Else
                 Try
                     DiscImages.FindCueFile(Disc)
                 Catch ex As FileNotFoundException
                     Issues.Add(Problem(Localizer.F("The .CUE file of disc {0} is missing.", Index + 1),
-                                       Localizer.F("Put {0} next to the .BIN file (same name, .cue extension).", Path.GetFileNameWithoutExtension(Disc) + ".cue")))
+                                       Localizer.F("Put {0} next to the .BIN file (same name, .cue extension).", Path.GetFileNameWithoutExtension(Disc) + ".cue"), FixAction.SelectGame))
                 End Try
             End If
         Next
@@ -70,11 +72,11 @@ Public Class BuildPreflight
         CheckTools(Issues)
         Dim Discs As String() = {Request.Disc1, Request.Disc2, Request.Disc3, Request.Disc4, Request.Disc5}
         If String.IsNullOrWhiteSpace(Request.Disc1) Then
-            Issues.Add(Problem("No disc 1 specified.", "Select the .ISO file of the game in the Game section."))
+            Issues.Add(Problem("No disc 1 specified.", "Select the .ISO file of the game in the Game section.", FixAction.SelectGame))
         End If
         For Index As Integer = 0 To Discs.Length - 1
             If Not String.IsNullOrWhiteSpace(Discs(Index)) AndAlso Not File.Exists(Discs(Index)) Then
-                Issues.Add(Problem(Localizer.F("Disc {0} was not found: {1}", Index + 1, Discs(Index)), "The file was moved or deleted. Select it again."))
+                Issues.Add(Problem(Localizer.F("Disc {0} was not found: {1}", Index + 1, Discs(Index)), "The file was moved or deleted. Select it again.", FixAction.SelectGame))
             End If
         Next
         CheckTitle(Issues, Request.Title)
@@ -97,9 +99,9 @@ Public Class BuildPreflight
         Dim Issues As New List(Of PreflightIssue)
         CheckTools(Issues)
         If String.IsNullOrWhiteSpace(Request.IsoFile) Then
-            Issues.Add(Problem("No ISO file specified.", "Select the .ISO file of the game in the Game section."))
+            Issues.Add(Problem("No ISO file specified.", "Select the .ISO file of the game in the Game section.", FixAction.SelectGame))
         ElseIf Not File.Exists(Request.IsoFile) Then
-            Issues.Add(Problem(Localizer.F("The ISO file was not found: {0}", Request.IsoFile), "The file was moved or deleted. Select it again."))
+            Issues.Add(Problem(Localizer.F("The ISO file was not found: {0}", Request.IsoFile), "The file was moved or deleted. Select it again.", FixAction.SelectGame))
         End If
         CheckTitle(Issues, Request.Title)
         Issues.AddRange(CheckNPTitle(Request.NPTitle))
@@ -122,7 +124,7 @@ Public Class BuildPreflight
 
     Private Shared Sub CheckTools(Issues As List(Of PreflightIssue))
         If Not AppPaths.ToolsAvailable() Then
-            Issues.Add(Problem(Localizer.F("The Tools folder was not found at {0}.", AppPaths.ToolsDirectory), "Keep the Tools folder of the download next to the program."))
+            Issues.Add(Problem(Localizer.F("The Tools folder was not found at {0}.", AppPaths.ToolsDirectory), "Keep the Tools folder of the download next to the program.", FixAction.OpenToolsFolder))
         End If
     End Sub
 
@@ -138,9 +140,9 @@ Public Class BuildPreflight
         For Each Image In {(IconFile, "The icon"), (BackgroundFile, "The background")}
             If String.IsNullOrWhiteSpace(Image.Item1) Then Continue For
             If Not File.Exists(Image.Item1) Then
-                Issues.Add(Problem(Localizer.F(Image.Item2 + " was not found: {0}", Image.Item1), "The file was moved or deleted. Select it again."))
+                Issues.Add(Problem(Localizer.F(Image.Item2 + " was not found: {0}", Image.Item1), "The file was moved or deleted. Select it again.", FixAction.ClearImages))
             ElseIf ImageConverter.GetSize(Image.Item1) Is Nothing Then
-                Issues.Add(Problem(Localizer.T(Image.Item2 + " could not be read."), "Use a PNG, JPG, BMP, GIF or WebP image."))
+                Issues.Add(Problem(Localizer.T(Image.Item2 + " could not be read."), "Use a PNG, JPG, BMP, GIF or WebP image.", FixAction.ClearImages))
             End If
         Next
     End Sub
@@ -162,19 +164,25 @@ Public Class BuildPreflight
             If String.Equals(CacheRoot, OutputDrive.Name, StringComparison.OrdinalIgnoreCase) Then Needed += CacheBytes
             If OutputDrive.IsReady AndAlso OutputDrive.AvailableFreeSpace < Needed Then
                 Issues.Add(Problem(Localizer.F("Not enough free space on {0}: about {1} needed, {2} free.", OutputDrive.Name, FormatSize(Needed), FormatSize(OutputDrive.AvailableFreeSpace)),
-                                   "Free some space or choose an output folder on another drive."))
+                                   "Free some space or choose an output folder on another drive.", FixAction.TryAgain))
             End If
         Catch ex As Exception
             'Unknown drive (network folder...): the build itself reports a full disk
         End Try
     End Sub
 
-    Private Shared Function Problem(Message As String, Suggestion As String) As PreflightIssue
-        Return New PreflightIssue With {.IsError = True, .Message = Localizer.T(Message), .Suggestion = Localizer.T(Suggestion)}
+    Private Shared Function Problem(Message As String, Suggestion As String, Optional Action As FixAction = FixAction.None) As PreflightIssue
+        Return New PreflightIssue With {.IsError = True, .Message = Localizer.T(Message), .Suggestion = Localizer.T(Suggestion), .Action = Action}
     End Function
 
     Private Shared Function Warning(Message As String, Suggestion As String) As PreflightIssue
         Return New PreflightIssue With {.IsError = False, .Message = Localizer.T(Message), .Suggestion = Localizer.T(Suggestion)}
+    End Function
+
+    ''' <summary>The fix to offer for a list of problems: the one of the first error that has one (FixAction.None when there is none).</summary>
+    Public Shared Function FirstAction(Issues As IEnumerable(Of PreflightIssue)) As FixAction
+        Dim Found As PreflightIssue = Issues.FirstOrDefault(Function(Issue) Issue.IsError AndAlso Issue.Action <> FixAction.None)
+        Return If(Found Is Nothing, FixAction.None, Found.Action)
     End Function
 
     ''' <summary>Text for a dialog: errors first, each with its fix.</summary>

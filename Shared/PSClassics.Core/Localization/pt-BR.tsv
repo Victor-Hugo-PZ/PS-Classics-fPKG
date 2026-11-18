@@ -416,3 +416,9 @@ The .cso file is damaged.	O arquivo .cso está danificado.
 The .cso file is cut short.	O arquivo .cso está cortado.
 This .cso file uses the ZSO (LZ4) format, which is not supported. Convert it to .iso or a normal .cso first.	Este arquivo .cso usa o formato ZSO (LZ4), que não é suportado. Converta-o para .iso ou para um .cso normal antes.
 The .cso file could not be converted: {0}	Não foi possível converter o arquivo .cso: {0}
+Select the game file again	Escolher o arquivo do jogo de novo
+Open the Wine setup	Abrir a configuração do Wine
+Show the Tools folder	Mostrar a pasta Tools
+Clear the icon and the background	Limpar o ícone e o fundo
+Choose another output folder and build again	Escolher outra pasta de saída e criar de novo
+Fix	Corrigir

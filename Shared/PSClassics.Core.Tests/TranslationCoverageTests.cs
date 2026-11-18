@@ -79,6 +79,7 @@ public class TranslationCoverageTests
         foreach (var preset in EmulatorPresets.PS1) { yield return preset.Name; yield return preset.Description; }
         foreach (var preset in EmulatorPresets.PS2) { yield return preset.Name; yield return preset.Description; }
         foreach (var text in ErrorExplainer.AllTexts()) yield return text;
+        foreach (var text in FixActions.AllTexts()) yield return text;
         foreach (var text in BuildHistory.ConsoleResultNames) yield return text;
         foreach (var image in new[] { "The icon", "The background" })
         {
