@@ -662,6 +662,13 @@ public partial class MainWindow : Window
         List<ImportedFile> found;
         try
         {
+            // Look inside first: an incomplete or protected archive is reported before any file is extracted
+            var report = await Task.Run(() => ArchiveInspector.Inspect(archiveFile));
+            if (!report.IsOk)
+            {
+                await MessageDialog.ShowInfo(this, "PS Classics fPKG Builder", report.Describe());
+                return;
+            }
             found = await Task.Run(() => ArchiveImport.FindGameFiles(ArchiveImport.Extract(archiveFile)));
         }
         catch (Exception ex)

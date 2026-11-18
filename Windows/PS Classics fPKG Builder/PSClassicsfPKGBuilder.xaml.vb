@@ -488,6 +488,12 @@ Public Class PSClassicsfPKGBuilder
     Private Async Function HandleDroppedArchive(ArchiveFile As String) As Task
         Dim Found As List(Of ImportedFile)
         Try
+            'Look inside first: an incomplete or protected archive is reported before any file is extracted
+            Dim Report As ArchiveReport = Await Task.Run(Function() ArchiveInspector.Inspect(ArchiveFile))
+            If Not Report.IsOk Then
+                MsgBox(Report.Describe(), MsgBoxStyle.Exclamation)
+                Return
+            End If
             Found = Await Task.Run(Function()
                                        Dim Folder As String = ArchiveImport.Extract(ArchiveFile)
                                        Return ArchiveImport.FindGameFiles(Folder)
