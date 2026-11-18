@@ -33,6 +33,7 @@ Shared/PSClassics.Core/                      lógica (RootNamespace PS_Classics_
   BuildPreflight.vb ErrorExplainer.vb        checagens antes do build (com a correção) e erros explicados em linguagem simples
   EmulatorPresets.vb CoverArt.vb             predefinições do emulador; capas (xlenore/psx-covers e ps2-covers) e imagens do disco PSP
   UpdateChecker.vb DroppedFiles.vb           aviso de nova versão (API do GitHub); classificação de arquivos arrastados
+  CoverSources.vb                            Buscar capa (PS1/PS2): coleção por ID -> nome do banco Redump pelo serial -> título (libretro)
   AppPaths.vb FileUtils.vb
 Shared/PSClassics.Core.Tests/                xUnit (C#): unidade + integração com as ferramentas reais
 Windows/PS Classics fPKG Builder/            app WPF: PSClassicsfPKGBuilder.xaml(.vb), DashPreview, FieldLabel, StepBar, UiTranslator, janelas (Guide, PackageReport, BuildResult, History, Settings)
