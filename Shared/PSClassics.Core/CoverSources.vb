@@ -188,6 +188,35 @@ Public Class CoverSources
         Return Result
     End Function
 
+    ''' <summary>The plain title of a Redump game name: "Tekken 3 (USA)" and "Metal Gear Solid (USA) (Disc 1)" -> the name without the tags.</summary>
+    Public Shared Function TitleFromRedumpName(RedumpName As String) As String
+        If String.IsNullOrWhiteSpace(RedumpName) Then Return ""
+        Dim Plain As String = Regex.Replace(RedumpName, "\s*\([^)]*\)", "")
+        Return Regex.Replace(Plain, " {2,}", " ").Trim()
+    End Function
+
+    ''' <summary>
+    ''' The title that the Redump database gives to a PS1 or PS2 game ID, for games that are not in the title list of the app.
+    ''' Returns an empty string when the game is unknown or the database cannot be read (no network, no copy kept).
+    ''' </summary>
+    Public Shared Async Function FindTitleAsync(PlatformName As String, GameIdOrNPTitle As String,
+                                                Optional CacheDirectory As String = Nothing, Optional Client As HttpClient = Nothing) As Task(Of String)
+        Dim Serial As String = CoverArt.NormalizeSerial(GameIdOrNPTitle)
+        Dim Libretro = LibretroOf(PlatformName)
+        If Serial = "" OrElse Libretro.DatFileName = "" Then Return ""
+        Dim OwnClient As Boolean = Client Is Nothing
+        If OwnClient Then Client = CoverArt.CreateClient()
+        Try
+            Dim Names As Dictionary(Of String, String) = Await LoadSerialNamesAsync(PlatformName, Libretro.DatFileName, Client, CacheDirectory)
+            Dim RedumpName As String = Nothing
+            Return If(Names.TryGetValue(Serial, RedumpName), TitleFromRedumpName(RedumpName), "")
+        Catch ex As Exception
+            Return ""
+        Finally
+            If OwnClient Then Client.Dispose()
+        End Try
+    End Function
+
     Private Shared Sub AddUnique(Names As List(Of String), Name As String)
         If Name <> "" AndAlso Not Names.Contains(Name) Then Names.Add(Name)
     End Sub

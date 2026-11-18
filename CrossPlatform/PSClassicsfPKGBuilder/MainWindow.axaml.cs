@@ -776,6 +776,14 @@ public partial class MainWindow : Window
             PS1TitleTextBox.Text, PS1PS5Radio.IsChecked == true, PS1IconThumbnail, PS1BackgroundThumbnail, PS1HintsText);
     }
 
+    /// <summary>For a game that is not in the title list: asks the Redump database for the title, when the title box is still empty.</summary>
+    private static async void FillTitleFromRedump(string platform, string gameId, TextBox titleBox)
+    {
+        if (!string.IsNullOrWhiteSpace(titleBox.Text)) return;
+        var title = await CoverSources.FindTitleAsync(platform, gameId);
+        if (title != "" && string.IsNullOrWhiteSpace(titleBox.Text)) titleBox.Text = title;
+    }
+
     private async Task LoadPS1Disc1(string file)
     {
         // Get the game ID from the BIN file and a title from the master list
@@ -797,6 +805,7 @@ public partial class MainWindow : Window
         }
 
         if (!string.IsNullOrEmpty(gameTitle)) PS1TitleTextBox.Text = gameTitle;
+        else if (gameID != "") FillTitleFromRedump("PS1", gameID, PS1TitleTextBox);
     }
 
     private PS1BuildRequest CreatePS1Request() => new()
@@ -926,6 +935,7 @@ public partial class MainWindow : Window
             }
 
             PS2TitleTextBox.Text = PS2Game.GetPS2GameTitleFromDatabaseList(gameID.Replace(".", "").Replace("_", "-").Trim());
+            if (string.IsNullOrEmpty(PS2TitleTextBox.Text)) FillTitleFromRedump("PS2", gameID, PS2TitleTextBox);
             PS2NPTitleTextBox.Text = gameID.Replace(".", "").Replace("_", "").Trim();
             SelectedDisc1TextBox.Text = file;
         }
@@ -1042,6 +1052,9 @@ public partial class MainWindow : Window
                 PSPNPTitleTextBox.Text = Encoding.ASCII.GetString(PspTools.ReadBytes(tempUMDDataFile, 0, 10)).Replace("-", "");
                 var title = Regex.Replace(Path.GetFileNameWithoutExtension(file), "\\((.*?)\\)", "");
                 PSPTitleTextBox.Text = Regex.Replace(title, " {2,}", "");
+                // The title stored in the disc is better than the one guessed from the file name
+                var discTitle = IsoTools.GetPSPTitle(file);
+                if (discTitle != "") PSPTitleTextBox.Text = discTitle;
                 File.Delete(tempUMDDataFile);
             }
 
