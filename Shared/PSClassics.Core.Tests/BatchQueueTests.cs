@@ -10,11 +10,12 @@ public class BatchQueueTests
     {
         var queue = new BatchQueue();
 
-        var added = queue.Add(new[] { @"C:\games\a.zip", @"C:\games\b.7z", @"C:\games\c.iso", @"C:\games\A.ZIP", @"C:\games\notes.txt" });
+        string P(string name) => Path.Combine("games", name); // paths that work on every OS
+        var added = queue.Add(new[] { P("a.zip"), P("b.7z"), P("c.iso"), P("A.ZIP"), P("notes.txt") });
 
         Assert.Equal(2, added);
         Assert.Equal(new[] { "a.zip", "b.7z" }, queue.Items.Select(i => i.DisplayName));
-        Assert.Equal(0, queue.Add(new[] { @"C:\games\a.zip" }));
+        Assert.Equal(0, queue.Add(new[] { P("a.zip") }));
     }
 
     [Fact]
@@ -63,7 +64,7 @@ public class BatchQueueTests
     [InlineData(BatchStatus.Failed, "No game files", "x.zip", "✘ Tekken 3 (x.zip) - No game files")]
     public void Describe_ShowsTheStateTheNameAndTheMessage(BatchStatus status, string message, string file, string expected)
     {
-        var item = new BatchItem { ArchiveFile = @"C:\g\" + file, Status = status, Message = message, Title = status is BatchStatus.Done or BatchStatus.Failed ? "Tekken 3" : "" };
+        var item = new BatchItem { ArchiveFile = Path.Combine("g", file), Status = status, Message = message, Title = status is BatchStatus.Done or BatchStatus.Failed ? "Tekken 3" : "" };
 
         Assert.Equal(expected, item.Describe());
     }
