@@ -424,10 +424,12 @@ Public Class PSClassicsfPKGBuilder
         Dispatcher.Invoke(Sub() MsgBox(Localizer.T(Message), MsgBoxStyle.Exclamation))
     End Sub
 
-    ''' <summary>Downloads the cover (PS1/PS2) and fills the icon, and the background when it is empty or the user agrees.</summary>
-    Private Async Function FindCover(PlatformName As String, GameIdOrNPTitle As String, IconBox As Wpf.Ui.Controls.TextBox, BackgroundBox As Wpf.Ui.Controls.TextBox, Button As Wpf.Ui.Controls.Button) As Task
-        Dim Serial As String = CoverArt.NormalizeSerial(GameIdOrNPTitle)
-        If Serial = "" Then
+    ''' <summary>
+    ''' Finds the cover (PS1/PS2) through <see cref="CoverSources"/> (ID collection, then the Redump name, then the title)
+    ''' and fills the icon, and the background when it is empty or the user agrees.
+    ''' </summary>
+    Private Async Function FindCover(PlatformName As String, GameIdOrNPTitle As String, TitleText As String, IconBox As Wpf.Ui.Controls.TextBox, BackgroundBox As Wpf.Ui.Controls.TextBox, Button As Wpf.Ui.Controls.Button) As Task
+        If CoverArt.NormalizeSerial(GameIdOrNPTitle) = "" AndAlso String.IsNullOrWhiteSpace(TitleText) Then
             MsgBox(Localizer.T("Select the game first: the game ID (or the NP title) is needed to find its cover."), MsgBoxStyle.Information, Localizer.T("Find cover"))
             Return
         End If
@@ -435,12 +437,15 @@ Public Class PSClassicsfPKGBuilder
         Button.IsEnabled = False
         Button.Content = Localizer.T("Searching…")
         Try
-            Dim Cover As Byte() = Await CoverArt.DownloadCoverAsync(PlatformName, Serial)
-            If Cover Is Nothing Then
-                MsgBox(Localizer.F("No cover was found for {0}. Choose an image yourself.", Serial), MsgBoxStyle.Information, Localizer.T("Find cover"))
+            Dim Found As CoverFound = Await CoverSources.FindCoverAsync(PlatformName, GameIdOrNPTitle, TitleText)
+            If Found Is Nothing Then
+                MsgBox(Localizer.F("No cover was found for {0}. Choose an image yourself.", CoverArt.NormalizeSerial(GameIdOrNPTitle) + " " + TitleText), MsgBoxStyle.Information, Localizer.T("Find cover"))
                 Return
             End If
-            Dim Images As CoverArt.GeneratedImages = Await Task.Run(Function() CoverArt.CreateImages(Cover, Serial))
+            If Found.Source <> CoverSource.IdCollection Then
+                MsgBox(Localizer.T("The cover was found by the game name, not by its ID. Check the icon and the background in the preview before building."), MsgBoxStyle.Information, Localizer.T("Find cover"))
+            End If
+            Dim Images As CoverArt.GeneratedImages = Await Task.Run(Function() CoverArt.CreateImages(Found.Image, CoverArt.NormalizeSerial(GameIdOrNPTitle) + "-" + Found.Source.ToString()))
             ApplyImages(Images, IconBox, BackgroundBox)
         Catch ex As Exception
             MsgBox(Localizer.F("The cover could not be downloaded: {0}", ex.Message), MsgBoxStyle.Exclamation, Localizer.T("Find cover"))
@@ -559,7 +564,7 @@ Public Class PSClassicsfPKGBuilder
     End Sub
 
     Private Async Sub PS1FindCoverButton_Click(sender As Object, e As RoutedEventArgs) Handles PS1FindCoverButton.Click
-        Await FindCover("PS1", If(CurrentPS1GameID <> "", CurrentPS1GameID, PS1NPTitleTextBox.Text), SelectedPS1IconTextBox, SelectedPS1BGTextBox, PS1FindCoverButton)
+        Await FindCover("PS1", If(CurrentPS1GameID <> "", CurrentPS1GameID, PS1NPTitleTextBox.Text), PS1TitleTextBox.Text, SelectedPS1IconTextBox, SelectedPS1BGTextBox, PS1FindCoverButton)
     End Sub
 
     Private Sub BrowsePS1Disc2Button_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePS1Disc2Button.Click
@@ -686,7 +691,7 @@ Public Class PSClassicsfPKGBuilder
     End Sub
 
     Private Async Sub PS2FindCoverButton_Click(sender As Object, e As RoutedEventArgs) Handles PS2FindCoverButton.Click
-        Await FindCover("PS2", If(CurrentPS2GameID <> "", CurrentPS2GameID, PS2NPTitleTextBox.Text), SelectedIconTextBox, SelectedStartupImageTextBox, PS2FindCoverButton)
+        Await FindCover("PS2", If(CurrentPS2GameID <> "", CurrentPS2GameID, PS2NPTitleTextBox.Text), PS2TitleTextBox.Text, SelectedIconTextBox, SelectedStartupImageTextBox, PS2FindCoverButton)
     End Sub
 
     Private Sub BrowsePS2MCButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePS2MCButton.Click

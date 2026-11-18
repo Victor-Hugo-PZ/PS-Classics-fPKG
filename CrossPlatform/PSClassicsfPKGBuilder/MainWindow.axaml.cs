@@ -569,11 +569,13 @@ public partial class MainWindow : Window
     private void WarnFromBuildThread(string message) =>
         Dispatcher.UIThread.InvokeAsync(() => MessageDialog.ShowInfo(this, Localizer.T("Warning"), Localizer.T(message))).GetAwaiter().GetResult();
 
-    /// <summary>Downloads the cover (PS1/PS2) and fills the icon, and the background when it is empty or the user agrees.</summary>
-    private async Task FindCover(string platformName, string gameIdOrNPTitle, TextBox iconBox, TextBox backgroundBox, Button button, TextBlock buttonText)
+    /// <summary>
+    /// Finds the cover (PS1/PS2) through <see cref="CoverSources"/> (ID collection, then the Redump name, then the title)
+    /// and fills the icon, and the background when it is empty or the user agrees.
+    /// </summary>
+    private async Task FindCover(string platformName, string gameIdOrNPTitle, string titleText, TextBox iconBox, TextBox backgroundBox, Button button, TextBlock buttonText)
     {
-        var serial = CoverArt.NormalizeSerial(gameIdOrNPTitle);
-        if (serial == "")
+        if (CoverArt.NormalizeSerial(gameIdOrNPTitle) == "" && string.IsNullOrWhiteSpace(titleText))
         {
             await MessageDialog.ShowInfo(this, Localizer.T("Find cover"), Localizer.T("Select the game first: the game ID (or the NP title) is needed to find its cover."));
             return;
@@ -582,13 +584,16 @@ public partial class MainWindow : Window
         buttonText.Text = Localizer.T("Searching…");
         try
         {
-            var cover = await CoverArt.DownloadCoverAsync(platformName, serial);
-            if (cover == null)
+            var found = await CoverSources.FindCoverAsync(platformName, gameIdOrNPTitle, titleText);
+            if (found == null)
             {
-                await MessageDialog.ShowInfo(this, Localizer.T("Find cover"), Localizer.F("No cover was found for {0}. Choose an image yourself.", serial));
+                await MessageDialog.ShowInfo(this, Localizer.T("Find cover"), Localizer.F("No cover was found for {0}. Choose an image yourself.", CoverArt.NormalizeSerial(gameIdOrNPTitle) + " " + titleText));
                 return;
             }
-            var images = await Task.Run(() => CoverArt.CreateImages(cover, serial));
+            if (found.Source != CoverSource.IdCollection)
+                await MessageDialog.ShowInfo(this, Localizer.T("Find cover"), Localizer.T("The cover was found by the game name, not by its ID. Check the icon and the background in the preview before building."));
+            var name = CoverArt.NormalizeSerial(gameIdOrNPTitle) + "-" + found.Source;
+            var images = await Task.Run(() => CoverArt.CreateImages(found.Image, name));
             await ApplyImages(images, iconBox, backgroundBox);
         }
         catch (Exception ex)
@@ -721,7 +726,7 @@ public partial class MainWindow : Window
         Browse(BrowsePS1TXTConfigButton, SelectedPS1TXTConfigTextBox, "Select a TXT config file.", TxtFiles);
         Browse(BrowsePS1LUAConfigButton, SelectedPS1LUAConfigTextBox, "Select a LUA config file.", LuaFiles);
         PS1FindCoverButton.Click += async (_, _) =>
-            await FindCover("PS1", _currentPS1GameID != "" ? _currentPS1GameID : PS1NPTitleTextBox.Text, SelectedPS1IconTextBox, SelectedPS1BGTextBox, PS1FindCoverButton, PS1FindCoverButtonText);
+            await FindCover("PS1", _currentPS1GameID != "" ? _currentPS1GameID : PS1NPTitleTextBox.Text, PS1TitleTextBox.Text, SelectedPS1IconTextBox, SelectedPS1BGTextBox, PS1FindCoverButton, PS1FindCoverButtonText);
         PS1PresetComboBox.SelectionChanged += (_, _) => ApplyPS1Preset();
 
         SelectedPS1IconTextBox.TextChanged += (_, _) => UpdatePS1Preview();
@@ -814,7 +819,7 @@ public partial class MainWindow : Window
         Browse(BrowsePS2Disc4Button, SelectedDisc4TextBox, "Select a PS2 ISO file.", IsoFiles);
         Browse(BrowsePS2Disc5Button, SelectedDisc5TextBox, "Select a PS2 ISO file.", IsoFiles);
         PS2FindCoverButton.Click += async (_, _) =>
-            await FindCover("PS2", _currentPS2GameID != "" ? _currentPS2GameID : PS2NPTitleTextBox.Text, SelectedIconTextBox, SelectedStartupImageTextBox, PS2FindCoverButton, PS2FindCoverButtonText);
+            await FindCover("PS2", _currentPS2GameID != "" ? _currentPS2GameID : PS2NPTitleTextBox.Text, PS2TitleTextBox.Text, SelectedIconTextBox, SelectedStartupImageTextBox, PS2FindCoverButton, PS2FindCoverButtonText);
         PS2PresetComboBox.SelectionChanged += (_, _) => ApplyPS2Preset();
 
         PS2EmulatorComboBox.SelectionChanged += (_, _) =>

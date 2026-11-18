@@ -397,3 +397,4 @@ Select an image for the icon (PNG, JPG, BMP, GIF or WebP).	Selecione uma imagem 
 Select an image for the background (PNG, JPG, BMP, GIF or WebP).	Selecione uma imagem para o fundo (PNG, JPG, BMP, GIF ou WebP).
 This game is Libcrypt protected. Do you want to add --libcrypt to the configuration file ?	Este jogo tem proteção Libcrypt. Deseja adicionar --libcrypt ao arquivo de configuração?
 Libcrypt	Libcrypt
+The cover was found by the game name, not by its ID. Check the icon and the background in the preview before building.	A capa foi encontrada pelo nome do jogo, e não pelo ID. Confira o ícone e o fundo na prévia antes de criar.
