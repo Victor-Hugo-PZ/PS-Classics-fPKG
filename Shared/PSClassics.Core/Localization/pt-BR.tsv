@@ -410,3 +410,9 @@ This archive has a password. Extract it yourself and drop the game files instead
 The archive is incomplete: '{0}' lists the file '{1}', which is not in the archive.	O arquivo compactado está incompleto: '{0}' lista o arquivo '{1}', que não está no arquivo compactado.
 Not enough free space to extract this archive: {0} needed, {1} free.	Espaço livre insuficiente para extrair este arquivo compactado: {0} necessários, {1} livres.
 The archive could not be opened. It may be damaged or not complete.	Não foi possível abrir o arquivo compactado. Ele pode estar danificado ou incompleto.
+This is not a valid .cso file.	Este não é um arquivo .cso válido.
+The .cso file is cut short: its block index is incomplete.	O arquivo .cso está cortado: o índice de blocos está incompleto.
+The .cso file is damaged.	O arquivo .cso está danificado.
+The .cso file is cut short.	O arquivo .cso está cortado.
+This .cso file uses the ZSO (LZ4) format, which is not supported. Convert it to .iso or a normal .cso first.	Este arquivo .cso usa o formato ZSO (LZ4), que não é suportado. Converta-o para .iso ou para um .cso normal antes.
+The .cso file could not be converted: {0}	Não foi possível converter o arquivo .cso: {0}

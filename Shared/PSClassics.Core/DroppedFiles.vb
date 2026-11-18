@@ -31,6 +31,9 @@ Public Class DroppedFiles
                           Not File.Exists(Path.ChangeExtension(FilePath, ".cue")), DroppedFileKind.MemoryCard, DroppedFileKind.PS1Disc)
             Case ".iso"
                 Return If(IsoTools.FileExistInISO(FilePath, "\PSP_GAME\PARAM.SFO"), DroppedFileKind.PSPDisc, DroppedFileKind.PS2Disc)
+            Case ".cso"
+                'Compressed ISO: only PSP games come this way
+                Return If(CsoReader.IsCso(FilePath) OrElse CsoReader.IsZiso(FilePath), DroppedFileKind.PSPDisc, DroppedFileKind.Unknown)
             Case ".txt"
                 Return DroppedFileKind.TxtConfig
             Case ".lua"

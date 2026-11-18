@@ -22,6 +22,7 @@ public partial class MainWindow : Window
 {
     private static readonly FilePickerFileType BinFiles = new("BIN") { Patterns = new[] { "*.bin", "*.BIN" } };
     private static readonly FilePickerFileType IsoFiles = new("ISO") { Patterns = new[] { "*.iso", "*.ISO" } };
+    private static readonly FilePickerFileType PspImageFiles = new("PSP image (ISO, CSO)") { Patterns = new[] { "*.iso", "*.cso", "*.ISO", "*.CSO" } };
     private static readonly FilePickerFileType TxtFiles = new("TXT") { Patterns = new[] { "*.txt", "*.TXT" } };
     private static readonly FilePickerFileType LuaFiles = new("LUA") { Patterns = new[] { "*.lua", "*.LUA" } };
     private static readonly FilePickerFileType PkgFiles = new("PS4 package") { Patterns = new[] { "*.pkg", "*.PKG" } };
@@ -1001,7 +1002,7 @@ public partial class MainWindow : Window
         ForceUpperCase(PSPNPTitleTextBox);
         BrowsePSPDiscButton.Click += async (_, _) =>
         {
-            var file = await PickFile("Select a PSP ISO file.", IsoFiles);
+            var file = await PickFile("Select a PSP ISO file.", PspImageFiles);
             if (file != null) await LoadPSPDisc(file);
         };
         BrowseImage(BrowsePSPIconButton, SelectedPSPIconTextBox, true);
@@ -1048,6 +1049,20 @@ public partial class MainWindow : Window
 
     private async Task LoadPSPDisc(string file)
     {
+        // A compressed .cso is turned into a normal .iso first (kept in the cache folder)
+        if (Path.GetExtension(file).Equals(".cso", StringComparison.OrdinalIgnoreCase))
+        {
+            var csoFile = file;
+            try
+            {
+                file = await Task.Run(() => CsoReader.ConvertToCache(csoFile));
+            }
+            catch (Exception ex)
+            {
+                await MessageDialog.ShowInfo(this, "PS Classics fPKG Builder", Localizer.F("The .cso file could not be converted: {0}", ex.Message));
+                return;
+            }
+        }
         if (IsoTools.FileExistInISO(file, "\\PSP_GAME\\PARAM.SFO"))
         {
             Directory.CreateDirectory(AppPaths.CacheDirectory);

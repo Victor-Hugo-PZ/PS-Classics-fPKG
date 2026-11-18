@@ -528,7 +528,7 @@ Public Class PSClassicsfPKGBuilder
                 Await LoadPS2Disc1(DroppedFile)
             Case DroppedFileKind.PSPDisc
                 PlatformListBox.SelectedIndex = 2
-                LoadPSPDisc(DroppedFile)
+                Await LoadPSPDisc(DroppedFile)
             Case DroppedFileKind.Icon
                 SetText(Page, DroppedFile, SelectedPS1IconTextBox, SelectedIconTextBox, SelectedPSPIconTextBox)
             Case DroppedFileKind.Background
@@ -843,12 +843,25 @@ Public Class PSClassicsfPKGBuilder
         ApplyImages(Images, SelectedPSPIconTextBox, SelectedPSPBGImageTextBox)
     End Sub
 
-    Private Sub BrowsePSPDiscButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePSPDiscButton.Click
-        Dim IsoFile As String = PickFile("Select a PSP ISO file.", "ISO (*.iso)|*.iso")
-        If IsoFile IsNot Nothing Then LoadPSPDisc(IsoFile)
+    Private Async Sub BrowsePSPDiscButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePSPDiscButton.Click
+        Dim IsoFile As String = PickFile("Select a PSP ISO file.", "PSP image (*.iso;*.cso)|*.iso;*.cso")
+        If IsoFile IsNot Nothing Then Await LoadPSPDisc(IsoFile)
     End Sub
 
-    Private Sub LoadPSPDisc(IsoFile As String)
+    Private Async Function LoadPSPDisc(IsoFile As String) As Task
+        'A compressed .cso is turned into a normal .iso first (kept in the cache folder)
+        If Path.GetExtension(IsoFile).Equals(".cso", StringComparison.OrdinalIgnoreCase) Then
+            Dim CsoFile As String = IsoFile
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait
+            Try
+                IsoFile = Await Task.Run(Function() CsoReader.ConvertToCache(CsoFile))
+            Catch ex As Exception
+                MsgBox(Localizer.F("The .cso file could not be converted: {0}", ex.Message), MsgBoxStyle.Exclamation)
+                Return
+            Finally
+                Mouse.OverrideCursor = Nothing
+            End Try
+        End If
         If IsoTools.FileExistInISO(IsoFile, "\PSP_GAME\PARAM.SFO") Then
             Directory.CreateDirectory(AppPaths.CacheDirectory)
             Dim TempUMDDataFile As String = Path.Combine(AppPaths.CacheDirectory, "temp_umd_data.bin")
@@ -868,7 +881,7 @@ Public Class PSClassicsfPKGBuilder
         ElseIf MsgBox(Localizer.T("Could not find any PSP game information within the ISO file.\nDo you want to use this file anyway ?"), MsgBoxStyle.YesNo, Localizer.T("Unknown PSP ISO file")) = MsgBoxResult.Yes Then
             SelectedPSPDiscTextBox.Text = IsoFile
         End If
-    End Sub
+    End Function
 
     Private Sub BrowsePSPConfigButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePSPConfigButton.Click
         Dim ConfigFile As String = PickFile("Select a config-title.txt file.", "TXT (*.txt)|*.txt")
