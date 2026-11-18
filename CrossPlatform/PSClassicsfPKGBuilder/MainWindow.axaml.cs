@@ -650,15 +650,39 @@ public partial class MainWindow : Window
         foreach (var item in files)
         {
             var path = item.TryGetLocalPath();
-            if (!string.IsNullOrEmpty(path)) await HandleDroppedFile(path);
+            if (string.IsNullOrEmpty(path)) continue;
+            if (ArchiveImport.IsArchive(path)) await HandleDroppedArchive(path);
+            else await HandleDroppedFile(path);
         }
     }
 
+    /// <summary>Extracts a dropped .zip or .7z and handles the game files in it as if they were dropped one by one.</summary>
+    private async Task HandleDroppedArchive(string archiveFile)
+    {
+        List<ImportedFile> found;
+        try
+        {
+            found = await Task.Run(() => ArchiveImport.FindGameFiles(ArchiveImport.Extract(archiveFile)));
+        }
+        catch (Exception ex)
+        {
+            await MessageDialog.ShowInfo(this, "PS Classics fPKG Builder", Localizer.F("The archive could not be opened: {0}", ex.Message));
+            return;
+        }
+        if (found.Count == 0)
+        {
+            await MessageDialog.ShowInfo(this, "PS Classics fPKG Builder", Localizer.T("No game files were found in this archive. A PS1 game needs its .bin and .cue files, a PS2 or PSP game its .iso file."));
+            return;
+        }
+        foreach (var item in found)
+            await HandleDroppedFile(item.Path, item.Kind);
+    }
+
     /// <summary>Puts a dropped file in the right field (switching to the right platform for games).</summary>
-    private async Task HandleDroppedFile(string droppedFile)
+    private async Task HandleDroppedFile(string droppedFile, DroppedFileKind? knownKind = null)
     {
         var page = PlatformListBox.SelectedIndex;
-        switch (DroppedFiles.Classify(droppedFile))
+        switch (knownKind ?? DroppedFiles.Classify(droppedFile))
         {
             case DroppedFileKind.PS1Disc:
                 var bin = DroppedFiles.DiscFile(droppedFile);

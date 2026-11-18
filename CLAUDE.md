@@ -34,6 +34,8 @@ Shared/PSClassics.Core/                      lógica (RootNamespace PS_Classics_
   EmulatorPresets.vb CoverArt.vb             predefinições do emulador; capas (xlenore/psx-covers e ps2-covers) e imagens do disco PSP
   UpdateChecker.vb DroppedFiles.vb           aviso de nova versão (API do GitHub); classificação de arquivos arrastados
   CoverSources.vb                            Buscar capa (PS1/PS2): coleção por ID -> nome do banco Redump pelo serial -> título (libretro)
+  DiscImages.vb                              CUE de um disco (acha o .cue que lista o .bin) e junção de discos com um BIN por faixa (cue2toc lê um BIN só)
+  ArchiveImport.vb                           .zip/.7z arrastado: extração com 7z e achado dos arquivos do jogo (mesmo caminho do arrastar)
   AppPaths.vb FileUtils.vb
 Shared/PSClassics.Core.Tests/                xUnit (C#): unidade + integração com as ferramentas reais
 Windows/PS Classics fPKG Builder/            app WPF: PSClassicsfPKGBuilder.xaml(.vb), DashPreview, FieldLabel, StepBar, UiTranslator, janelas (Guide, PackageReport, BuildResult, History, Settings)

@@ -135,23 +135,35 @@ Public Class PS1PackageBuilder
         'Create a new PARAM.SFO file
         File.WriteAllBytes(Path.Combine(GameCacheDirectory, "sce_sys", "param.sfo"), SfoBuilder.Build(SfoBuilder.PS1ContentID(Request.NPTitle), Request.Title, Request.NPTitle))
 
-        'Create a TOC file for every disc (the original code only created the one of disc 1)
-        Directory.CreateDirectory(Path.Combine(GameCacheDirectory, "data"))
-        For Each Disc As KeyValuePair(Of Integer, String) In DiscFiles
-            File.WriteAllBytes(Path.Combine(GameCacheDirectory, "data", "disc" + Disc.Key.ToString() + ".toc"), CueToc.Generate(Path.ChangeExtension(Disc.Value, ".cue"), Disc.Value))
-        Next
+        'A disc with one BIN file per track (CD audio) is merged into one BIN file, outside the package folder
+        Dim Discs As New List(Of PreparedDisc)
+        Try
+            For Each Disc As KeyValuePair(Of Integer, String) In DiscFiles
+                Discs.Add(DiscImages.Prepare(Disc.Key, Disc.Value, AppPaths.CacheDirectory, "PS1fPKG-disc" + Disc.Key.ToString()))
+            Next
 
-        'Generate the GP4 project, modify it and add the disc info
-        BuilderHelpers.GenerateGp4(GameCacheDirectory, Gp4File)
-        Dim Gp4Entries As New List(Of Gp4FileEntry)
-        For Each Disc As KeyValuePair(Of Integer, String) In DiscFiles
-            Gp4Entries.Add(BuilderHelpers.Entry("data/disc" + Disc.Key.ToString() + ".cue", Path.ChangeExtension(Disc.Value, ".cue"), True))
-            Gp4Entries.Add(BuilderHelpers.Entry("data/disc" + Disc.Key.ToString() + ".bin", Disc.Value, True))
-        Next
-        Gp4Editor.PatchFile(Gp4File, Gp4Entries)
+            'Create a TOC file for every disc (the original code only created the one of disc 1)
+            Directory.CreateDirectory(Path.Combine(GameCacheDirectory, "data"))
+            For Each Disc As PreparedDisc In Discs
+                File.WriteAllBytes(Path.Combine(GameCacheDirectory, "data", "disc" + Disc.Number.ToString() + ".toc"), CueToc.Generate(Disc.CueFile, Disc.BinFile))
+            Next
 
-        'Create the fPKG
-        Return BuilderHelpers.CreatePackage(Gp4File, PKGOutputFolder)
+            'Generate the GP4 project, modify it and add the disc info
+            BuilderHelpers.GenerateGp4(GameCacheDirectory, Gp4File)
+            Dim Gp4Entries As New List(Of Gp4FileEntry)
+            For Each Disc As PreparedDisc In Discs
+                Gp4Entries.Add(BuilderHelpers.Entry("data/disc" + Disc.Number.ToString() + ".cue", Disc.CueFile, True))
+                Gp4Entries.Add(BuilderHelpers.Entry("data/disc" + Disc.Number.ToString() + ".bin", Disc.BinFile, True))
+            Next
+            Gp4Editor.PatchFile(Gp4File, Gp4Entries)
+
+            'Create the fPKG
+            Return BuilderHelpers.CreatePackage(Gp4File, PKGOutputFolder)
+        Finally
+            For Each Disc As PreparedDisc In Discs
+                Disc.DeleteMergedFiles()
+            Next
+        End Try
     End Function
 
 End Class

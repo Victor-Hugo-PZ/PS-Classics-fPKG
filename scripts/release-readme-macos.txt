@@ -32,7 +32,7 @@ Where things are
 Using the app
   The Guide button explains every field. Settings: language (English / Português), step-by-step mode,
   package check after building, update notice. History: the packages you built and how they ran on the console.
-  Tip: drag and drop the game (.bin, .cue, .iso), images or a .pkg anywhere on the window.
+  Tip: drag and drop the game (.bin, .cue, .iso), images or a .pkg anywhere on the window. A .zip or .7z of a game can be dropped too: the app extracts it and finds the game files.
 
 PkgCheck (command line), inside the app bundle:
   "/Applications/PS Classics fPKG Builder.app/Contents/MacOS/PkgCheck" game.pkg [--quick] [--tool-output]

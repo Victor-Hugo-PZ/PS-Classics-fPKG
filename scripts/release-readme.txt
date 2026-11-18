@@ -17,7 +17,7 @@ The app
   The "Check a .pkg" button checks a package from inside the app.
   Settings: language (English / Português), step-by-step mode, package check after building, update notice.
   History: the packages you built, the options used and how each one ran on the console.
-  Tip: drag and drop the game (.bin, .cue, .iso), images or a .pkg anywhere on the window.
+  Tip: drag and drop the game (.bin, .cue, .iso), images or a .pkg anywhere on the window. A .zip or .7z of a game can be dropped too: the app extracts it and finds the game files.
 
 PkgCheck (command line)
   PkgCheck.exe game.pkg              Full check with the SDK checker (can take minutes on large games).

@@ -131,7 +131,8 @@ Public Class CoverSources
 
     ''' <summary>
     ''' Reads the game names of a Redump DAT file: serial -> the first game name that has it.
-    ''' A game has a line <c>name "..."</c> and a line <c>serial "..."</c>, both indented with a tab.
+    ''' A game has a line <c>name "..."</c> and a line <c>serial "..."</c>, both indented with a tab. A game with
+    ''' several tracks (one BIN file per track) has its serial only in the <c>rom ( ... serial "..." )</c> lines.
     ''' </summary>
     Public Shared Function ParseSerialNames(DatContent As String) As Dictionary(Of String, String)
         Dim Names As New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
@@ -143,6 +144,9 @@ Public Class CoverSources
             ElseIf Line.StartsWith(vbTab + "serial """) AndAlso Line.EndsWith("""") AndAlso CurrentName IsNot Nothing Then
                 Dim Serial As String = Line.Substring(9, Line.Length - 10)
                 If Not Names.ContainsKey(Serial) Then Names(Serial) = CurrentName
+            ElseIf CurrentName IsNot Nothing AndAlso Line.StartsWith(vbTab + "rom (") Then
+                Dim Match As Match = Regex.Match(Line, " serial ""([^""]+)"" \)\s*$")
+                If Match.Success AndAlso Not Names.ContainsKey(Match.Groups(1).Value) Then Names(Match.Groups(1).Value) = CurrentName
             End If
         Next
         Return Names

@@ -18,7 +18,8 @@ All versions share the same build code (`Shared/PSClassics.Core`), so they produ
 - Easily create PS1, PS2 & PSP game fake packages for the PS4 / PS5 on Windows, Linux and macOS
 - Supports .BIN files (PS1) & .ISO files (PS2 & PSP)
 - Detects PS1 game protection and can apply the required patch
-- Automatic PS1 game TOC generation for games using CDDA music
+- Automatic PS1 game TOC generation for games using CDDA music, including discs with one BIN file per track (the tracks are joined automatically)
+- Add a game from a .zip or .7z: drop the archive on the window, the app extracts it and finds the game files
 - Customize the icon & background (PNG, JPG, BMP, GIF, WebP: converted automatically)
 - Configure the emulator, with a hint for every option
 - Select up to 4 discs on PS1 & up to 5 discs on PS2
@@ -29,7 +30,7 @@ All versions share the same build code (`Shared/PSClassics.Core`), so they produ
 **Made for beginners** (new in 2.2):
 - English and Portuguese (Brazil) interface, chosen in **Settings** (follows the system language by default)
 - **Step-by-step mode**: one step at a time (Game, Images, Options, Review) with Next and Back
-- **Drag and drop** the game, images, configs or a `.pkg` anywhere on the window
+- **Drag and drop** the game, images, configs or a `.pkg` anywhere on the window; a `.zip` or `.7z` of a game is opened by itself and its files are found (PS1, PS2, PSP)
 - **Find cover**: downloads the PS1/PS2 cover by game ID and creates the icon and background; PSP uses the images stored on the disc
 - Emulator **presets** (Recommended, Most compatible, Best looking, Other emulator)
 - **Checks before building** (missing files and `.cue`, invalid NP title, free disk space) with the fix for each problem
@@ -130,6 +131,7 @@ dotnet test CrossPlatform/PSClassicsfPKGBuilder.sln    # any OS: Core tests
 ## Project status
 - [x] Windows app migrated from .NET Framework 4.8.1 to .NET 10, LibOrbisPkg built from source
 - [x] Build logic extracted into a cross-platform, tested library (`Shared/PSClassics.Core`)
+- [x] 2.2.3: PS1 games with one BIN file per track (for example Tekken 3) build; the game ID no longer keeps the folder of the BOOT file; the cover search reads the serials of multi-track games; drop a .zip or .7z to add a game
 - [x] Fixed: PS1 discs 3/4 ignored, unterminated `--path-patches`, lost PS2 emulator fixes, pipe deadlocks, leaked file handles, working-directory dependent paths, PS1 TOC for every disc, PS2 game ID derived from the NP title when it is not detected
 - [x] Fluent interface with a live PS4/PS5 home screen preview, help buttons, Required/Optional badges and hints
 - [x] `.pkg` checker in the app and as `PkgCheck`
