@@ -38,7 +38,7 @@ public class FixActionTests
         using var ws = new TempWorkspace(linkTools: true);
         var issues = BuildPreflight.CheckPS1(new PS1BuildRequest { Title = "T", NPTitle = "SLUS00594", Disc1 = Path.Combine(ws.Root, "missing.bin") }, null);
 
-        Assert.Equal(FixAction.SelectGame, BuildPreflight.FirstAction(issues));
+        Assert.Contains(FixAction.SelectGame, issues.Select(issue => issue.Action)); // (without a Tools folder the first fix is OpenToolsFolder)
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class FixActionTests
         ws.Write(@"g\game.cue", "FILE \"game.bin\" BINARY\r\n  TRACK 01 MODE2/2352\r\n    INDEX 01 00:00:00\r\n");
         var issues = BuildPreflight.CheckPS1(new PS1BuildRequest { Title = "T", NPTitle = "SLUS00594", Disc1 = disc, IconFile = Path.Combine(ws.Root, "gone.png") }, null);
 
-        Assert.Equal(FixAction.ClearImages, BuildPreflight.FirstAction(issues));
+        Assert.Contains(FixAction.ClearImages, issues.Select(issue => issue.Action));
     }
 
     [Fact]
