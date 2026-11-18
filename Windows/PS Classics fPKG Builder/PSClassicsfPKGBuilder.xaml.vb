@@ -575,7 +575,18 @@ Public Class PSClassicsfPKGBuilder
         ElseIf MsgBox(Localizer.T("Cannot find the game ID within the PS1 BIN file, do you want to use this file anyway ?\nDo not forget to specify a NP title and title if you do so."), MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
             PS1SelectedDisc1TextBox.Text = BinFile
         End If
-        If Not String.IsNullOrEmpty(GameTitle) Then PS1TitleTextBox.Text = GameTitle
+        If Not String.IsNullOrEmpty(GameTitle) Then
+            PS1TitleTextBox.Text = GameTitle
+        ElseIf GameID <> "" Then
+            FillTitleFromRedump("PS1", GameID, PS1TitleTextBox)
+        End If
+    End Sub
+
+    ''' <summary>For a game that is not in the title list: asks the Redump database for the title, when the title box is still empty.</summary>
+    Private Async Sub FillTitleFromRedump(PlatformName As String, GameID As String, TitleBox As Wpf.Ui.Controls.TextBox)
+        If Not String.IsNullOrWhiteSpace(TitleBox.Text) Then Return
+        Dim Title As String = Await CoverSources.FindTitleAsync(PlatformName, GameID)
+        If Title <> "" AndAlso String.IsNullOrWhiteSpace(TitleBox.Text) Then TitleBox.Text = Title
     End Sub
 
     Private Sub BrowsePS1IconButton_Click(sender As Object, e As RoutedEventArgs) Handles BrowsePS1IconButton.Click
@@ -693,6 +704,7 @@ Public Class PSClassicsfPKGBuilder
             End If
 
             PS2TitleTextBox.Text = PS2Game.GetPS2GameTitleFromDatabaseList(PS2GameID.Replace(".", "").Replace("_", "-").Trim())
+            If PS2TitleTextBox.Text = "" Then FillTitleFromRedump("PS2", PS2GameID, PS2TitleTextBox)
             PS2NPTitleTextBox.Text = PS2GameID.Replace(".", "").Replace("_", "").Trim()
             SelectedDisc1TextBox.Text = IsoFile
         ElseIf MsgBox(Localizer.T("Could not find the PS2 game ID within the ISO file.\nDo you want to use this file anyway ?"), MsgBoxStyle.YesNo, Localizer.T("PS2 Game ID not found")) = MsgBoxResult.Yes Then
@@ -840,6 +852,9 @@ Public Class PSClassicsfPKGBuilder
                 PSPNPTitleTextBox.Text = Text.Encoding.ASCII.GetString(PspTools.ReadBytes(TempUMDDataFile, 0, 10)).Replace("-", "")
                 PSPTitleTextBox.Text = Regex.Replace(Path.GetFileNameWithoutExtension(IsoFile), "\((.*?)\)", "")
                 PSPTitleTextBox.Text = Regex.Replace(PSPTitleTextBox.Text, " {2,}", "")
+                'The title stored in the disc is better than the one guessed from the file name
+                Dim DiscTitle As String = IsoTools.GetPSPTitle(IsoFile)
+                If DiscTitle <> "" Then PSPTitleTextBox.Text = DiscTitle
                 File.Delete(TempUMDDataFile)
             End If
 

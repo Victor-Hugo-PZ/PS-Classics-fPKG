@@ -147,4 +147,22 @@ Public Class IsoTools
         End Try
     End Function
 
+    ''' <summary>The game title stored in the PARAM.SFO of a PSP ISO (\PSP_GAME\PARAM.SFO), or an empty string.</summary>
+    Public Shared Function GetPSPTitle(ISOPath As String) As String
+        Try
+            Using NewFileStream As New FileStream(ISOPath, FileMode.Open, FileAccess.Read)
+                Dim NewIso9660CDReader As New Iso9660.CDReader(NewFileStream, True)
+                If Not NewIso9660CDReader.FileExists("\PSP_GAME\PARAM.SFO") Then Return ""
+                Using NewSparseStream As Streams.SparseStream = NewIso9660CDReader.OpenFile("\PSP_GAME\PARAM.SFO", FileMode.Open)
+                    Using Memory As New MemoryStream()
+                        NewSparseStream.CopyTo(Memory)
+                        Return SfoReader.ReadTitle(Memory.ToArray())
+                    End Using
+                End Using
+            End Using
+        Catch ex As Exception
+            Return ""
+        End Try
+    End Function
+
 End Class
