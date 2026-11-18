@@ -530,7 +530,39 @@ public partial class MainWindow : Window
             PackagePath = result?.PackagePath ?? "", Succeeded = result is { Success: true },
         });
 
-        await new BuildResultWindow(result, outputFolder, report, errorDetails).ShowDialog(this);
+        var resultWindow = new BuildResultWindow(result, outputFolder, report, errorDetails);
+        await resultWindow.ShowDialog(this);
+        await RunFixAction(resultWindow.RequestedAction);
+    }
+
+    /// <summary>Does what a fix button promised (see <see cref="FixAction"/>), on the page that is open.</summary>
+    private async Task RunFixAction(FixAction action)
+    {
+        var page = PlatformListBox.SelectedIndex;
+        switch (action)
+        {
+            case FixAction.SelectGame:
+                if (page is >= 0 and < 3)
+                    new[] { BrowsePS1Disc1Button, BrowsePS2Disc1Button, BrowsePSPDiscButton }[page].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                break;
+            case FixAction.ClearImages:
+                if (page is >= 0 and < 3)
+                {
+                    new[] { SelectedPS1IconTextBox, SelectedIconTextBox, SelectedPSPIconTextBox }[page].Text = "";
+                    new[] { SelectedPS1BGTextBox, SelectedStartupImageTextBox, SelectedPSPBGImageTextBox }[page].Text = "";
+                }
+                break;
+            case FixAction.OpenToolsFolder:
+                OpenFolder(Directory.Exists(AppPaths.ToolsDirectory) ? AppPaths.ToolsDirectory : AppContext.BaseDirectory);
+                break;
+            case FixAction.WineSetup:
+                await new WineSetupWindow().ShowDialog(this);
+                break;
+            case FixAction.TryAgain:
+                if (page is >= 0 and < 3)
+                    new[] { BuildPS1fPKGButton, BuildPS2fPKGButton, BuildPSPfPKGButton }[page].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                break;
+        }
     }
 
     /// <summary>Shows the problems found before a build. Returns false when the build must not start.</summary>
@@ -539,7 +571,17 @@ public partial class MainWindow : Window
         if (issues.Count == 0) return true;
         if (issues.Any(issue => issue.IsError))
         {
-            await MessageDialog.ShowError(this, Localizer.T("Cannot create fPKG"), BuildPreflight.Describe(issues));
+            // A problem that the app can help with gets a question with the fix; the others only a message
+            var fix = BuildPreflight.FirstAction(issues);
+            if (fix != FixAction.None && !(fix == FixAction.WineSetup && Platform.IsWindows))
+            {
+                if (await MessageDialog.Confirm(this, Localizer.T("Cannot create fPKG"), BuildPreflight.Describe(issues) + "\n\n" + FixActions.Label(fix) + "?"))
+                    await RunFixAction(fix);
+            }
+            else
+            {
+                await MessageDialog.ShowError(this, Localizer.T("Cannot create fPKG"), BuildPreflight.Describe(issues));
+            }
             return false;
         }
         return await MessageDialog.Confirm(this, Localizer.T("Before building"), BuildPreflight.Describe(issues) + "\n\n" + Localizer.T("Continue anyway?"));
