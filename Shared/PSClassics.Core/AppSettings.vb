@@ -19,6 +19,8 @@ Public Class AppSettings
     Public Property LatestVersionUrl As String = ""
     ''' <summary>Output folder of the queue window, kept for the next time.</summary>
     Public Property QueueOutputFolder As String = ""
+    ''' <summary>Output folder of the last package built with the form, offered first the next time.</summary>
+    Public Property LastOutputFolder As String = ""
 
     Private Shared _Current As AppSettings
 

@@ -19,6 +19,11 @@ Public Class BatchItem
     ''' <summary>What the app is doing now, then the result or the reason of a failure (already translated).</summary>
     Public Property Message As String = ""
     Public Property PackagePath As String = ""
+    ''' <summary>
+    ''' Preset of <see cref="EmulatorPresets"/> chosen for this game only. Empty = the game follows the preset of the queue
+    ''' (<see cref="BatchOptions.PresetName"/>).
+    ''' </summary>
+    Public Property PresetName As String = ""
 
     ''' <summary>The file name of the archive.</summary>
     Public ReadOnly Property DisplayName As String
@@ -31,7 +36,8 @@ Public Class BatchItem
     Public Function Describe() As String
         Dim Symbol As String = If(Status = BatchStatus.Done, "✔", If(Status = BatchStatus.Failed, "✘", If(Status = BatchStatus.Working, "▶", "•")))
         Dim Name As String = If(Title <> "", Title + " (" + DisplayName + ")", DisplayName)
-        Return Symbol + " " + Name + If(Message <> "", " - " + Message, "")
+        Dim Preset As String = If(PresetName <> "", " [" + Localizer.T(PresetName) + "]", "")
+        Return Symbol + " " + Name + Preset + If(Message <> "", " - " + Message, "")
     End Function
 End Class
 
@@ -50,6 +56,20 @@ Public Class BatchQueue
             Added += 1
         Next
         Return Added
+    End Function
+
+    ''' <summary>
+    ''' Gives games their own preset (an empty name puts them back to the preset of the queue). Games that are done or
+    ''' being built keep theirs. Returns how many games were changed.
+    ''' </summary>
+    Public Function SetPreset(Selected As IEnumerable(Of BatchItem), PresetName As String) As Integer
+        Dim Changed As Integer = 0
+        For Each Item As BatchItem In Selected
+            If Item.Status = BatchStatus.Done OrElse Item.Status = BatchStatus.Working Then Continue For
+            Item.PresetName = If(PresetName, "")
+            Changed += 1
+        Next
+        Return Changed
     End Function
 
     ''' <summary>Removes the games that are done. Returns how many were removed.</summary>
@@ -174,9 +194,26 @@ Public Class BatchBuilder
 
 #Region "Platforms"
 
+    ''' <summary>The PS1 preset of a game: its own, else the one of the queue, else "Recommended" (a name that does not exist for PS1 is skipped).</summary>
+    Public Shared Function ResolvePS1Preset(Item As BatchItem, Options As BatchOptions) As PS1Preset
+        For Each Name As String In {Item.PresetName, Options.PresetName}
+            Dim Found As PS1Preset = EmulatorPresets.PS1.FirstOrDefault(Function(Candidate) Candidate.Name = Name)
+            If Found IsNot Nothing Then Return Found
+        Next
+        Return EmulatorPresets.PS1(0)
+    End Function
+
+    ''' <summary>The PS2 preset of a game (same rule as <see cref="ResolvePS1Preset"/>).</summary>
+    Public Shared Function ResolvePS2Preset(Item As BatchItem, Options As BatchOptions) As PS2Preset
+        For Each Name As String In {Item.PresetName, Options.PresetName}
+            Dim Found As PS2Preset = EmulatorPresets.PS2.FirstOrDefault(Function(Candidate) Candidate.Name = Name)
+            If Found IsNot Nothing Then Return Found
+        Next
+        Return EmulatorPresets.PS2(0)
+    End Function
+
     Private Shared Function BuildPS1(Item As BatchItem, Options As BatchOptions, DiscFiles As List(Of String)) As PackageBuildResult
-        Dim Preset As PS1Preset = EmulatorPresets.PS1.FirstOrDefault(Function(Candidate) Candidate.Name = Options.PresetName)
-        If Preset Is Nothing Then Preset = EmulatorPresets.PS1(0)
+        Dim Preset As PS1Preset = ResolvePS1Preset(Item, Options)
 
         Dim GameID As String = PS1Game.GetPS1GameID(DiscFiles(0))
         Dim Title As String = If(GameID.Length = 10, PS1Game.GetPS1GameTitleFromDatabaseList(GameID), "")
@@ -199,8 +236,7 @@ Public Class BatchBuilder
     End Function
 
     Private Shared Function BuildPS2(Item As BatchItem, Options As BatchOptions, DiscFiles As List(Of String)) As PackageBuildResult
-        Dim Preset As PS2Preset = EmulatorPresets.PS2.FirstOrDefault(Function(Candidate) Candidate.Name = Options.PresetName)
-        If Preset Is Nothing Then Preset = EmulatorPresets.PS2(0)
+        Dim Preset As PS2Preset = ResolvePS2Preset(Item, Options)
 
         Dim GameID As String = PS2Game.GetPS2GameID(DiscFiles(0))
         Dim GameCRC As String = ""

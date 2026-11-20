@@ -449,3 +449,19 @@ Build several games from .zip or .7z files, one after the other, with no questio
 • Queue: the Queue button builds several games from .zip or .7z files, one after the other, with no questions. Choose the output folder and a preset, then press Start.	• Fila: o botão Fila cria vários jogos a partir de arquivos .zip ou .7z, um depois do outro, sem perguntas. Escolha a pasta de saída e uma predefinição e aperte Iniciar.
 • PSP games in .cso (compressed) are accepted: the app converts them to .iso by itself.	• Jogos de PSP em .cso (compactado) são aceitos: o app converte para .iso sozinho.
 • When something goes wrong, the message can have a Fix button (select the game again, show the Tools folder, clear the images...) that does it for you.	• Quando algo dá errado, a mensagem pode ter um botão Corrigir (escolher o jogo de novo, mostrar a pasta Tools, limpar as imagens...) que faz isso por você.
+Create another game	Criar outro jogo
+New game	Novo jogo
+Clears the game fields of this page (disc, title, images and configs), ready for another game. The emulator options stay.	Limpa os campos do jogo desta página (disco, título, imagens e configs), pronta para outro jogo. As opções do emulador continuam.
+Clears the game fields, ready for another game. The emulator options stay.	Limpa os campos do jogo, pronto para outro jogo. As opções do emulador continuam.
+Clear the game fields of this page? The emulator options stay.	Limpar os campos do jogo desta página? As opções do emulador continuam.
+A package of this game was already built on {0}: {1}	Já existe um pacote deste jogo, criado em {0}: {1}
+Continue only if you want another package of the same game, for example with other emulator settings.	Continue só se quiser outro pacote do mesmo jogo, por exemplo com outras configurações do emulador.
+Settings for all games	Configurações para todos os jogos
+Settings of the selected games	Configurações dos jogos selecionados
+A preset that only exists for PS2 is ignored for PS1 games, which then use the settings for all games.	Uma predefinição que só existe no PS2 é ignorada nos jogos de PS1, que então usam as configurações para todos os jogos.
+Apply to selected	Aplicar aos selecionados
+Select one or more games in the list (Ctrl or Shift), choose the settings and press this button. The other games keep following the settings for all games.	Selecione um ou mais jogos na lista (Ctrl ou Shift), escolha as configurações e aperte este botão. Os outros jogos continuam seguindo as configurações para todos os jogos.
+Open output folder	Abrir pasta de saída
+Same as all games	Igual aos demais jogos
+Select the games in the list first (Ctrl or Shift to select several).	Selecione primeiro os jogos na lista (Ctrl ou Shift para vários).
+The output folder does not exist yet.	A pasta de saída ainda não existe.

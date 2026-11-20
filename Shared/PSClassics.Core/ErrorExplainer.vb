@@ -13,6 +13,8 @@ Public Enum FixAction
     ClearImages
     ''' <summary>Build again (the output folder is asked again).</summary>
     TryAgain
+    ''' <summary>Clear the game fields of the open page, ready for another game (offered after a successful build).</summary>
+    StartNew
 End Enum
 
 ''' <summary>The button text of each fix.</summary>
@@ -30,6 +32,8 @@ Public Class FixActions
                 Return Localizer.T("Clear the icon and the background")
             Case FixAction.TryAgain
                 Return Localizer.T("Choose another output folder and build again")
+            Case FixAction.StartNew
+                Return Localizer.T("Create another game")
             Case Else
                 Return ""
         End Select
@@ -37,7 +41,7 @@ Public Class FixActions
 
     ''' <summary>Every English button text (for the translation tests).</summary>
     Public Shared Function AllTexts() As IEnumerable(Of String)
-        Return {"Select the game file again", "Open the Wine setup", "Show the Tools folder", "Clear the icon and the background", "Choose another output folder and build again"}
+        Return {"Select the game file again", "Open the Wine setup", "Show the Tools folder", "Clear the icon and the background", "Choose another output folder and build again", "Create another game"}
     End Function
 
 End Class

@@ -24,6 +24,13 @@
                         </StackPanel>
                     </StackPanel>
                 </Border>
+                <Button x:Name="NewGameButton" HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                        ToolTip.Tip="Clears the game fields of this page (disc, title, images and configs), ready for another game. The emulator options stay.">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <mi:MaterialIcon Kind="Plus" Width="18" Height="18" />
+                        <TextBlock Text="New game" />
+                    </StackPanel>
+                </Button>
                 <Button x:Name="VerifyPkgButton" HorizontalAlignment="Stretch" Margin="0,0,0,8"
                         ToolTip.Tip="Verifies a generated .pkg with the SDK checker and tells you if something is wrong">
                     <StackPanel Orientation="Horizontal" Spacing="8">

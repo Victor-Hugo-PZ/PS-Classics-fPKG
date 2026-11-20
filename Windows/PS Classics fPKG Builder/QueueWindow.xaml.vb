@@ -18,6 +18,12 @@ Public Class QueueWindow
             PresetComboBox.Items.Add(Localizer.T(Preset.Name))
         Next
         PresetComboBox.SelectedIndex = 0
+        'The settings of one game: the first entry gives it back to "Settings for all games"
+        GamePresetComboBox.Items.Add(Localizer.T("Same as all games"))
+        For Each Name As String In EmulatorPresets.AllNames()
+            GamePresetComboBox.Items.Add(Localizer.T(Name))
+        Next
+        GamePresetComboBox.SelectedIndex = 0
         OutputFolderTextBox.Text = AppSettings.Current.QueueOutputFolder
         RefreshList()
         UiTranslator.Attach(Me)
@@ -47,7 +53,36 @@ Public Class QueueWindow
         ClearDoneButton.IsEnabled = Idle
         BrowseOutputButton.IsEnabled = Idle
         PresetComboBox.IsEnabled = Idle
+        GamePresetComboBox.IsEnabled = Idle
+        ApplyPresetButton.IsEnabled = Idle
         OnlineCheckBox.IsEnabled = Idle
+    End Sub
+
+    ''' <summary>The games selected in the list (the list rows are in the same order as the queue).</summary>
+    Private Function SelectedGames() As List(Of BatchItem)
+        Return ItemsListBox.SelectedItems.Cast(Of Object)().Select(Function(Row) ItemsListBox.Items.IndexOf(Row)).
+            Where(Function(Index) Index >= 0 AndAlso Index < _Queue.Items.Count).Select(Function(Index) _Queue.Items(Index)).ToList()
+    End Function
+
+    Private Sub ApplyPresetButton_Click(sender As Object, e As RoutedEventArgs) Handles ApplyPresetButton.Click
+        Dim Games As List(Of BatchItem) = SelectedGames()
+        If Games.Count = 0 Then
+            MsgBox(Localizer.T("Select the games in the list first (Ctrl or Shift to select several)."), MsgBoxStyle.Information)
+            Return
+        End If
+        Dim Names As List(Of String) = EmulatorPresets.AllNames()
+        Dim Index As Integer = GamePresetComboBox.SelectedIndex
+        _Queue.SetPreset(Games, If(Index <= 0 OrElse Index > Names.Count, "", Names(Index - 1)))
+        RefreshList()
+    End Sub
+
+    Private Sub OpenOutputButton_Click(sender As Object, e As RoutedEventArgs) Handles OpenOutputButton.Click
+        Dim Folder As String = OutputFolderTextBox.Text
+        If String.IsNullOrWhiteSpace(Folder) OrElse Not Directory.Exists(Folder) Then
+            MsgBox(Localizer.T("The output folder does not exist yet."), MsgBoxStyle.Information)
+            Return
+        End If
+        Process.Start(New ProcessStartInfo("explorer", """" + Folder + """") With {.UseShellExecute = True})
     End Sub
 
     Private Sub AddButton_Click(sender As Object, e As RoutedEventArgs) Handles AddButton.Click
