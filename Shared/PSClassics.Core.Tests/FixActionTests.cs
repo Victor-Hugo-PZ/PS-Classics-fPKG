@@ -33,6 +33,33 @@ public class FixActionTests
     }
 
     [Fact]
+    public void CheckAlreadyBuilt_WarnsOnlyWhenThePackageOfTheSameGameStillExists()
+    {
+        using var ws = new TempWorkspace();
+        var history = Path.Combine(ws.Root, "history.json");
+        var package = ws.Write(@"out\game.pkg", new byte[8]);
+        BuildHistory.AddOrUpdate(new HistoryEntry { Platform = "PS1", NPTitle = "SLUS00594", PackagePath = package, Succeeded = true }, history);
+        BuildHistory.AddOrUpdate(new HistoryEntry { Platform = "PS2", NPTitle = "SLUS20000", PackagePath = Path.Combine(ws.Root, "gone.pkg"), Succeeded = true }, history);
+        BuildHistory.AddOrUpdate(new HistoryEntry { Platform = "PS1", NPTitle = "SLUS00001", PackagePath = package, Succeeded = false }, history);
+
+        var warning = Assert.Single(BuildPreflight.CheckAlreadyBuilt("PS1", "slus00594", history));
+        Assert.False(warning.IsError);
+        Assert.Contains(package, warning.Message);
+        Assert.Empty(BuildPreflight.CheckAlreadyBuilt("PS2", "SLUS00594", history)); // other platform
+        Assert.Empty(BuildPreflight.CheckAlreadyBuilt("PS2", "SLUS20000", history));  // the file is gone
+        Assert.Empty(BuildPreflight.CheckAlreadyBuilt("PS1", "SLUS00001", history));  // that build failed
+        Assert.Empty(BuildPreflight.CheckAlreadyBuilt("PS1", "", history));
+    }
+
+    [Fact]
+    public void StartNew_IsOnlyOfferedAfterASuccessAndNeverByTheErrorExplainer()
+    {
+        Assert.NotEqual("", FixActions.Label(FixAction.StartNew));
+        Assert.NotEqual(FixAction.StartNew, ErrorExplainer.Explain("something nobody expected").Action);
+        Assert.NotEqual(FixAction.StartNew, ErrorExplainer.Explain("The .CUE file of disc 1 is missing").Action);
+    }
+
+    [Fact]
     public void Preflight_MissingDiscOffersToSelectTheGame()
     {
         using var ws = new TempWorkspace();

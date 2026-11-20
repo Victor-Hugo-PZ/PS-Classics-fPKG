@@ -59,4 +59,34 @@ public class BuildResultWindowTests
             Assert.Equal(Visibility.Collapsed, ((FrameworkElement)window.FindName("FixButton")).Visibility);
         });
     }
+
+    [Fact]
+    public void ASuccessOffersToCreateAnotherGame()
+    {
+        RunSta(() =>
+        {
+            var done = new PackageBuildResult { Success = true, PackagePath = @"C:\out\game.pkg" };
+            var window = new BuildResultWindow(done, @"C:\out", null, "");
+
+            var button = (System.Windows.Controls.Primitives.ButtonBase)window.FindName("NewGameButton");
+            Assert.Equal(Visibility.Visible, button.Visibility);
+            Assert.Equal(FixAction.None, window.RequestedAction);
+
+            button.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+
+            Assert.Equal(FixAction.StartNew, window.RequestedAction);
+        });
+    }
+
+    [Fact]
+    public void AFailureDoesNotOfferAnotherGame()
+    {
+        RunSta(() =>
+        {
+            var failed = new PackageBuildResult { Success = false };
+            var window = new BuildResultWindow(failed, @"C:\out", null, "something nobody expected");
+
+            Assert.Equal(Visibility.Collapsed, ((FrameworkElement)window.FindName("NewGameButton")).Visibility);
+        });
+    }
 }

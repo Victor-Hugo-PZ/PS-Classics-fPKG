@@ -22,6 +22,25 @@ Public Class BuildPreflight
     ''' <summary>Space kept free on top of the package size (emulator, images, safety margin).</summary>
     Public Const ExtraSpaceBytes As Long = 200L * 1024 * 1024
 
+    ''' <summary>
+    ''' A warning when a package of the same game (same platform and NP title) was already built and the file still exists:
+    ''' the user may be about to build the same game twice. Never an error (a second build with other options is normal).
+    ''' </summary>
+    Public Shared Function CheckAlreadyBuilt(PlatformName As String, NPTitle As String, Optional HistoryFile As String = Nothing) As List(Of PreflightIssue)
+        Dim Issues As New List(Of PreflightIssue)
+        If String.IsNullOrWhiteSpace(NPTitle) Then Return Issues
+        Dim Previous As HistoryEntry = BuildHistory.Load(HistoryFile).FirstOrDefault(
+            Function(Entry) Entry.Succeeded AndAlso Entry.Platform = PlatformName AndAlso String.Equals(Entry.NPTitle, NPTitle, StringComparison.OrdinalIgnoreCase) AndAlso
+                            Entry.PackagePath <> "" AndAlso File.Exists(Entry.PackagePath))
+        If Previous IsNot Nothing Then
+            Issues.Add(New PreflightIssue With {
+                .IsError = False,
+                .Message = Localizer.F("A package of this game was already built on {0}: {1}", Previous.CreatedAt.ToString("d"), Previous.PackagePath),
+                .Suggestion = Localizer.T("Continue only if you want another package of the same game, for example with other emulator settings.")})
+        End If
+        Return Issues
+    End Function
+
     ''' <summary>Returns the problems of an NP title (empty list when it is valid).</summary>
     Public Shared Function CheckNPTitle(NPTitle As String) As List(Of PreflightIssue)
         Dim Issues As New List(Of PreflightIssue)
