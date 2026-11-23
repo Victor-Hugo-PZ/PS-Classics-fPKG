@@ -30,6 +30,15 @@ End Class
 
 Public Class EmulatorPresets
 
+    ''' <summary>Every preset name of the platforms that have presets, without repeating the shared ones (for the queue's per-game list).</summary>
+    Public Shared Function AllNames() As List(Of String)
+        Dim Names As New List(Of String)
+        For Each Name As String In PS1.Select(Function(Preset) Preset.Name).Concat(PS2.Select(Function(Preset) Preset.Name))
+            If Not Names.Contains(Name) Then Names.Add(Name)
+        Next
+        Return Names
+    End Function
+
     Public Shared ReadOnly Property PS1 As IReadOnlyList(Of PS1Preset) = New List(Of PS1Preset) From {
         New PS1Preset With {.Name = "Recommended", .Description = "Default settings that work for most games.", .Upscaling = "2"},
         New PS1Preset With {.Name = "Most compatible", .Description = "Original resolution. Try it when a game runs slowly or shows glitches.", .Upscaling = "1"},

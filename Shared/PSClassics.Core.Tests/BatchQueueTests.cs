@@ -57,6 +57,30 @@ public class BatchQueueTests
         Assert.Equal("2 of 3 packages were made.", queue.Summary());
     }
 
+    [Fact]
+    public void SetPreset_ChangesOnlyGamesThatCanStillBeBuilt_AndEmptyGoesBackToTheQueuePreset()
+    {
+        var queue = new BatchQueue();
+        queue.Add(new[] { "a.zip", "b.zip", "c.zip", "d.zip" });
+        queue.Items[1].Status = BatchStatus.Done;
+        queue.Items[2].Status = BatchStatus.Working;
+        queue.Items[3].Status = BatchStatus.Failed;
+
+        Assert.Equal(2, queue.SetPreset(queue.Items, "Best looking"));
+        Assert.Equal(new[] { "Best looking", "", "", "Best looking" }, queue.Items.Select(i => i.PresetName));
+
+        Assert.Equal(1, queue.SetPreset(new[] { queue.Items[0] }, ""));
+        Assert.Equal("", queue.Items[0].PresetName);
+    }
+
+    [Fact]
+    public void Describe_ShowsThePresetOfAGameThatHasItsOwn()
+    {
+        var item = new BatchItem { ArchiveFile = Path.Combine("g", "x.zip"), PresetName = "Best looking" };
+
+        Assert.Equal("• x.zip [" + Localizer.T("Best looking") + "]", item.Describe());
+    }
+
     [Theory]
     [InlineData(BatchStatus.Waiting, "", "x.zip", "• x.zip")]
     [InlineData(BatchStatus.Working, "Extracting…", "x.zip", "▶ x.zip - Extracting…")]

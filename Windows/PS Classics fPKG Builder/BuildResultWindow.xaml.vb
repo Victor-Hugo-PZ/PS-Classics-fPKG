@@ -32,6 +32,7 @@ Public Class BuildResultWindow
                 ResultTitle.Text = Localizer.T("Package created, but the check found problems")
                 ResultText.Text = Localizer.T("The package may not install or run. See the details below.")
             End If
+            NewGameButton.Visibility = Visibility.Visible
             SuggestionText.Text = Localizer.T("Tip: write in the History how the game runs on the console. It helps to compare emulator settings.")
             PackageText.Text = If(_PackagePath <> "", Localizer.F("Package: {0}", _PackagePath), Localizer.F("Output folder: {0}", OutputFolder))
             DetailsTextBox.Text = If(Report?.ToText(), Result.Output)
@@ -61,6 +62,11 @@ Public Class BuildResultWindow
 
     Private Sub FixButton_Click(sender As Object, e As RoutedEventArgs) Handles FixButton.Click
         _RequestedAction = _FixAction
+        Close()
+    End Sub
+
+    Private Sub NewGameButton_Click(sender As Object, e As RoutedEventArgs) Handles NewGameButton.Click
+        _RequestedAction = FixAction.StartNew
         Close()
     End Sub
 

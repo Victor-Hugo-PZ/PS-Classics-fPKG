@@ -44,6 +44,7 @@ public partial class BuildResultWindow : Window
                 ResultTitle.Text = Localizer.T("Package created, but the check found problems");
                 ResultText.Text = Localizer.T("The package may not install or run. See the details below.");
             }
+            NewGameButton.IsVisible = true;
             SuggestionText.Text = Localizer.T("Tip: write in the History how the game runs on the console. It helps to compare emulator settings.");
             PackageText.Text = _packagePath != "" ? Localizer.F("Package: {0}", _packagePath) : Localizer.F("Output folder: {0}", outputFolder);
             DetailsTextBox.Text = report?.ToText() ?? result.Output;
@@ -76,6 +77,11 @@ public partial class BuildResultWindow : Window
         }
         if (_packagePath == "") FullCheckButton.IsVisible = false;
 
+        NewGameButton.Click += (_, _) =>
+        {
+            RequestedAction = FixAction.StartNew;
+            Close();
+        };
         CopyButton.Click += async (_, _) =>
         {
             var clipboard = GetTopLevel(this)?.Clipboard;

@@ -90,6 +90,8 @@
                             </StackPanel>
                         </StackPanel>
                     </Border>
+                    <ui:Button x:Name="NewGameButton" Content="New game" Icon="{ui:SymbolIcon Add24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                               ToolTip="Clears the game fields of this page (disc, title, images and configs), ready for another game. The emulator options stay." />
                     <ui:Button x:Name="VerifyPkgButton" Content="Check a .pkg" Icon="{ui:SymbolIcon ShieldCheckmark24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,8"
                                ToolTip="Verifies a generated .pkg with the SDK checker and tells you if something is wrong" />
                     <ui:Button x:Name="HistoryButton" Content="History" Icon="{ui:SymbolIcon History24}" Appearance="Secondary" HorizontalAlignment="Stretch" Margin="0,0,0,8"

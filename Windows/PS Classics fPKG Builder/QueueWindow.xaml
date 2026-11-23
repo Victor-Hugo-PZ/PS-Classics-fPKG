@@ -26,7 +26,7 @@
                 <ui:TextBox x:Name="OutputFolderTextBox" PlaceholderText="Folder where the packages are written" />
             </DockPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Emulator settings" VerticalAlignment="Center" Margin="0,0,10,0" />
+                <TextBlock Text="Settings for all games" VerticalAlignment="Center" Margin="0,0,10,0" />
                 <ComboBox x:Name="PresetComboBox" Width="200" Margin="0,0,24,0" />
                 <CheckBox x:Name="OnlineCheckBox" Content="Look for covers and titles on the internet" IsChecked="True" />
             </StackPanel>
@@ -42,12 +42,20 @@
         <StackPanel Grid.Row="4" Margin="24,0,24,20">
             <ProgressBar x:Name="QueueProgress" IsIndeterminate="True" Visibility="Collapsed" Margin="0,0,0,8" />
             <TextBlock x:Name="SummaryText" Margin="0,0,0,8" />
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <TextBlock Text="Settings of the selected games" VerticalAlignment="Center" Margin="0,0,10,0" />
+                <ComboBox x:Name="GamePresetComboBox" Width="220" Margin="0,0,8,0"
+                          ToolTip="A preset that only exists for PS2 is ignored for PS1 games, which then use the settings for all games." />
+                <ui:Button x:Name="ApplyPresetButton" Content="Apply to selected" Icon="{ui:SymbolIcon Checkmark24}"
+                           ToolTip="Select one or more games in the list (Ctrl or Shift), choose the settings and press this button. The other games keep following the settings for all games." />
+            </StackPanel>
             <WrapPanel HorizontalAlignment="Right">
                 <ui:Button x:Name="AddButton" Content="Add archives" Icon="{ui:SymbolIcon Add24}" Margin="0,0,8,8" />
                 <ui:Button x:Name="RemoveButton" Content="Remove" Icon="{ui:SymbolIcon Delete24}" Margin="0,0,8,8" />
                 <ui:Button x:Name="ClearDoneButton" Content="Clear finished" Icon="{ui:SymbolIcon Broom24}" Margin="0,0,8,8" />
                 <ui:Button x:Name="StartButton" Content="Start" Appearance="Primary" Icon="{ui:SymbolIcon Play24}" Margin="0,0,8,8" />
                 <ui:Button x:Name="CancelButton" Content="Stop after this game" Icon="{ui:SymbolIcon Stop24}" Visibility="Collapsed" Margin="0,0,8,8" />
+                <ui:Button x:Name="OpenOutputButton" Content="Open output folder" Icon="{ui:SymbolIcon FolderOpen24}" Margin="0,0,8,8" />
                 <ui:Button x:Name="CloseButton" Content="Close" Margin="0,0,0,8" />
             </WrapPanel>
         </StackPanel>

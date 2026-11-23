@@ -118,6 +118,8 @@ dotnet run --project CrossPlatform/PSClassicsfPKGBuilder
 
 **Funções da 2.2.4 testadas só por código (sem clique real nem arquivo real):** a janela Fila e os botões de correção (WPF e Avalonia: só abrem e as listas são testadas); o suporte a `.cso` (testado com CSO feito no teste, não com um `.cso` de jogo PSP real); a fila com jogos de verdade pela internet (capa e título pelo Redump); os zips grandes (a extração roda em segundo plano mas não foi medida com 700 MB no Linux/macOS).
 
+**Novo jogo e preset por jogo na fila (testados só por código):** o botão "Criar outro jogo" da janela de resultado e o botão "Novo jogo" (`ResetPage` no WPF e no Avalonia, sem teste automático porque a janela principal precisa dos recursos do WPF-UI, que quebram os outros testes de janela) e o "Aplicar aos selecionados" da Fila (a janela WPF é testada, o Avalonia só compila). Falta testar clicando de verdade, e no Avalonia o seletor de pasta que abre na última pasta (`SuggestedStartLocation`).
+
 **Linux/macOS (não verificado em máquina real):** o pacote Linux e os testes com Wine rodam no CI; o macOS só compila no CI. No macOS, o Wine vem do Homebrew (`wine-stable`, via Rosetta no Apple Silicon) e as ferramentas `orbis-pub-cmd`/`gengp4` são 32 bits: confirmar que rodam. O `.app` é assinado ad-hoc (sem conta Apple), então o Gatekeeper pede "Abrir mesmo assim".
 
 Notas: o `cue2toc` grava **dois** arquivos (`<bin>.TOC`, usado no pacote, e `<bin>.cu2`); roda numa pasta temporária. TIFF não é aceito (Skia não decodifica); WebP sim.

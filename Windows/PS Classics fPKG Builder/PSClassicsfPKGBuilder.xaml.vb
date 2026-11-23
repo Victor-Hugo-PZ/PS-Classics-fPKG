@@ -68,6 +68,17 @@ Public Class PSClassicsfPKGBuilder
         PSPPage.Visibility = If(PlatformListBox.SelectedIndex = 2, Visibility.Visible, Visibility.Collapsed)
     End Sub
 
+    Private Sub NewGameButton_Click(sender As Object, e As RoutedEventArgs) Handles NewGameButton.Click
+        If _Building Then Return
+        Dim Page As Integer = PlatformListBox.SelectedIndex
+        If Page < 0 OrElse Page > 2 Then Return
+        Dim Disc As String = {PS1SelectedDisc1TextBox.Text, SelectedDisc1TextBox.Text, SelectedPSPDiscTextBox.Text}(Page)
+        Dim Title As String = {PS1TitleTextBox.Text, PS2TitleTextBox.Text, PSPTitleTextBox.Text}(Page)
+        If (Not String.IsNullOrWhiteSpace(Disc) OrElse Not String.IsNullOrWhiteSpace(Title)) AndAlso
+           MsgBox(Localizer.T("Clear the game fields of this page? The emulator options stay."), MsgBoxStyle.YesNo Or MsgBoxStyle.Question, Localizer.T("New game")) <> MsgBoxResult.Yes Then Return
+        ResetPage(Page)
+    End Sub
+
     Private Sub OpenGuideButton_Click(sender As Object, e As RoutedEventArgs) Handles OpenGuideButton.Click
         Dim Guide As New GuideWindow() With {.Owner = Me}
         Guide.ShowDialog()
@@ -232,6 +243,46 @@ Public Class PSClassicsfPKGBuilder
 
 #End Region
 
+#Region "New game"
+
+    ''' <summary>
+    ''' Clears what belongs to one game on a page (discs, title, NP title, images, configs, memory card and the options that
+    ''' depend on the game) and goes back to the first step. The emulator options and the preset stay as they were.
+    ''' </summary>
+    Private Sub ResetPage(Page As Integer)
+        Select Case Page
+            Case 0
+                CurrentPS1GameID = ""
+                ClearBoxes(PS1SelectedDisc1TextBox, PS1SelectedDisc2TextBox, PS1SelectedDisc3TextBox, PS1SelectedDisc4TextBox, PS1TitleTextBox, PS1NPTitleTextBox,
+                           SelectedPS1IconTextBox, SelectedPS1BGTextBox, SelectedPS1TXTConfigTextBox, SelectedPS1LUAConfigTextBox)
+                PS1GunconCheckBox.IsChecked = False
+            Case 1
+                CurrentPS2GameID = ""
+                CurrentPS2GameCRC = ""
+                ClearBoxes(SelectedDisc1TextBox, SelectedDisc2TextBox, SelectedDisc3TextBox, SelectedDisc4TextBox, SelectedDisc5TextBox, PS2TitleTextBox, PS2NPTitleTextBox,
+                           SelectedIconTextBox, SelectedStartupImageTextBox, SelectedPS2TXTConfigTextBox, SelectedPS2LUAConfigTextBox, SelectedPS2MemoryCardTextBox)
+                For Each Box As CheckBox In {PS2AddTXTConfigFromDatabaseCheckBox, PS2AddLUAConfigFromDatabaseCheckBox, PS2AddPS3ConfigFromDatabaseCheckBox}
+                    Box.IsChecked = False
+                    Box.Visibility = Visibility.Visible
+                Next
+                PS2UseWidescreenPatchCheckBox.IsChecked = False
+                PS2UseWidescreenPatchCheckBox.IsEnabled = False
+                PS2MultitapComboBox.SelectedIndex = 0
+                PS2RestartEmulatorOnDiscChangeCheckBox.IsChecked = False
+            Case Else
+                ClearBoxes(SelectedPSPDiscTextBox, PSPTitleTextBox, PSPNPTitleTextBox, SelectedPSPIconTextBox, SelectedPSPBGImageTextBox, SelectedPSPConfigTextBox)
+        End Select
+        StepBarOf(Page).CurrentStep = 0
+    End Sub
+
+    Private Shared Sub ClearBoxes(ParamArray Boxes As Wpf.Ui.Controls.TextBox())
+        For Each Box As Wpf.Ui.Controls.TextBox In Boxes
+            Box.Text = ""
+        Next
+    End Sub
+
+#End Region
+
 #Region "Presets"
 
     Private Sub FillPresets()
@@ -363,11 +414,17 @@ Public Class PSClassicsfPKGBuilder
 
         'Problems that do not depend on the output folder are shown before asking for it
         Dim Issues As List(Of PreflightIssue) = Preflight(Nothing)
+        'Building the same game twice is allowed, but the user is told (only when nothing else is wrong)
+        If Not Issues.Any(Function(Issue) Issue.IsError) Then Issues.AddRange(BuildPreflight.CheckAlreadyBuilt(PlatformName, NPTitle))
         If Not ConfirmPreflight(Issues) Then Return
 
         Dim FBD As New System.Windows.Forms.FolderBrowserDialog() With {.Description = Localizer.T("Please select an output folder"), .ShowNewFolderButton = True, .UseDescriptionForTitle = True}
+        'The dialog opens in the folder of the last package, so several games go to the same place with one click
+        If AppSettings.Current.LastOutputFolder <> "" AndAlso Directory.Exists(AppSettings.Current.LastOutputFolder) Then FBD.SelectedPath = AppSettings.Current.LastOutputFolder
         If FBD.ShowDialog() <> System.Windows.Forms.DialogResult.OK Then Return
         Dim OutputFolder As String = FBD.SelectedPath
+        AppSettings.Current.LastOutputFolder = OutputFolder
+        AppSettings.Current.Save()
 
         'Free space on the chosen drive
         Dim SpaceIssues As List(Of PreflightIssue) = Preflight(OutputFolder).Where(Function(Issue) Not Issues.Any(Function(Known) Known.Message = Issue.Message)).ToList()
@@ -427,6 +484,8 @@ Public Class PSClassicsfPKGBuilder
             Case FixAction.TryAgain
                 Dim Buttons As Wpf.Ui.Controls.Button() = {BuildPS1fPKGButton, BuildPS2fPKGButton, BuildPSPfPKGButton}
                 If Page >= 0 AndAlso Page < Buttons.Length Then Buttons(Page).RaiseEvent(New RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent))
+            Case FixAction.StartNew
+                If Page >= 0 AndAlso Page <= 2 Then ResetPage(Page)
         End Select
     End Sub
 

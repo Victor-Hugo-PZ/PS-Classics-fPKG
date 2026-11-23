@@ -21,6 +21,11 @@ public partial class QueueWindow : Window
         foreach (var preset in EmulatorPresets.PS1)
             PresetComboBox.Items.Add(Localizer.T(preset.Name));
         PresetComboBox.SelectedIndex = 0;
+        // The settings of one game: the first entry gives it back to "Settings for all games"
+        GamePresetComboBox.Items.Add(Localizer.T("Same as all games"));
+        foreach (var name in EmulatorPresets.AllNames())
+            GamePresetComboBox.Items.Add(Localizer.T(name));
+        GamePresetComboBox.SelectedIndex = 0;
         OutputFolderTextBox.Text = AppSettings.Current.QueueOutputFolder;
 
         AddHandler(DragDrop.DragOverEvent, (_, e) =>
@@ -64,6 +69,29 @@ public partial class QueueWindow : Window
             var path = folders.Count > 0 ? folders[0].TryGetLocalPath() : null;
             if (!string.IsNullOrEmpty(path)) OutputFolderTextBox.Text = path;
         };
+        ApplyPresetButton.Click += async (_, _) =>
+        {
+            var games = ItemsListBox.Selection.SelectedIndexes.Where(index => index >= 0 && index < _queue.Items.Count).Select(index => _queue.Items[index]).ToList();
+            if (games.Count == 0)
+            {
+                await MessageDialog.ShowInfo(this, Localizer.T("Queue"), Localizer.T("Select the games in the list first (Ctrl or Shift to select several)."));
+                return;
+            }
+            var names = EmulatorPresets.AllNames();
+            var index = GamePresetComboBox.SelectedIndex;
+            _queue.SetPreset(games, index <= 0 || index > names.Count ? "" : names[index - 1]);
+            RefreshList();
+        };
+        OpenOutputButton.Click += async (_, _) =>
+        {
+            var folder = OutputFolderTextBox.Text;
+            if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder))
+            {
+                await MessageDialog.ShowInfo(this, Localizer.T("Queue"), Localizer.T("The output folder does not exist yet."));
+                return;
+            }
+            MainWindow.OpenFolder(folder);
+        };
         StartButton.Click += async (_, _) => await Start();
         CancelButton.Click += (_, _) =>
         {
@@ -91,8 +119,12 @@ public partial class QueueWindow : Window
 
     private void RefreshList()
     {
+        // The rows are rebuilt on every change, so the selection is kept by position
+        var selected = ItemsListBox.Selection.SelectedIndexes.ToList();
         ItemsListBox.Items.Clear();
         foreach (var item in _queue.Items) ItemsListBox.Items.Add(item.Describe());
+        foreach (var index in selected)
+            if (index >= 0 && index < ItemsListBox.Items.Count) ItemsListBox.Selection.Select(index);
         EmptyText.IsVisible = _queue.Items.Count == 0;
         SummaryText.Text = _queue.Items.Count == 0 ? "" : _queue.Summary();
         var idle = !_running;
@@ -102,6 +134,8 @@ public partial class QueueWindow : Window
         ClearDoneButton.IsEnabled = idle;
         BrowseOutputButton.IsEnabled = idle;
         PresetComboBox.IsEnabled = idle;
+        GamePresetComboBox.IsEnabled = idle;
+        ApplyPresetButton.IsEnabled = idle;
         OnlineCheckBox.IsEnabled = idle;
     }
 

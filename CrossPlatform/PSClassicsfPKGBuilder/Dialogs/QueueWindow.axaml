@@ -15,7 +15,7 @@
                 <TextBox x:Name="OutputFolderTextBox" PlaceholderText="Folder where the packages are written" />
             </DockPanel>
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="Emulator settings" VerticalAlignment="Center" />
+                <TextBlock Text="Settings for all games" VerticalAlignment="Center" />
                 <ComboBox x:Name="PresetComboBox" Width="200" />
                 <CheckBox x:Name="OnlineCheckBox" Content="Look for covers and titles on the internet" IsChecked="True" Margin="14,0,0,0" />
             </StackPanel>
@@ -31,12 +31,20 @@
         <StackPanel Grid.Row="4">
             <ProgressBar x:Name="QueueProgress" IsIndeterminate="True" IsVisible="False" Margin="0,0,0,8" />
             <TextBlock x:Name="SummaryText" Margin="0,0,0,8" />
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+                <TextBlock Text="Settings of the selected games" VerticalAlignment="Center" />
+                <ComboBox x:Name="GamePresetComboBox" Width="220"
+                          ToolTip.Tip="A preset that only exists for PS2 is ignored for PS1 games, which then use the settings for all games." />
+                <Button x:Name="ApplyPresetButton" Content="Apply to selected"
+                        ToolTip.Tip="Select one or more games in the list (Ctrl or Shift), choose the settings and press this button. The other games keep following the settings for all games." />
+            </StackPanel>
             <WrapPanel HorizontalAlignment="Right">
                 <Button x:Name="AddButton" Content="Add archives" Margin="0,0,8,8" />
                 <Button x:Name="RemoveButton" Content="Remove" Margin="0,0,8,8" />
                 <Button x:Name="ClearDoneButton" Content="Clear finished" Margin="0,0,8,8" />
                 <Button x:Name="StartButton" Content="Start" Classes="accent" Margin="0,0,8,8" />
                 <Button x:Name="CancelButton" Content="Stop after this game" IsVisible="False" Margin="0,0,8,8" />
+                <Button x:Name="OpenOutputButton" Content="Open output folder" Margin="0,0,8,8" />
                 <Button x:Name="CloseButton" Content="Close" Margin="0,0,0,8" />
             </WrapPanel>
         </StackPanel>

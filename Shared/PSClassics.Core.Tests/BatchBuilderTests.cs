@@ -170,6 +170,27 @@ public class BatchBuilderTests
     }
 
     [Fact]
+    public void PresetOfAGame_IsItsOwnThenTheQueueOneThenRecommended()
+    {
+        var options = new BatchOptions { PresetName = "Most compatible" };
+
+        Assert.Equal("Most compatible", BatchBuilder.ResolvePS1Preset(new BatchItem(), options).Name);
+        Assert.Equal("Best looking", BatchBuilder.ResolvePS1Preset(new BatchItem { PresetName = "Best looking" }, options).Name);
+        Assert.Equal("Best looking", BatchBuilder.ResolvePS2Preset(new BatchItem { PresetName = "Best looking" }, options).Name);
+        Assert.Equal("Recommended", BatchBuilder.ResolvePS1Preset(new BatchItem(), new BatchOptions { PresetName = "nonexistent" }).Name);
+    }
+
+    [Fact]
+    public void APresetThatOnlyExistsForPS2_FallsBackToTheQueuePresetForPS1()
+    {
+        var options = new BatchOptions { PresetName = "Best looking" };
+        var item = new BatchItem { PresetName = "Other emulator (Rogue v1)" };
+
+        Assert.Equal("Best looking", BatchBuilder.ResolvePS1Preset(item, options).Name);
+        Assert.Equal("Other emulator (Rogue v1)", BatchBuilder.ResolvePS2Preset(item, options).Name);
+    }
+
+    [Fact]
     public void ADoneGameIsNotBuiltAgain()
     {
         using var ws = new TempWorkspace();

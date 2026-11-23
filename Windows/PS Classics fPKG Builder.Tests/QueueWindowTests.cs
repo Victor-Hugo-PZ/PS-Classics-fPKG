@@ -36,6 +36,38 @@ public class QueueWindowTests
     }
 
     [Fact]
+    public void ThePresetOfSelectedGamesCanBeChangedAndTheOthersKeepFollowingTheQueue()
+    {
+        RunSta(() =>
+        {
+            var window = new QueueWindow();
+            window.AddArchives(new[] { @"C:\games\a.zip", @"C:\games\b.zip", @"C:\games\c.zip" });
+            var list = (System.Windows.Controls.ListBox)window.FindName("ItemsListBox");
+            var presets = (System.Windows.Controls.ComboBox)window.FindName("GamePresetComboBox");
+            var apply = (System.Windows.Controls.Primitives.ButtonBase)window.FindName("ApplyPresetButton");
+
+            // "Same as all games" + every preset name
+            Assert.Equal(EmulatorPresets.AllNames().Count + 1, presets.Items.Count);
+
+            list.SelectedItems.Add(list.Items[0]);
+            list.SelectedItems.Add(list.Items[2]);
+            presets.SelectedIndex = 1 + EmulatorPresets.AllNames().IndexOf("Best looking");
+            apply.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+
+            Assert.Contains("[" + Localizer.T("Best looking") + "]", (string)list.Items[0]);
+            Assert.DoesNotContain("[", (string)list.Items[1]);
+            Assert.Contains("[" + Localizer.T("Best looking") + "]", (string)list.Items[2]);
+            // the selection stays after the list is rebuilt
+            Assert.Equal(2, list.SelectedItems.Count);
+
+            // the first entry gives a game back to the queue preset
+            presets.SelectedIndex = 0;
+            apply.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            Assert.DoesNotContain("[", (string)list.Items[0]);
+        });
+    }
+
+    [Fact]
     public void AddedArchivesAreListedAndEnableStart()
     {
         RunSta(() =>

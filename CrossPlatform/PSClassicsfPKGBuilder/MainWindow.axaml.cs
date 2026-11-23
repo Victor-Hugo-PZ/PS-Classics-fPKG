@@ -75,6 +75,7 @@ public partial class MainWindow : Window
             PS2Page.IsVisible = PlatformListBox.SelectedIndex == 1;
             PSPPage.IsVisible = PlatformListBox.SelectedIndex == 2;
         };
+        NewGameButton.Click += async (_, _) => await StartNewGame();
         VerifyPkgButton.Click += async (_, _) =>
         {
             var pkgFile = await PickFile("Select the .pkg to check.", PkgFiles);
@@ -397,10 +398,13 @@ public partial class MainWindow : Window
 
     private async Task<string> PickOutputFolder()
     {
+        // The dialog opens in the folder of the last package, so several games go to the same place with one click
+        var last = AppSettings.Current.LastOutputFolder;
         var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
             Title = Localizer.T("Please select an output folder"),
             AllowMultiple = false,
+            SuggestedStartLocation = last != "" && Directory.Exists(last) ? await StorageProvider.TryGetFolderFromPathAsync(last) : null,
         });
         return folders.Count > 0 ? folders[0].TryGetLocalPath() : null;
     }
@@ -481,10 +485,14 @@ public partial class MainWindow : Window
 
         // Problems that do not depend on the output folder are shown before asking for it
         var issues = preflight(null);
+        // Building the same game twice is allowed, but the user is told (only when nothing else is wrong)
+        if (!issues.Any(issue => issue.IsError)) issues.AddRange(BuildPreflight.CheckAlreadyBuilt(platformName, npTitle));
         if (!await ConfirmPreflight(issues)) return;
 
         var outputFolder = await PickOutputFolder();
         if (outputFolder == null) return;
+        AppSettings.Current.LastOutputFolder = outputFolder;
+        AppSettings.Current.Save();
 
         // Free space on the chosen drive
         var spaceIssues = preflight(outputFolder).Where(issue => issues.All(known => known.Message != issue.Message)).ToList();
@@ -536,6 +544,58 @@ public partial class MainWindow : Window
         await RunFixAction(resultWindow.RequestedAction);
     }
 
+    /// <summary>The "New game" button: asks first when the page already has a game, then clears it.</summary>
+    private async Task StartNewGame()
+    {
+        if (_building) return;
+        var page = PlatformListBox.SelectedIndex;
+        if (page is < 0 or > 2) return;
+        var disc = new[] { PS1SelectedDisc1TextBox.Text, SelectedDisc1TextBox.Text, SelectedPSPDiscTextBox.Text }[page];
+        var title = new[] { PS1TitleTextBox.Text, PS2TitleTextBox.Text, PSPTitleTextBox.Text }[page];
+        if ((!string.IsNullOrWhiteSpace(disc) || !string.IsNullOrWhiteSpace(title)) &&
+            !await MessageDialog.Confirm(this, Localizer.T("New game"), Localizer.T("Clear the game fields of this page? The emulator options stay.")))
+            return;
+        ResetPage(page);
+    }
+
+    /// <summary>
+    /// Clears what belongs to one game on a page (discs, title, NP title, images, configs, memory card and the options that
+    /// depend on the game) and goes back to the first step. The emulator options and the preset stay as they were.
+    /// </summary>
+    private void ResetPage(int page)
+    {
+        TextBox[] boxes;
+        switch (page)
+        {
+            case 0:
+                _currentPS1GameID = "";
+                boxes = new[] { PS1SelectedDisc1TextBox, PS1SelectedDisc2TextBox, PS1SelectedDisc3TextBox, PS1SelectedDisc4TextBox, PS1TitleTextBox, PS1NPTitleTextBox,
+                    SelectedPS1IconTextBox, SelectedPS1BGTextBox, SelectedPS1TXTConfigTextBox, SelectedPS1LUAConfigTextBox };
+                PS1GunconCheckBox.IsChecked = false;
+                break;
+            case 1:
+                _currentPS2GameID = "";
+                _currentPS2GameCRC = "";
+                boxes = new[] { SelectedDisc1TextBox, SelectedDisc2TextBox, SelectedDisc3TextBox, SelectedDisc4TextBox, SelectedDisc5TextBox, PS2TitleTextBox, PS2NPTitleTextBox,
+                    SelectedIconTextBox, SelectedStartupImageTextBox, SelectedPS2TXTConfigTextBox, SelectedPS2LUAConfigTextBox, SelectedPS2MemoryCardTextBox };
+                foreach (var box in new[] { PS2AddTXTConfigFromDatabaseCheckBox, PS2AddLUAConfigFromDatabaseCheckBox, PS2AddPS3ConfigFromDatabaseCheckBox })
+                {
+                    box.IsChecked = false;
+                    box.IsVisible = true;
+                }
+                PS2UseWidescreenPatchCheckBox.IsChecked = false;
+                PS2UseWidescreenPatchCheckBox.IsEnabled = false;
+                PS2MultitapComboBox.SelectedIndex = 0;
+                PS2RestartEmulatorOnDiscChangeCheckBox.IsChecked = false;
+                break;
+            default:
+                boxes = new[] { SelectedPSPDiscTextBox, PSPTitleTextBox, PSPNPTitleTextBox, SelectedPSPIconTextBox, SelectedPSPBGImageTextBox, SelectedPSPConfigTextBox };
+                break;
+        }
+        foreach (var box in boxes) box.Text = "";
+        StepBarOf(page).CurrentStep = 0;
+    }
+
     /// <summary>Does what a fix button promised (see <see cref="FixAction"/>), on the page that is open.</summary>
     private async Task RunFixAction(FixAction action)
     {
@@ -562,6 +622,9 @@ public partial class MainWindow : Window
             case FixAction.TryAgain:
                 if (page is >= 0 and < 3)
                     new[] { BuildPS1fPKGButton, BuildPS2fPKGButton, BuildPSPfPKGButton }[page].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                break;
+            case FixAction.StartNew:
+                if (page is >= 0 and < 3) ResetPage(page);
                 break;
         }
     }

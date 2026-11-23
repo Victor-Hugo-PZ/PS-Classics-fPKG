@@ -37,6 +37,9 @@ All versions share the same build code (`Shared/PSClassics.Core`), so they produ
 - **Errors explained in plain words**, with the technical details below
 - The package is **checked automatically** after building
 - **Queue** of several games: drop or add many `.zip` or `.7z` files and build them one after the other with no questions (cover and title are looked up, a game that fails does not stop the others)
+- **Queue settings per game**: the Queue has "Settings for all games" and, for the games you select, their own preset ("Apply to selected"); the others keep following the settings for all games
+- **New game**: after a successful build the result window offers "Create another game" (clears the disc, title, images and configs, keeps the emulator options); the "New game" button does the same at any time
+- The output folder dialog opens in the folder of the last package, and building a game that is already in the History (package still on disk) shows a warning first
 - **Archive check**: a `.zip` or `.7z` is looked into before it is extracted (no game files, a track missing from the `.cue`, a password, not enough disk space)
 - **Fix buttons**: an error or a problem found before building can offer the fix (select the game again, Wine setup, show the Tools folder, clear the images, build again)
 - **Titles** of PSP games come from the disc; PS1 and PS2 games that are not in the title list get theirs from the Redump database
@@ -141,6 +144,6 @@ dotnet test CrossPlatform/PSClassicsfPKGBuilder.sln    # any OS: Core tests
 - [x] Fluent interface with a live PS4/PS5 home screen preview, help buttons, Required/Optional badges and hints
 - [x] `.pkg` checker in the app and as `PkgCheck`
 - [x] One Linux/macOS app (Avalonia) with the same screens and the same build code as Windows; `strings`, `7z` and `crc` replaced by managed code (same results, verified by tests against the original tools)
-- [ ] Try the 2.2.4 features with real files: a PSP `.cso` of a real game, the Queue window with several games, the Fix buttons (they are tested by code, not by clicking)
+- [ ] Try the 2.2.4 features with real files: a PSP `.cso` of a real game, the Queue window with several games (also with a preset chosen for some of them), the Fix buttons, and the New game / Create another game buttons (tested by code, not by clicking)
 - [ ] Test the Linux and macOS packages on real machines (the Linux build is tested by the CI with Wine; macOS only builds in the CI)
 - [ ] Verify on a real console: which background the home screen shows (the user image is written as `pic0.png`, while the emulators ship a `pic1.png`), PS2 `-vu0-opt-flags` (single dash in the original), the PS3 config (`--lopnor-config`) for database configs, and `disc2.toc` to `disc4.toc` of multi-disc PS1 games
