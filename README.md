@@ -138,12 +138,13 @@ dotnet test CrossPlatform/PSClassicsfPKGBuilder.sln    # any OS: Core tests
 ## Project status
 - [x] Windows app migrated from .NET Framework 4.8.1 to .NET 10, LibOrbisPkg built from source
 - [x] Build logic extracted into a cross-platform, tested library (`Shared/PSClassics.Core`)
-- [x] 2.2.4 (next): PSP .cso support, queue of several games, archive check, fix buttons, titles from the PSP disc and Redump
+- [x] 2.2.5: create another game after a build (New game button), a different preset for some games of the queue, the output folder dialogs open in the last folder, a warning when a game was already built
+- [x] 2.2.4: PSP .cso support, queue of several games, archive check, fix buttons, titles from the PSP disc and Redump
 - [x] 2.2.3: PS1 games with one BIN file per track (for example Tekken 3) build; the game ID no longer keeps the folder of the BOOT file; the cover search reads the serials of multi-track games; drop a .zip or .7z to add a game
 - [x] Fixed: PS1 discs 3/4 ignored, unterminated `--path-patches`, lost PS2 emulator fixes, pipe deadlocks, leaked file handles, working-directory dependent paths, PS1 TOC for every disc, PS2 game ID derived from the NP title when it is not detected
 - [x] Fluent interface with a live PS4/PS5 home screen preview, help buttons, Required/Optional badges and hints
 - [x] `.pkg` checker in the app and as `PkgCheck`
 - [x] One Linux/macOS app (Avalonia) with the same screens and the same build code as Windows; `strings`, `7z` and `crc` replaced by managed code (same results, verified by tests against the original tools)
-- [ ] Try the 2.2.4 features with real files: a PSP `.cso` of a real game, the Queue window with several games (also with a preset chosen for some of them), the Fix buttons, and the New game / Create another game buttons (tested by code, not by clicking)
+- [ ] Try the 2.2.4 and 2.2.5 features with real files: a PSP `.cso` of a real game, the Queue window with several games (also with a preset chosen for some of them), the Fix buttons, and the New game / Create another game buttons (tested by code, not by clicking)
 - [ ] Test the Linux and macOS packages on real machines (the Linux build is tested by the CI with Wine; macOS only builds in the CI)
 - [ ] Verify on a real console: which background the home screen shows (the user image is written as `pic0.png`, while the emulators ship a `pic1.png`), PS2 `-vu0-opt-flags` (single dash in the original), the PS3 config (`--lopnor-config`) for database configs, and `disc2.toc` to `disc4.toc` of multi-disc PS1 games
